@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页标题</title>
+    <!-- 引入外部 CSS 样式表 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 背景音频：直接引用同目录下的 123.mp3 文件 -->
+    <audio id="bgm-audio" src="123.mp3" loop preload="auto"></audio>
+
+    <!-- 页面主体容器 -->
+    <div class="container">
+        <!-- 时钟/倒计时/文字展示区域 -->
+        <div id="clock-container">
+            <h1 id="clock-title">欢迎访问</h1>
+            <div id="clock-display">00:00:00</div>
+        </div>
+
+        <!-- 音频控制按钮 -->
+        <div class="audio-controls">
+            <button id="play-btn" type="button">播放 / 暂停</button>
+        </div>
+    </div>
+
+    <!-- 引入外部 JavaScript 逻辑脚本 -->
+    <script src="script.js"></script>
+</body>
+</html>
