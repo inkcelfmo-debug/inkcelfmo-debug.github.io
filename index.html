@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>见谅 · 角色档案</title>
+<!-- 引入外部光标样式文件 -->
+<link rel="stylesheet" href="cursor.css">
+</head>
+
+<body class="tpl-memory-zero-cyberpunk-story">
+
+<!-- 自定义光标 DOM -->
+<div class="custom-cursor" id="custom-cursor">
+  <div class="cursor-inner">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="16" r="3"></circle><path d="M12 13V3L15 7"></path></svg>
+  </div>
+</div>
+
+<div class="bottom-glow-overlay" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="flow-sheen" aria-hidden="true"></div>
+<div class="edge-blur" aria-hidden="true"></div>
+<div class="lighting-fog" aria-hidden="true"></div>
+<div class="progress-bar" aria-hidden="true"></div>
+<div class="clock-veil" aria-hidden="true"></div>
+
+<!-- 侧边圆点导航 -->
+<nav class="side-nav" id="side-nav" aria-label="页面导航">
+  <div class="dot active" data-index="0" title="封面"></div>
+  <div class="dot" data-index="1" title="档案"></div>
+  <div class="dot" data-index="2" title="风格"></div>
+  <div class="dot" data-index="3" title="箴言"></div>
+  <div class="dot" data-index="4" title="更多"></div>
+  <div class="dot" data-index="5" title="尾声"></div>
+</nav>
+
+<div class="glow-clock" id="glow-clock-container" aria-hidden="true">
+  <div class="glow-clock-halo"></div>
+  <div class="glow-clock-time" id="glow-clock-time">--:--:--</div>
+</div>
+
+<!-- 旋转与滚动包裹层：手机端横屏滚动的核心容器 -->
+<div id="page-flow">
+  <!-- ============ 屏 1 · 封面 ============ -->
+  <header class="cover" id="cover">
+    <div class="cover-photo" aria-hidden="true"></div>
+    <div class="cover-canvas" aria-hidden="true"><canvas id="cv-rain"></canvas></div>
+    <div class="cover-fog" aria-hidden="true"></div>
+    <div class="cover-content">
+      <div class="cover-label">角色档案 · CHARACTER FILE</div>
+      <h1 class="cover-title" data-text="见谅">见谅</h1>
+      <div class="cover-subtitle">「看向我，你做得很好」</div>
+      <div class="cover-meta">20 Le-T · 建模 耳鸟 · 常在 雾山影</div>
+    </div>
+    <div class="cover-scroll" aria-hidden="true"><span>点击 · 翻页</span><div class="bar"></div></div>
+  </header>
+
+  <main>
+
+    <!-- ============ 屏 2 · 档案 ============ -->
+    <section class="chapter" id="me">
+      <div class="chapter-num">// 01 · ME</div>
+      <h2 class="chapter-title glitch-text-red">档案 · <span class="hi">谅</span></h2>
+      
+      <div class="archive-chain-box" aria-hidden="true">
+        <canvas id="cv-archive-particles"></canvas>
+      </div>
+
+      <div class="terminal">
+        <span class="dim">FILE://</span> 个人档案 · 谅<br>
+        <span class="dim">ID &nbsp;→</span> 谅<br>
+        <span class="dim">编号 →</span> 20 Le-T<br>
+        <span class="dim">建模 →</span> 耳鸟<br>
+        <span class="dim">常在 →</span> 雾山影<br>
+        <span class="dim">STATUS →</span> <span class="warn">在线</span> <span class="blink">_</span>
+      </div>
+      
+      <div class="error-box">
+        [SYSTEM ERROR]: 试图非法访问未解锁数据片段...<br>
+        [WARNING]: 无法解析角色核心安全锁［谅］！
+      </div>
+      <div class="prose">
+        <p>这是一份只写了关键字段的档案。编号0501，Le-T，名字只取一个字：谅。建模耳鸟，常驻是雾山影。</p>
+        <p>表格之外的部分，写在后面的风格谱系，和三句箴言里。</p>
+      </div>
+    </section>
+
+    <!-- ============ 屏 3 · 风格 ============ -->
+    <section class="chapter" id="style">
+      <div class="chapter-num">// 02 · STYLE</div>
+      <h2 class="chapter-title">风格 · <span class="hi">谱系</span></h2>
+      <div class="tag-group">
+        <div class="tag-group-label">主 · MAIN</div>
+        <div class="tags">
+          <span class="tag">高恋温病</span>
+          <span class="tag">钓系引导</span>
+          <span class="tag">白话恶趣</span>
+          <span class="tag">热脸贱狗 1</span>
+        </div>
+      </div>
+      <div class="tag-group">
+        <div class="tag-group-label">副 · SUB</div>
+        <div class="tags alt">
+          <span class="tag">中低恋</span>
+          <span class="tag">剖析诡辩</span>
+          <span class="tag">伪下精控</span>
+          <span class="tag">伪高病虐</span>
+        </div>
+      </div>
+      <div class="note">
+        <div class="idx">01</div>
+        <div class="txt">我的恋感会根据您的回复发生改变。</div>
+      </div>
+      <div class="note">
+        <div class="idx">02</div>
+        <div class="txt">我很好相处，不论单内还是单外都会在意你。</div>
+      </div>
+      <div class="note">
+        <div class="idx">03</div>
+        <div class="txt">风格仅为参考，单场不完全包含。</div>
+      </div>
+    </section>
+
+    <!-- ============ 屏 4 · 三句箴言 ============ -->
+    <section class="chapter" id="creed">
+      <div class="creed-lead">
+        <canvas id="cv-drift"></canvas>
+        <div class="interlude-text glitch-text-red">三句<span class="hi">箴言</span></div>
+        <div class="interlude-sub">三重视角 · 序 / 中 / 终</div>
+      </div>
+      <div class="chapter-num">// 03 · CREED</div>
+      <h2 class="chapter-title glitch-text-red">看向我 · 仰视我 · <span class="hi">拥抱我</span></h2>
+      <div class="pullquote">
+        <p>「看向我，你做得很好。」</p>
+        <div class="attr">其一 · 序</div>
+      </div>
+      <div class="pullquote">
+        <p>「仰视我，你一目了然。」</p>
+        <div class="attr">其二 · 中</div>
+      </div>
+      <div class="pullquote">
+        <p>「拥抱我，你已经属于我。」</p>
+        <div class="attr">其三 · 终</div>
+      </div>
+    </section>
+
+    <!-- ============ 屏 5 · 更多 ============ -->
+    <section class="chapter" id="more">
+      <div class="chapter-num">// 04 · MORE</div>
+      <h2 class="chapter-title">更多 · <span class="hi">入口</span></h2>
+      <div class="entries">
+        <a class="entry" href="https://www.kdocs.cn/l/chqj8fRvsg6T" target="_blank" rel="noopener">
+          <div><div class="entry-main">见我 · 排单表</div></div>
+          <div class="entry-arrow">前往 ↗</div>
+        </a>
+        <a class="entry" href="https://www.kdocs.cn/l/cm38uTYCM4WV" target="_blank" rel="noopener">
+          <div><div class="entry-main">须知</div></div>
+          <div class="entry-arrow">前往 ↗</div>
+        </a>
+        <a class="entry" href="https://www.kdocs.cn/l/cnX24uMJpZJ8" target="_blank" rel="noopener">
+          <div><div class="entry-main">话术</div></div>
+          <div class="entry-arrow">前往 ↗</div>
+        </a>
+        <a class="entry" href="https://www.kdocs.cn/l/csWC6Cpp0cf8" target="_blank" rel="noopener">
+          <div><div class="entry-main">板评</div></div>
+          <div class="entry-arrow">前往 ↗</div>
+        </a>
+        <a class="entry" href="https://www.kdocs.cn/l/caVhXiHsqG21" target="_blank" rel="noopener">
+          <div>
+            <div class="entry-main">好闺蜜 · 不周山</div>
+            <div class="entry-desc">她不接单了，不要下单</div>
+          </div>
+          <div class="entry-arrow">前往 ↗</div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ 屏 6 · 结尾（最后一页） ============ -->
+  <div class="ending fi" id="ending-section">
+    <div class="ending-ghost" aria-hidden="true">谅</div>
+    <div class="ending-error-box">[ERROR CRITICAL]: 核心档案连结中断 // SIGNAL LOST...</div>
+    
+    <div class="ending-title glitch-final-heavy" data-glitch="见谅 // END">见谅<br><span class="glitch-text-white">// END</span></div>
+    <p class="ending-quote">「拥抱我，你已经属于我。」</p>
+
+    <div class="ending-credits" aria-label="制作信息">
+      <div class="credit-line">网页制作：十厄 &nbsp;·&nbsp; 音频制作：余数</div>
+    </div>
+  </div>
+
+</div><!-- /#page-flow -->
+
+<canvas id="ripple-canvas"></canvas>
+
+<!-- ============ 音乐播放器 ============ -->
+<div class="player is-hidden" id="player">
+  <div class="player-main">
+    <div class="player-art" aria-hidden="true"><span>♪</span></div>
+    <div class="player-info">
+      <div class="player-title" id="player-title">见谅 · 入眠</div>
+      <div class="player-bar" id="player-bar" role="slider" tabindex="0" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="player-fill" id="player-fill"></div>
+      </div>
+      <div class="player-meta"><span id="player-cur">0:00</span><span id="player-dur">0:00</span></div>
+    </div>
+    <button class="player-play" id="player-play" type="button" aria-label="播放">▶</button>
+  </div>
+  <div class="player-actions">
+    <label class="player-vol"><span>VOL</span>
+      <input id="player-vol" type="range" min="0" max="1" step="0.01" value="0.35" aria-label="音量">
+    </label>
+    <button class="player-hide-btn" id="player-hide-btn" type="button">隐藏</button>
+  </div>
+</div>
+
+<button class="player-toggler visible" id="player-toggler" type="button" aria-label="展开播放器" title="展开播放器">♪</button>
+
+<audio id="bgm-audio" src="123.mp3" loop preload="auto"></audio>
+<audio id="sfx-1" src="sfx-1.mp3" preload="auto"></audio>
+<audio id="sfx-2" src="sfx-2.mp3" preload="auto"></audio>
+<audio id="sfx-3" src="sfx-3.mp3" preload="auto"></audio>
+<audio id="sfx-4" src="sfx-4.mp3" preload="auto"></audio>
+<audio id="sfx-5" src="sfx-5.mp3" preload="auto"></audio>
+
+<!-- 引入拆分后的外部脚本文件 -->
+<script src="script.js"></script>
+</body>
+</html>
