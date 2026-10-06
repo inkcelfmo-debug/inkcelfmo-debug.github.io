@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>月光の骸骨 · 厄命月下</title>
+  <title>月光の骸骨 · 厄命的月光</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     /* ============================================================
-       全局重置与自定义样式 (含 1px 泛光磨砂玻璃 & 动态钳位 & 星芒光标)
+       全局重置与自定义样式 (含发光星星链滚动条 & 手机竖屏自适应)
     ============================================================ */
     * {
       margin: 0;
@@ -31,7 +31,7 @@
       -webkit-user-select: none;
     }
 
-    /* 桌面端自定义八角星芒光标 (放大3倍: 16px -> 48px) */
+    /* 桌面端自定义八角星芒光标 */
     @media (pointer: fine) {
       html, body, button, a, section, div {
         cursor: none !important;
@@ -70,7 +70,6 @@
       flex-direction: column;
     }
 
-    /* 移除手机竖屏时的自动强制横屏旋转，改为默认保持正常竖屏 */
     #app.force-rotated {
       width: 100dvh;
       height: 100dvw;
@@ -115,7 +114,6 @@
       background: radial-gradient(ellipse at center, transparent 35%, rgba(9, 13, 20, 0.7) 75%, rgba(6, 9, 14, 0.95) 100%);
     }
 
-    /* 磨砂玻璃通用类：更高透明度 + 厚度 1px 细边 + 柔和泛光 */
     .frosted-glass-box {
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -129,7 +127,6 @@
       border-color: rgba(190, 218, 250, 0.5);
     }
 
-    /* 顶栏图标自适应钳位 */
     .top-nav {
       position: relative;
       z-index: 20;
@@ -203,10 +200,30 @@
       flex-direction: column;
     }
 
-    .page::-webkit-scrollbar { width: 0.6vmin; }
+    /* ============================================================
+       将侧边滚动条轨道修改为发光星星链轨道
+    ============================================================ */
+    .page::-webkit-scrollbar {
+      width: 8px;
+    }
+    .page::-webkit-scrollbar-track {
+      background: rgba(9, 13, 20, 0.6);
+      border-left: 1px solid rgba(190, 218, 250, 0.15);
+      position: relative;
+    }
+    /* 通过伪元素或背景模拟星星链效果 */
     .page::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.25);
-      border-radius: 0.3vmin;
+      background: radial-gradient(circle, #f8fafc 30%, rgba(190, 225, 255, 0.8) 70%);
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(190, 225, 255, 0.9), 0 0 20px rgba(150, 200, 255, 0.6);
+      border: 2px solid rgba(9, 13, 20, 0.8);
+    }
+
+    /* 横屏或特定模式下滚动条距离边缘留出间距 */
+    @media screen and (orientation: landscape) and (max-width: 900px) {
+      .page-content {
+        padding: 4vmin 8vmin 8vmin !important;
+      }
     }
 
     .page-cover {
@@ -304,7 +321,9 @@
     .swallow-left { left: 6vmin; animation: glideLeft 4.5s ease-in-out infinite; }
     .swallow-right { right: 6vmin; animation: glideRight 4.5s ease-in-out infinite; }
 
-    /* 卷首肖像框 */
+    /* ============================================================
+       卷首肖像框：自适应手机竖屏，改为纵向排列
+    ============================================================ */
     .cover-content {
       position: relative;
       z-index: 10;
@@ -316,6 +335,14 @@
       width: 100%;
       max-width: 120vmin;
       padding: 0 4vmin;
+    }
+
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .cover-content {
+        flex-direction: column !important;
+        gap: 3vmin;
+        padding: 0 2vmin;
+      }
     }
 
     .mirror-portal-box {
@@ -334,8 +361,8 @@
 
     .portal-disc {
       position: relative;
-      width: clamp(160px, 32vmin, 260px);
-      height: clamp(160px, 32vmin, 260px);
+      width: clamp(140px, 32vmin, 260px);
+      height: clamp(140px, 32vmin, 260px);
       border-radius: 1.4vmin;
       border: 1px solid rgba(190, 218, 250, 0.4);
       background: radial-gradient(circle at 45% 40%, #334155 0%, #1e293b 45%, #090d16 100%);
@@ -367,7 +394,7 @@
     }
 
     .moon-glyph {
-      font-size: clamp(48px, 11vmin, 96px);
+      font-size: clamp(40px, 11vmin, 96px);
       color: #f8fafc;
       line-height: 1;
       text-shadow: 0 0 3.5vmin rgba(210, 230, 255, 0.9);
@@ -401,6 +428,12 @@
       pointer-events: none;
     }
 
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .portal-title-vertical {
+        right: -4.2vmin;
+      }
+    }
+
     .moon-tiny {
       font-size: clamp(14px, 2.2vmin, 20px);
       color: rgba(203, 213, 225, 0.9);
@@ -411,7 +444,7 @@
       writing-mode: vertical-rl;
       text-orientation: upright;
       font-family: "Cinzel", "Noto Serif SC", serif;
-      font-size: clamp(16px, 2.6vmin, 28px);
+      font-size: clamp(14px, 2.6vmin, 28px);
       letter-spacing: 1.1vmin;
       color: rgba(226, 232, 240, 0.95);
       text-shadow: 0 0 1.5vmin rgba(200, 225, 255, 0.7);
@@ -422,7 +455,7 @@
       bottom: -3vmin;
       left: 50%;
       transform: translateX(-50%);
-      width: clamp(120px, 26vmin, 220px);
+      width: clamp(100px, 26vmin, 220px);
       height: 6.5vmin;
       color: rgba(203, 213, 225, 0.8);
       pointer-events: none;
@@ -445,44 +478,44 @@
 
     .main-title {
       font-family: "Cinzel", "Noto Serif SC", serif;
-      font-size: clamp(40px, 8vmin, 80px);
-      letter-spacing: 2vmin;
+      font-size: clamp(32px, 8vmin, 80px);
+      letter-spacing: 1.5vmin;
       color: #f8fafc;
       text-shadow: 0 0 3vmin rgba(190, 220, 255, 0.8);
     }
 
     .sub-title-code {
-      font-size: clamp(14px, 2.4vmin, 24px);
-      letter-spacing: 1.5vmin;
+      font-size: clamp(12px, 2.4vmin, 24px);
+      letter-spacing: 1.2vmin;
       color: rgba(190, 218, 250, 0.9);
       margin-top: 0.5vmin;
     }
 
     .star-emblem {
-      margin: 2vmin 0;
+      margin: 1.5vmin 0;
       color: #f8fafc;
       filter: drop-shadow(0 0 6px rgba(190, 225, 255, 0.8));
     }
     .star-emblem svg {
-      width: clamp(24px, 5vmin, 48px);
-      height: clamp(24px, 5vmin, 48px);
+      width: clamp(20px, 5vmin, 48px);
+      height: clamp(20px, 5vmin, 48px);
     }
 
     .cover-tagline {
-      font-size: clamp(14px, 2.2vmin, 20px);
+      font-size: clamp(12px, 2.2vmin, 20px);
       letter-spacing: 0.4vmin;
       color: rgba(220, 235, 255, 0.9);
     }
 
     .cover-subtag {
-      font-size: clamp(12px, 1.8vmin, 18px);
+      font-size: clamp(11px, 1.8vmin, 18px);
       letter-spacing: 0.3vmin;
       color: rgba(190, 210, 235, 0.85);
-      margin-top: 0.8vmin;
+      margin-top: 0.6vmin;
     }
 
     .explore-btn {
-      margin-top: 3vmin;
+      margin-top: 2.5vmin;
       padding: 1.2vmin 3vmin;
       border-radius: 3vmin;
       color: #f8fafc;
@@ -509,15 +542,15 @@
 
     .vintage-divider h2 {
       font-family: "Cinzel", "Noto Serif SC", serif;
-      font-size: clamp(22px, 3.2vmin, 36px);
+      font-size: clamp(20px, 3.2vmin, 36px);
       letter-spacing: 0.8vmin;
       color: #f1f5f9;
     }
 
     .star-icon { font-size: 2vmin; color: #94a3b8; }
-    .name-sub { font-size: clamp(22px, 3.2vmin, 36px); font-weight: bold; letter-spacing: 1.2vmin; color: #f8fafc; margin-top: 1vmin; }
-    .meta-row { font-size: clamp(14px, 2.2vmin, 22px); color: #cbd5e1; margin-top: 0.5vmin; }
-    .desc-row { font-size: clamp(13px, 2vmin, 19px); color: #94a3b8; margin-top: 0.4vmin; }
+    .name-sub { font-size: clamp(20px, 3.2vmin, 36px); font-weight: bold; letter-spacing: 1.2vmin; color: #f8fafc; margin-top: 1vmin; }
+    .meta-row { font-size: clamp(13px, 2.2vmin, 22px); color: #cbd5e1; margin-top: 0.5vmin; }
+    .desc-row { font-size: clamp(12px, 2vmin, 19px); color: #94a3b8; margin-top: 0.4vmin; }
 
     .card-highlight {
       width: 100%;
@@ -525,7 +558,7 @@
       margin: 1.5vmin 0;
       border-radius: 1.2vmin;
       text-align: center;
-      font-size: clamp(14px, 2.2vmin, 22px);
+      font-size: clamp(13px, 2.2vmin, 22px);
       color: #f8fafc;
       font-weight: 500;
     }
@@ -535,7 +568,7 @@
       display: flex;
       flex-direction: column;
       gap: 1.4vmin;
-      font-size: clamp(13px, 2.1vmin, 20px);
+      font-size: clamp(12px, 2.1vmin, 20px);
       line-height: 1.85;
       color: #e2e8f0;
     }
@@ -562,12 +595,11 @@
     }
     .letter-cipher span {
       font-family: "Cinzel", serif;
-      font-size: clamp(18px, 2.6vmin, 28px);
+      font-size: clamp(16px, 2.6vmin, 28px);
       font-weight: 600;
       color: #cbd5e1;
     }
 
-    /* 板位须知卡片 (完全转为纯白色正文) */
     .card-block {
       width: 100%;
       margin: 1.5vmin 0;
@@ -578,11 +610,11 @@
       align-items: center;
       text-align: center;
       gap: 1.2vmin;
-      font-size: clamp(13px, 2vmin, 19px);
+      font-size: clamp(12px, 2vmin, 19px);
     }
 
     .card-title {
-      font-size: clamp(18px, 2.6vmin, 28px);
+      font-size: clamp(16px, 2.6vmin, 28px);
       font-weight: bold;
       letter-spacing: 0.6vmin;
       color: #f8fafc;
@@ -604,7 +636,7 @@
       flex-direction: column;
       gap: 1vmin;
       padding: 0 2vmin;
-      font-size: clamp(13px, 1.95vmin, 19px);
+      font-size: clamp(12px, 1.95vmin, 19px);
     }
     .num-list li {
       display: flex;
@@ -615,7 +647,6 @@
       color: rgba(220, 235, 255, 0.9);
       flex-shrink: 0;
     }
-    /* 条款正文与序号统一纯白 */
     .num-list li, .num-list span {
       color: #f8fafc !important;
       font-weight: 500;
@@ -625,10 +656,9 @@
       font-weight: 500;
     }
 
-    /* 好友码页 */
     .quote-text {
       font-style: italic;
-      font-size: clamp(18px, 2.8vmin, 30px);
+      font-size: clamp(16px, 2.8vmin, 30px);
       letter-spacing: 0.5vmin;
       color: #f8fafc;
       text-shadow: 0 0 2vmin rgba(180, 210, 240, 0.5);
@@ -636,7 +666,7 @@
 
     .qr-heading {
       font-family: "Cinzel", serif;
-      font-size: clamp(22px, 3.2vmin, 36px);
+      font-size: clamp(20px, 3.2vmin, 36px);
       letter-spacing: 0.8vmin;
       color: #f8fafc;
       margin-bottom: 2vmin;
@@ -651,8 +681,8 @@
 
     .qr-box {
       position: relative;
-      width: clamp(160px, 28vmin, 220px);
-      height: clamp(160px, 28vmin, 220px);
+      width: clamp(140px, 28vmin, 220px);
+      height: clamp(140px, 28vmin, 220px);
       background: #fff;
       padding: 1.5vmin;
       border-radius: 1vmin;
@@ -682,19 +712,18 @@
       padding: 1.2vmin 3vmin;
       border-radius: 3vmin;
       color: #f1f5f9;
-      font-size: clamp(13px, 1.9vmin, 19px);
+      font-size: clamp(12px, 1.9vmin, 19px);
       cursor: pointer;
     }
     .copy-btn:hover { border-color: #f8fafc; box-shadow: 0 0 8px rgba(190, 225, 255, 0.8); }
 
     .epilogue-note {
-      font-size: clamp(12px, 1.8vmin, 18px);
+      font-size: clamp(11px, 1.8vmin, 18px);
       color: #94a3b8;
       letter-spacing: 0.3vmin;
       margin-top: 2vmin;
     }
 
-    /* 页码指示点 */
     #dots {
       position: absolute;
       bottom: 2.2vmin;
@@ -723,7 +752,6 @@
       box-shadow: 0 0 1.5vmin rgba(200, 225, 255, 0.8);
     }
 
-    /* 飘落羽毛特效样式 (放大3倍) */
     .luminous-feather {
       position: fixed;
       pointer-events: none;
@@ -746,7 +774,6 @@
       }
     }
 
-    /* 点击月亮掉落的较大月亮特效样式 */
     .falling-big-moon {
       position: fixed;
       pointer-events: none;
@@ -792,13 +819,6 @@
     .anim-float { animation: floatY 5s ease-in-out infinite; }
     .anim-shimmer { animation: shimmerGlow 4s ease-in-out infinite; }
 
-    /* ============================================================
-       新增 · 全屏视频背景 / 叠加氛围层 / 手电筒黑雾 / 折叠音乐播放器
-       层级：① 备用底 → ② 视频 → ③ 原有背景+暗色蒙版 → ④ 黑雾手电筒
-             → ⑤ 页面内容 → ⑥ 音乐控件
-    ============================================================ */
-
-    /* ① 备用底 + ② 全屏循环视频背景（固定视口，不随内容滚动） */
     .site-video-layer {
       position: fixed;
       inset: 0;
@@ -816,7 +836,6 @@
       left: 50%;
       width: 104%;
       height: 104%;
-      /* 轻微放大预留边缘，避免鼠标视差移动时露出空白 */
       transform: translate(calc(-50% + var(--video-shift-x, 0px)), calc(-50% + var(--video-shift-y, 0px))) translateZ(0);
       object-fit: cover;
       object-position: center center;
@@ -827,10 +846,8 @@
     }
     .site-video-layer.loaded video { opacity: 1; }
 
-    /* ③ 原有静态背景以极低透明度叠加在视频之上，保留纹理轮廓 */
     .ambient-backdrop { opacity: 0.03; }
 
-    /* ③ 附加：独立暗色氛围层，进一步压低画面亮度 */
     .dark-mood-overlay {
       position: absolute;
       inset: 0;
@@ -841,7 +858,6 @@
         linear-gradient(180deg, rgba(5, 9, 16, 0.28), rgba(4, 7, 13, 0.42));
     }
 
-    /* ④ 黑色雾气 + 鼠标手电筒照明遮罩（不拦截鼠标事件） */
     .torch-fog-layer {
       position: absolute;
       inset: 0;
@@ -862,7 +878,6 @@
     }
     .torch-fog-layer.coarse { opacity: 0.72; }
 
-    /* 手电筒补光层：只提高照明亮度，不改变 --torch-r 的照明范围 */
     .torch-fog-layer::after {
       content: "";
       position: absolute;
@@ -880,7 +895,6 @@
       opacity: 0.95;
     }
 
-    /* 星屑叠层：稀疏冷白星点，独立随机呼吸、柔和泛光 */
     #starlightCanvas {
       position: absolute;
       inset: 0;
@@ -892,7 +906,6 @@
       mix-blend-mode: screen;
     }
 
-    /* ⑥ 音乐播放器：默认折叠为图标，位于内容之上 */
     .music-widget {
       position: fixed;
       right: max(2.4vmin, 14px);
@@ -1057,7 +1070,6 @@
 </head>
 <body>
 
-<!-- 自定义八角星芒光标 (桌面端) -->
 <div class="custom-star-cursor" id="starCursor">
   <svg viewBox="0 0 100 100" fill="currentColor">
     <path d="M50 0 L58 35 L90 20 L65 45 L100 50 L65 55 L90 80 L58 65 L50 100 L42 65 L10 80 L35 55 L0 50 L35 45 L10 20 L42 35 Z"/>
@@ -1065,7 +1077,6 @@
   </svg>
 </div>
 
-<!-- 全屏循环视频背景 -->
 <div class="site-video-layer" id="siteVideoLayer" aria-hidden="true">
   <video id="bgVideo" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
     <source src="videos.mp4" type="video/mp4">
@@ -1073,7 +1084,6 @@
 </div>
 
 <div id="app">
-  <!-- 全屏动态背景 -->
   <div class="ambient-backdrop">
     <canvas id="ambientCanvas"></canvas>
     <video id="heroVideo" autoplay muted loop playsinline>
@@ -1086,7 +1096,6 @@
   <div class="torch-fog-layer" id="torchFogLayer" aria-hidden="true"></div>
   <canvas id="starlightCanvas" aria-hidden="true"></canvas>
 
-  <!-- 顶部轻盈工具条 -->
   <header class="top-nav">
     <div class="nav-brand">
       <span class="brand-title">月光の骸骨 · 厄命</span>
@@ -1111,10 +1120,9 @@
     </div>
   </header>
 
-  <!-- 横向多页容器 -->
   <div id="pages">
 
-    <!-- 第一页：卷首·月光骸骨 -->
+    <!-- 第一页：卷首·月光骸骨（已调整为竖向自适应） -->
     <section class="page page-cover">
       <div class="corner-ornament top-left"><svg viewBox="0 0 100 100"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
       <div class="corner-ornament top-right"><svg viewBox="0 0 100 100" style="transform:scaleX(-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
@@ -1347,7 +1355,6 @@
 
   </div>
 
-  <!-- 底部页码指示点 -->
   <div id="dots" class="frosted-glass-box">
     <span class="active" data-index="0"></span>
     <span data-index="1"></span>
@@ -1356,7 +1363,6 @@
   </div>
 </div>
 
-<!-- 音乐播放器组件 -->
 <div class="music-widget" id="musicWidget">
   <div class="music-panel frosted-glass-box" id="musicPanel" role="group" aria-label="背景音乐控制">
     <div class="music-panel-head">
@@ -1405,7 +1411,7 @@
 
     const total = dots.length;
     let current = 0;
-    let forceRotated = false; // 默认不强制旋转，即按手机常规竖屏展现
+    let forceRotated = false;
 
     function isRotated() {
       if (forceRotated) return true;
