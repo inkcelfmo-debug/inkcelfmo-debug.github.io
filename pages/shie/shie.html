@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>月光の骸骨 · 厄命 - 手机横屏复古画卷</title>
+  <title>月光の骸骨 · 厄命 - 手机复古画卷</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -70,19 +70,7 @@
       flex-direction: column;
     }
 
-    @media screen and (orientation: portrait) and (max-width: 900px) {
-      html, body {
-        width: 100dvh;
-        height: 100dvw;
-      }
-      #app {
-        width: 100dvh;
-        height: 100dvw;
-        transform: rotate(90deg);
-        left: 100dvw;
-      }
-    }
-
+    /* 移除手机竖屏时的自动强制横屏旋转，改为默认保持正常竖屏 */
     #app.force-rotated {
       width: 100dvh;
       height: 100dvw;
@@ -127,7 +115,7 @@
       background: radial-gradient(ellipse at center, transparent 35%, rgba(9, 13, 20, 0.7) 75%, rgba(6, 9, 14, 0.95) 100%);
     }
 
-    /* 磨砂玻璃通用类：更高透明度 (background 改为 0.35) + 厚度 1px 细边 + 柔和泛光 */
+    /* 磨砂玻璃通用类：更高透明度 + 厚度 1px 细边 + 柔和泛光 */
     .frosted-glass-box {
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -1077,7 +1065,7 @@
   </svg>
 </div>
 
-<!-- 新增 · 第二层：全屏循环视频背景（固定视口，不随内容滚动，object-fit 铺满） -->
+<!-- 全屏循环视频背景 -->
 <div class="site-video-layer" id="siteVideoLayer" aria-hidden="true">
   <video id="bgVideo" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
     <source src="videos.mp4" type="video/mp4">
@@ -1094,9 +1082,7 @@
     <div class="vignette-overlay"></div>
   </div>
 
-  <!-- 新增 · 第三层附加：独立暗色氛围层，压低画面亮度 -->
   <div class="dark-mood-overlay" aria-hidden="true"></div>
-  <!-- 新增 · 第四层：黑色雾气 + 鼠标手电筒照明遮罩 -->
   <div class="torch-fog-layer" id="torchFogLayer" aria-hidden="true"></div>
   <canvas id="starlightCanvas" aria-hidden="true"></canvas>
 
@@ -1108,13 +1094,13 @@
       <span id="pageIndicator" class="brand-sub">1 / 4</span>
     </div>
     <div class="nav-actions">
-      <button id="rotateToggleBtn" class="action-btn frosted-glass-box" title="模拟手机竖屏CSS旋转90度">
+      <button id="rotateToggleBtn" class="action-btn frosted-glass-box" title="手动切换/模拟旋转视图">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
           <line x1="12" y1="18" x2="12.01" y2="18"/>
         </svg>
       </button>
-      <button id="fullscreenBtn" class="action-btn frosted-glass-box" title="全屏横屏展示">
+      <button id="fullscreenBtn" class="action-btn frosted-glass-box" title="全屏展示">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="15 3 21 3 21 9"/>
           <polyline points="9 21 3 21 3 15"/>
@@ -1130,13 +1116,11 @@
 
     <!-- 第一页：卷首·月光骸骨 -->
     <section class="page page-cover">
-      <!-- 四角巴洛克纯矢量花纹 -->
       <div class="corner-ornament top-left"><svg viewBox="0 0 100 100"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
       <div class="corner-ornament top-right"><svg viewBox="0 0 100 100" style="transform:scaleX(-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
       <div class="corner-ornament bottom-left"><svg viewBox="0 0 100 100" style="transform:scaleY(-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
       <div class="corner-ornament bottom-right"><svg viewBox="0 0 100 100" style="transform:scale(-1,-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
 
-      <!-- 对飞月光燕剪影 -->
       <div class="swallow-ornament swallow-left">
         <svg viewBox="0 0 120 100" fill="currentColor"><path d="M 115 15 C 85 20, 60 40, 45 60 C 40 45, 30 25, 5 10 C 25 35, 38 65, 40 85 C 30 92, 10 98, 0 100 C 25 96, 45 88, 55 75 C 65 65, 85 55, 115 45 C 95 50, 75 58, 65 68 C 75 48, 95 30, 115 15 Z" opacity="0.85"/></svg>
       </div>
@@ -1144,7 +1128,6 @@
         <svg viewBox="0 0 120 100" style="transform:scaleX(-1)" fill="currentColor"><path d="M 115 15 C 85 20, 60 40, 45 60 C 40 45, 30 25, 5 10 C 25 35, 38 65, 40 85 C 30 92, 10 98, 0 100 C 25 96, 45 88, 55 75 C 65 65, 85 55, 115 45 C 95 50, 75 58, 65 68 C 75 48, 95 30, 115 15 Z" opacity="0.85"/></svg></div>
 
       <div class="cover-content">
-        <!-- 月相法阵肖像镜框 (添加了点击掉落较大月亮交互) -->
         <div class="mirror-portal-box" id="moonPortalBox" title="点击掉落月亮">
           <div class="portal-frame frosted-glass-box">
             <div class="portal-disc">
@@ -1183,7 +1166,6 @@
           </div>
         </div>
 
-        <!-- 标题区 -->
         <div class="cover-text-group">
           <div class="main-title-row">
             <span class="title-flourish">✦ —</span>
@@ -1212,7 +1194,6 @@
     <!-- 第二页：卷一·个人信息 -->
     <section class="page page-content">
       <div class="page-inner-scroll">
-        <!-- 顶部月牙连缀光弧导航 -->
         <div class="moon-star-rail-nav">
           <div class="rail-node active-node" onclick="window.goToPage(0)"><span class="rail-moon">☾</span><span class="rail-label">卷首</span></div>
           <div class="rail-node active-node" onclick="window.goToPage(1)"><span class="rail-moon">☾</span><span class="rail-label">信息</span></div>
@@ -1254,10 +1235,9 @@
       </div>
     </section>
 
-    <!-- 第三页：卷二·板位须知 (全纯白字高亮) -->
+    <!-- 第三页：卷二·板位须知 -->
     <section class="page page-content">
       <div class="page-inner-scroll">
-        <!-- 顶部月牙连缀光弧导航 -->
         <div class="moon-star-rail-nav">
           <div class="rail-node active-node" onclick="window.goToPage(0)"><span class="rail-moon">☾</span><span class="rail-label">卷首</span></div>
           <div class="rail-node active-node" onclick="window.goToPage(1)"><span class="rail-moon">☾</span><span class="rail-label">信息</span></div>
@@ -1274,7 +1254,6 @@
           </div>
         </div>
 
-        <!-- 板块 1：关于病恋喜点 -->
         <div class="card-block frosted-glass-box">
           <div class="card-title">✦ 关于病恋喜点 ✦</div>
           <ol class="num-list">
@@ -1286,7 +1265,6 @@
           </ol>
         </div>
 
-        <!-- 板块 2：关于病恋雷点 -->
         <div class="card-block frosted-glass-box">
           <div class="card-title">✦ 关于病恋雷点 ✦</div>
           <ol class="num-list">
@@ -1303,7 +1281,6 @@
     <!-- 第四页：卷三·好友码 -->
     <section class="page page-content">
       <div class="page-inner-scroll flex-center">
-        <!-- 顶部月牙连缀光弧导航 -->
         <div class="moon-star-rail-nav">
           <div class="rail-node active-node" onclick="window.goToPage(0)"><span class="rail-moon">☾</span><span class="rail-label">卷首</span></div>
           <div class="rail-node active-node" onclick="window.goToPage(1)"><span class="rail-moon">☾</span><span class="rail-label">信息</span></div>
@@ -1379,7 +1356,7 @@
   </div>
 </div>
 
-<!-- 新增 · 第六层：音乐播放器（默认折叠为图标，位于所有内容之上） -->
+<!-- 音乐播放器组件 -->
 <div class="music-widget" id="musicWidget">
   <div class="music-panel frosted-glass-box" id="musicPanel" role="group" aria-label="背景音乐控制">
     <div class="music-panel-head">
@@ -1405,7 +1382,6 @@
     </span>
   </button>
 
-  <!-- 背景音频实例：随机播放 music.mp3 或 music2.mp3 -->
   <audio id="bgMusic" loop preload="auto"></audio>
 </div>
 
@@ -1429,12 +1405,12 @@
 
     const total = dots.length;
     let current = 0;
-    let forceRotated = false;
+    let forceRotated = false; // 默认不强制旋转，即按手机常规竖屏展现
 
     function isRotated() {
       if (forceRotated) return true;
       try {
-        return window.matchMedia('(orientation: portrait) and (max-width: 900px)').matches;
+        return window.matchMedia('(orientation: portrait) and (max-width: 900px)').matches && forceRotated;
       } catch (e) {
         return false;
       }
@@ -1494,7 +1470,6 @@
       setTimeout(() => goTo(current, false), 150);
     });
 
-    // 鼠标八角星芒光标跟随
     document.addEventListener('mousemove', (e) => {
       if (starCursor) {
         starCursor.style.left = e.clientX + 'px';
@@ -1502,11 +1477,10 @@
       }
     });
 
-    // 点击第一页月亮图案掉落 2-3 个较大月亮交互
     if (moonPortalBox) {
       moonPortalBox.addEventListener('pointerdown', (e) => {
         e.stopPropagation();
-        const count = Math.floor(Math.random() * 2) + 2; // 2到3个
+        const count = Math.floor(Math.random() * 2) + 2;
         const rect = moonPortalBox.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
@@ -1533,20 +1507,16 @@
       });
     }
 
-    // 点击飘落放大3倍的泛光羽毛特效 (3-5根) & 屏幕空白处点击翻页逻辑
     document.addEventListener('pointerdown', (e) => {
       if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox')) return;
 
-      const count = Math.floor(Math.random() * 3) + 3; // 3 到 5 根
+      const count = Math.floor(Math.random() * 3) + 3;
       for (let i = 0; i < count; i++) {
         const feather = document.createElement('div');
         feather.className = 'luminous-feather';
-        
-        // 放大3倍尺寸 (原本 14px-24px，现在 42px-72px)
         const size = (Math.random() * 10 + 14) * 3; 
         feather.style.width = size + 'px';
         feather.style.height = (size * 0.4) + 'px';
-        
         feather.style.left = e.clientX + (Math.random() * 30 - 15) + 'px';
         feather.style.top = e.clientY + (Math.random() * 30 - 15) + 'px';
         
@@ -1563,7 +1533,6 @@
       }
     });
 
-    // 纯轻触/点击任意空白区域循环切页监听
     let clickStartX = 0;
     let clickStartY = 0;
     document.addEventListener('pointerdown', (e) => {
@@ -1579,7 +1548,6 @@
       }
     });
 
-    // 触摸滑动逻辑
     let touchStart = null;
     let decided = false;
     let axis = null;
@@ -1650,42 +1618,6 @@
       setTimeout(() => { dragging = false; }, 50);
     }, { passive: true });
 
-    // 桌面端鼠标拖动支持
-    let mouseStart = null;
-    let mouseDragging = false;
-    let mouseStartTranslate = 0;
-    let mouseCachedWidth = 0;
-
-    document.addEventListener('mousedown', (e) => {
-      if (e.target.closest('button, #dots, a, .rail-node, #moonPortalBox')) return;
-      mouseCachedWidth = getPageWidth();
-      mouseStart = { x: e.clientX };
-      mouseStartTranslate = -current * mouseCachedWidth;
-      mouseDragging = true;
-      pagesEl.style.transition = 'none';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!mouseDragging || !mouseStart) return;
-      const dx = e.clientX - mouseStart.x;
-      let offset = mouseStartTranslate + dx;
-      const minLimit = -(total - 1) * mouseCachedWidth;
-      if (offset > 0) offset *= 0.35;
-      else if (offset < minLimit) offset = minLimit + (offset - minLimit) * 0.35;
-      setTranslate(offset);
-    });
-
-    document.addEventListener('mouseup', (e) => {
-      if (!mouseDragging || !mouseStart) return;
-      const dx = e.clientX - mouseStart.x;
-      const threshold = mouseCachedWidth * 0.16;
-      if (dx < -threshold) goTo(current + 1, true);
-      else if (dx > threshold) goTo(current - 1, true);
-      else goTo(current, true);
-      mouseStart = null;
-      mouseDragging = false;
-    });
-
     dots.forEach((dot) => {
       const handleJump = (e) => {
         e.stopPropagation();
@@ -1729,13 +1661,7 @@
       fullscreenBtn.addEventListener('click', () => {
         try {
           if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().then(() => {
-              try {
-                if (screen.orientation && screen.orientation.lock) {
-                  screen.orientation.lock('landscape').catch(() => {});
-                }
-              } catch (e) {}
-            }).catch(() => {});
+            document.documentElement.requestFullscreen().catch(() => {});
           } else {
             document.exitFullscreen().catch(() => {});
           }
@@ -1800,11 +1726,6 @@
       renderMist();
     }
 
-    /* ============================================================
-       新增逻辑 · 视频背景 / 手电筒黑雾 / 背景音乐
-    ============================================================ */
-
-    /* ---- 全屏视频背景：平滑淡入，失败不影响其他功能 ---- */
     const siteVideoLayer = document.getElementById('siteVideoLayer');
     const bgVideo = document.getElementById('bgVideo');
     if (siteVideoLayer && bgVideo) {
@@ -1815,7 +1736,6 @@
       bgVideo.addEventListener('playing', revealVideo);
       const vp = bgVideo.play();
       if (vp && vp.catch) vp.catch(() => {});
-      // 若首次自动播放被拦截，用户首次交互时补播
       document.addEventListener('pointerdown', () => {
         if (bgVideo.paused) {
           const p = bgVideo.play();
@@ -1824,52 +1744,14 @@
       }, { passive: true });
     }
 
-    /* ---- 视频背景微弱鼠标视差：幅度小、平滑跟随，不影响页面内容 ---- */
-    if (siteVideoLayer && bgVideo) {
-      const finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      if (finePointer) {
-        let targetX = 0, targetY = 0;
-        let currentX = 0, currentY = 0;
-        let videoMotionRaf = 0;
-        const maxShift = 10; // 最大位移仅 10px，呈现微微晃动
-
-        function animateVideoMotion() {
-          currentX += (targetX - currentX) * 0.055;
-          currentY += (targetY - currentY) * 0.055;
-          siteVideoLayer.style.setProperty('--video-shift-x', currentX.toFixed(2) + 'px');
-          siteVideoLayer.style.setProperty('--video-shift-y', currentY.toFixed(2) + 'px');
-          if (Math.abs(targetX - currentX) > 0.08 || Math.abs(targetY - currentY) > 0.08) {
-            videoMotionRaf = requestAnimationFrame(animateVideoMotion);
-          } else {
-            videoMotionRaf = 0;
-          }
-        }
-
-        window.addEventListener('pointermove', (event) => {
-          const nx = (event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1;
-          const ny = (event.clientY / Math.max(window.innerHeight, 1)) * 2 - 1;
-          targetX = -nx * maxShift;
-          targetY = -ny * maxShift;
-          if (!videoMotionRaf) videoMotionRaf = requestAnimationFrame(animateVideoMotion);
-        }, { passive: true });
-
-        window.addEventListener('pointerleave', () => {
-          targetX = 0;
-          targetY = 0;
-          if (!videoMotionRaf) videoMotionRaf = requestAnimationFrame(animateVideoMotion);
-        }, { passive: true });
-      }
-    }
-
-    /* ---- 鼠标手电筒黑雾：rAF 平滑跟随，触摸设备降低强度 ---- */
     const torchLayer = document.getElementById('torchFogLayer');
     if (torchLayer) {
       let isCoarse = false;
       try { isCoarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
       if (isCoarse) torchLayer.classList.add('coarse');
 
-      let tX = -100000, tY = -100000;   // 目标坐标（初始在屏外 → 画面幽暗）
-      let cX = -100000, cY = -100000;   // 当前坐标（缓动）
+      let tX = -100000, tY = -100000;
+      let cX = -100000, cY = -100000;
       let torchRaf = null;
 
       function sizeTorch() {
@@ -1910,75 +1792,6 @@
       }, { passive: true });
     }
 
-    /* ---- 稀疏泛光星屑：轻微漂浮、闪烁，不拦截页面交互 ---- */
-    const starCanvas = document.getElementById('starlightCanvas');
-    if (starCanvas) {
-      const ctx = starCanvas.getContext('2d');
-      let starW = 0, starH = 0, starDpr = 1, stars = [];
-      let starFrame = null;
-      const starCount = 58;
-      function resizeStars() {
-        starDpr = Math.min(window.devicePixelRatio || 1, 2);
-        starW = window.innerWidth;
-        starH = window.innerHeight;
-        starCanvas.width = Math.round(starW * starDpr);
-        starCanvas.height = Math.round(starH * starDpr);
-        starCanvas.style.width = starW + 'px';
-        starCanvas.style.height = starH + 'px';
-        ctx.setTransform(starDpr, 0, 0, starDpr, 0, 0);
-        stars = Array.from({ length: starCount }, () => ({
-          x: Math.random() * starW,
-          y: Math.random() * starH,
-          r: 0.55 + Math.random() * 1.35,
-          phase: Math.random() * Math.PI * 2,
-          speed: 0.18 + Math.random() * 0.62,
-          drift: 0.08 + Math.random() * 0.24,
-          glow: 7 + Math.random() * 17,
-          bright: 0.42 + Math.random() * 0.58,
-          breathe: 0.65 + Math.random() * 0.7
-        }));
-        if (!starFrame) starFrame = requestAnimationFrame(drawStars);
-      }
-      function drawStars(time) {
-        starFrame = null;
-        ctx.clearRect(0, 0, starW, starH);
-        const t = (time || 0) * 0.001;
-        for (const star of stars) {
-          // 每颗星星拥有独立相位、速度与呼吸幅度，避免整片星光同步闪烁
-          const wave = (Math.sin(t * star.speed + star.phase) + 1) * 0.5;
-          const pulse = 0.22 + wave * 0.78;
-          const alpha = Math.min(1, pulse * star.bright * star.breathe);
-          star.y -= star.drift * 0.12;
-          if (star.y < -4) { star.y = starH + 4; star.x = Math.random() * starW; }
-          ctx.save();
-          ctx.globalAlpha = alpha;
-          ctx.shadowBlur = star.glow;
-          ctx.shadowColor = 'rgba(190, 220, 255, 0.95)';
-          ctx.fillStyle = 'rgba(225, 239, 255, 0.95)';
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-          ctx.fill();
-          // 少量星点带微弱十字星芒，避免画面过于花哨
-          if (star.r > 1.35) {
-            ctx.globalAlpha = alpha * 0.48;
-            ctx.lineWidth = 0.55;
-            ctx.strokeStyle = 'rgba(210, 232, 255, 0.9)';
-            ctx.beginPath();
-            ctx.moveTo(star.x - star.r * 2.4, star.y);
-            ctx.lineTo(star.x + star.r * 2.4, star.y);
-            ctx.moveTo(star.x, star.y - star.r * 2.4);
-            ctx.lineTo(star.x, star.y + star.r * 2.4);
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-        starFrame = requestAnimationFrame(drawStars);
-      }
-      resizeStars();
-      window.addEventListener('resize', resizeStars, { passive: true });
-    }
-
-    /* ---- 背景音乐：默认折叠，首次点击任意处启动，随机播放 music.mp3 与 music2.mp3 ---- */
     const musicWidget = document.getElementById('musicWidget');
     const musicToggle = document.getElementById('musicToggle');
     const musicPlayBtn = document.getElementById('musicPlayBtn');
@@ -1987,7 +1800,7 @@
     const bgMusic = document.getElementById('bgMusic');
 
     if (musicWidget && bgMusic) {
-      let userPaused = false;   // 用户主动暂停标记
+      let userPaused = false;
       const playlist = ['music.mp3', 'music2.mp3'];
 
       function setRandomTrack() {
@@ -1995,10 +1808,8 @@
         bgMusic.src = playlist[randomIndex];
       }
 
-      // 初始化时随机设定一首曲目
       setRandomTrack();
 
-      // 当一首曲目播放结束时，自动随机切换另一首并播放
       bgMusic.addEventListener('ended', () => {
         setRandomTrack();
         startMusic();
@@ -2017,19 +1828,16 @@
         if (p && p.catch) p.catch(() => {});
       }
 
-      // 首次点击页面任意位置（包括播放器图标）→ 尝试启动音乐；主动暂停后尊重用户选择
       document.addEventListener('pointerdown', () => {
         if (bgMusic.paused && !userPaused) startMusic();
       }, { passive: true });
 
-      // 展开 / 收起控制面板
       musicToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         const open = musicWidget.classList.toggle('open');
         musicToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
 
-      // 播放 / 暂停
       musicPlayBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (bgMusic.paused) {
@@ -2041,7 +1849,6 @@
         }
       });
 
-      // 音量
       if (musicVolume) {
         const v = parseFloat(musicVolume.value);
         if (!isNaN(v)) bgMusic.volume = v;
@@ -2052,7 +1859,6 @@
         });
       }
 
-      // 控件区域的交互不冒泡到全局（避免误触翻页 / 羽毛等）
       ['pointerdown', 'pointerup', 'click', 'mousedown', 'mouseup'].forEach((ev) => {
         musicWidget.addEventListener(ev, (e) => e.stopPropagation());
       });
