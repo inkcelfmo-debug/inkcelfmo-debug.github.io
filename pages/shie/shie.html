@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     /* ============================================================
-       全局重置与自定义样式 (含发光星星链滚动条 & 手机竖屏自适应)
+       全局重置与自定义样式 (含蓝白渐变滚动条 & 鼠标视差视频)
     ============================================================ */
     * {
       margin: 0;
@@ -201,21 +201,18 @@
     }
 
     /* ============================================================
-       将侧边滚动条轨道修改为发光星星链轨道
+       优化：滚动条做到顶端，采用精致的蓝白渐变样式
     ============================================================ */
     .page::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
     .page::-webkit-scrollbar-track {
-      background: rgba(9, 13, 20, 0.6);
-      border-left: 1px solid rgba(190, 218, 250, 0.15);
-      position: relative;
+      background: rgba(9, 13, 20, 0.4);
     }
     .page::-webkit-scrollbar-thumb {
-      background: radial-gradient(circle, #f8fafc 30%, rgba(190, 225, 255, 0.8) 70%);
-      border-radius: 4px;
-      box-shadow: 0 0 10px rgba(190, 225, 255, 0.9), 0 0 20px rgba(150, 200, 255, 0.6);
-      border: 2px solid rgba(9, 13, 20, 0.8);
+      background: linear-gradient(180deg, #60a5fa 0%, #ffffff 100%);
+      border-radius: 3px;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.8);
     }
 
     @media screen and (orientation: landscape) and (max-width: 900px) {
@@ -1368,7 +1365,7 @@
       </button>
       <div class="music-volume-wrap">
         <span class="music-vol-icon" aria-hidden="true">♪</span>
-        <!-- 将默认音量调整为 10% (0.1) -->
+        <!-- 默认音量调整为 10% (0.1) -->
         <input type="range" id="musicVolume" class="music-volume" min="0" max="1" step="0.01" value="0.1" aria-label="音量">
       </div>
     </div>
@@ -1401,6 +1398,7 @@
     const canvasEl = document.getElementById('ambientCanvas');
     const starCursor = document.getElementById('starCursor');
     const moonPortalBox = document.getElementById('moonPortalBox');
+    const siteVideoLayer = document.getElementById('siteVideoLayer');
 
     const total = dots.length;
     let current = 0;
@@ -1469,10 +1467,36 @@
       setTimeout(() => goTo(current, false), 150);
     });
 
+    // ============================================================
+    // 新增：跟随鼠标位置背景视频移动 (Mouse Parallax for Video)
+    // ============================================================
     document.addEventListener('mousemove', (e) => {
       if (starCursor) {
         starCursor.style.left = e.clientX + 'px';
         starCursor.style.top = e.clientY + 'px';
+      }
+
+      if (siteVideoLayer) {
+        const xOffset = (e.clientX / window.innerWidth - 0.5) * 30; // 最大偏移 30px
+        const yOffset = (e.clientY / window.innerHeight - 0.5) * 30;
+        siteVideoLayer.style.setProperty('--video-shift-x', xOffset + 'px');
+        siteVideoLayer.style.setProperty('--video-shift-y', yOffset + 'px');
+      }
+    });
+
+    // ============================================================
+    // 新增：点击屏幕边缘切页支持 (Click to Switch Pages)
+    // ============================================================
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox, .music-widget, .frosted-glass-box')) return;
+      
+      const x = e.clientX;
+      const width = window.innerWidth;
+      // 点击左侧 18% 区域切到上一页，点击右侧 18% 区域切到下一页
+      if (x < width * 0.18) {
+        goTo(current - 1, true);
+      } else if (x > width * 0.82) {
+        goTo(current + 1, true);
       }
     });
 
@@ -1532,9 +1556,6 @@
       }
     });
 
-    // ============================================================
-    // 新增：鼠标拖拽滑动切页支持 (Mouse Drag / Slide to Switch Pages)
-    // ============================================================
     let mouseDragStart = null;
     let isMouseDragging = false;
     let mouseStartTranslate = 0;
@@ -1757,7 +1778,6 @@
       renderMist();
     }
 
-    const siteVideoLayer = document.getElementById('siteVideoLayer');
     const bgVideo = document.getElementById('bgVideo');
     if (siteVideoLayer && bgVideo) {
       const revealVideo = () => siteVideoLayer.classList.add('loaded');
@@ -1779,7 +1799,7 @@
     if (torchLayer) {
       let isCoarse = false;
       try { isCoarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
-      if (isCoarse) torchLayer.classList.add('coarse');
+      if (isCoarse) torchLayer.classList.sadd('coarse');
 
       let tX = -100000, tY = -100000;
       let cX = -100000, cY = -100000;
