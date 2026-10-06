@@ -211,7 +211,6 @@
       border-left: 1px solid rgba(190, 218, 250, 0.15);
       position: relative;
     }
-    /* 通过伪元素或背景模拟星星链效果 */
     .page::-webkit-scrollbar-thumb {
       background: radial-gradient(circle, #f8fafc 30%, rgba(190, 225, 255, 0.8) 70%);
       border-radius: 4px;
@@ -219,7 +218,6 @@
       border: 2px solid rgba(9, 13, 20, 0.8);
     }
 
-    /* 横屏或特定模式下滚动条距离边缘留出间距 */
     @media screen and (orientation: landscape) and (max-width: 900px) {
       .page-content {
         padding: 4vmin 8vmin 8vmin !important;
@@ -245,7 +243,6 @@
       padding-bottom: 6vmin;
     }
 
-    /* 顶部月牙星轨光链导航 */
     .moon-star-rail-nav {
       position: relative;
       display: flex;
@@ -297,7 +294,6 @@
       letter-spacing: 0.2vmin;
     }
 
-    /* 角花与飞燕自适应钳位 */
     .corner-ornament {
       position: absolute;
       width: clamp(35px, 7.5vmin, 60px);
@@ -321,9 +317,6 @@
     .swallow-left { left: 6vmin; animation: glideLeft 4.5s ease-in-out infinite; }
     .swallow-right { right: 6vmin; animation: glideRight 4.5s ease-in-out infinite; }
 
-    /* ============================================================
-       卷首肖像框：自适应手机竖屏，改为纵向排列
-    ============================================================ */
     .cover-content {
       position: relative;
       z-index: 10;
@@ -528,7 +521,6 @@
       box-shadow: 0 0 8px rgba(190, 225, 255, 0.8);
     }
 
-    /* 文本排版通用 */
     .section-header { text-align: center; margin-bottom: 2vmin; }
     .header-line { font-size: 2vmin; color: #64748b; }
 
@@ -1122,7 +1114,7 @@
 
   <div id="pages">
 
-    <!-- 第一页：卷首·月光骸骨（已调整为竖向自适应） -->
+    <!-- 第一页：卷首·月光骸骨 -->
     <section class="page page-cover">
       <div class="corner-ornament top-left"><svg viewBox="0 0 100 100"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
       <div class="corner-ornament top-right"><svg viewBox="0 0 100 100" style="transform:scaleX(-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
@@ -1190,7 +1182,7 @@
           </div>
 
           <p class="cover-tagline">此卡既作板卡 · 又为扩列卡</p>
-          <p class="cover-subtag">“ 病恋 · 虐恋 · 渴望灵魂共鸣 · 发展长期关系 ”</p>
+          <p class="cover-subtag">“ 病恋 · 虐恋 · 渴望灵魂共鸣 ”</p>
 
           <button id="startExploreBtn" class="explore-btn frosted-glass-box">
             ◄ 滑动或轻触翻阅 · 开启画卷 ►
@@ -1222,7 +1214,7 @@
         </div>
 
         <div class="card-highlight frosted-glass-box">
-          病恋 · 虐恋 · 渴望灵魂共鸣 · 发展长期关系
+          病恋 · 虐恋 · 渴望灵魂共鸣
         </div>
 
         <div class="rule-block text-center frosted-glass-box" style="padding: 3vmin; border-radius: 1.2vmin;">
@@ -1231,7 +1223,7 @@
           <p>一般与人善 · 温柔待人 · 有时话少直接</p>
           <p>比较真诚 · 不会回避处理事情 · 可以不用弯绕</p>
           <p>有较强边界划分 · 尤其在情感方面 · 喜欢就是喜欢 会主动开屏</p>
-          <p>不喜欢就是不喜欢 · 但是易恋爱脑 · 请敲醒我</p>
+          <p>不喜欢就是不喜欢</p>
           <p>不会轻易外放需求 · 可以放心聊天 · 尽量不消耗你</p>
           <div class="divider-hairline"></div>
           <p class="text-important">扩列请说明来意 · 互换称呼</p>
@@ -1265,7 +1257,7 @@
         <div class="card-block frosted-glass-box">
           <div class="card-title">✦ 关于病恋喜点 ✦</div>
           <ol class="num-list">
-            <li><span>1.</span> 多风格尝试，喜带 ds 调</li>
+            <li><span>1.</span> 多风格尝试，喜逻辑剖析</li>
             <li><span>2.</span> 逻辑回合制，喜欢收集各种观点</li>
             <li><span>3.</span> 灵活应对 不拘泥于上下位置，放轻松些</li>
             <li><span>4.</span> 白话，少动描，有动描我希望是暴力美学，不要落入俗套，要么不做要么请做到极致</li>
@@ -1376,7 +1368,8 @@
       </button>
       <div class="music-volume-wrap">
         <span class="music-vol-icon" aria-hidden="true">♪</span>
-        <input type="range" id="musicVolume" class="music-volume" min="0" max="1" step="0.01" value="0.6" aria-label="音量">
+        <!-- 将默认音量调整为 10% (0.1) -->
+        <input type="range" id="musicVolume" class="music-volume" min="0" max="1" step="0.01" value="0.1" aria-label="音量">
       </div>
     </div>
     <div class="music-hint">轻触页面任意处亦可开始播放</div>
@@ -1539,19 +1532,51 @@
       }
     });
 
-    let clickStartX = 0;
-    let clickStartY = 0;
-    document.addEventListener('pointerdown', (e) => {
-      clickStartX = e.clientX;
-      clickStartY = e.clientY;
+    // ============================================================
+    // 新增：鼠标拖拽滑动切页支持 (Mouse Drag / Slide to Switch Pages)
+    // ============================================================
+    let mouseDragStart = null;
+    let isMouseDragging = false;
+    let mouseStartTranslate = 0;
+
+    document.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox, .music-widget')) return;
+      isMouseDragging = true;
+      const p = toVisual(e.clientX, e.clientY);
+      mouseDragStart = p;
+      cachedWidth = getPageWidth();
+      mouseStartTranslate = -current * cachedWidth;
+      pagesEl.style.transition = 'none';
     });
-    document.addEventListener('pointerup', (e) => {
-      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox')) return;
-      const dx = Math.abs(e.clientX - clickStartX);
-      const dy = Math.abs(e.clientY - clickStartY);
-      if (dx < 10 && dy < 10) {
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isMouseDragging || !mouseDragStart) return;
+      const p = toVisual(e.clientX, e.clientY);
+      const dx = p.x - mouseDragStart.x;
+      let offset = mouseStartTranslate + dx;
+      const minLimit = -(total - 1) * cachedWidth;
+
+      if (offset > 0) offset *= 0.35;
+      else if (offset < minLimit) offset = minLimit + (offset - minLimit) * 0.35;
+
+      setTranslate(offset);
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      if (!isMouseDragging || !mouseDragStart) return;
+      isMouseDragging = false;
+      const p = toVisual(e.clientX, e.clientY);
+      const dx = p.x - mouseDragStart.x;
+      const threshold = cachedWidth * 0.22;
+
+      if (dx < -threshold) {
         goTo(current + 1, true);
+      } else if (dx > threshold) {
+        goTo(current - 1, true);
+      } else {
+        goTo(current, true);
       }
+      mouseDragStart = null;
     });
 
     let touchStart = null;
