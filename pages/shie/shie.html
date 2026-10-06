@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>月光の骸骨 · 厄命 - 手机横屏复古画卷</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       全局重置与自定义样式 (含 1px 泛光磨砂玻璃 & 动态钳位 & 星芒光标)
+    ============================================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background: #090d14;
+      -webkit-tap-highlight-color: transparent;
+      font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+      touch-action: none;
+      color: #dce4ed;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 桌面端自定义八角星芒光标 (放大3倍: 16px -> 48px) */
+    @media (pointer: fine) {
+      html, body, button, a, section, div {
+        cursor: none !important;
+      }
+      .custom-star-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 48px;
+        height: 48px;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        animation: starCursorBreathe 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 18px rgba(190, 225, 255, 0.9));
+        color: #f8fafc;
+      }
+    }
+
+    @keyframes starCursorBreathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); opacity: 0.7; }
+      50% { transform: translate(-50%, -50%) scale(1.25) rotate(15deg); opacity: 1; }
+    }
+
+    #app {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      z-index: 2;
+      transform-origin: left top;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media screen and (orientation: portrait) and (max-width: 900px) {
+      html, body {
+        width: 100dvh;
+        height: 100dvw;
+      }
+      #app {
+        width: 100dvh;
+        height: 100dvw;
+        transform: rotate(90deg);
+        left: 100dvw;
+      }
+    }
+
+    #app.force-rotated {
+      width: 100dvh;
+      height: 100dvw;
+      transform: rotate(90deg);
+      left: 100dvw;
+    }
+
+    .ambient-backdrop {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .ambient-backdrop canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.75;
+    }
+
+    .ambient-backdrop video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.65;
+      filter: contrast(1.1) brightness(0.85);
+    }
+
+    .vignette-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(9, 13, 20, 0.7) 75%, rgba(6, 9, 14, 0.95) 100%);
+    }
+
+    /* 磨砂玻璃通用类：更高透明度 (background 改为 0.35) + 厚度 1px 细边 + 柔和泛光 */
+    .frosted-glass-box {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(190, 218, 250, 0.28);
+      box-shadow: 0 0 1px rgba(186, 215, 250, 0.45);
+      transition: all 0.3s ease;
+    }
+    .frosted-glass-box:hover {
+      box-shadow: 0 0 4px rgba(186, 215, 250, 0.7);
+      border-color: rgba(190, 218, 250, 0.5);
+    }
+
+    /* 顶栏图标自适应钳位 */
+    .top-nav {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 1.5vmin 3vmin;
+      color: #94a3b8;
+      font-size: 1.8vmin;
+      pointer-events: auto;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 1.5vmin;
+    }
+
+    .brand-title {
+      font-family: "Cinzel", serif;
+      color: #f1f5f9;
+      font-weight: 600;
+      letter-spacing: 0.4vmin;
+    }
+
+    .brand-sep { opacity: 0.4; }
+    .brand-sub { color: #64748b; font-size: 1.6vmin; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5vmin;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8vmin;
+      border-radius: 50%;
+      color: #cbd5e1;
+      cursor: pointer;
+      width: clamp(32px, 4.5vmin, 46px);
+      height: clamp(32px, 4.5vmin, 46px);
+    }
+    .action-btn svg {
+      width: clamp(16px, 2.4vmin, 24px);
+      height: clamp(16px, 2.4vmin, 24px);
+    }
+
+    #pages {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      will-change: transform;
+    }
+
+    .page {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page::-webkit-scrollbar { width: 0.6vmin; }
+    .page::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.25);
+      border-radius: 0.3vmin;
+    }
+
+    .page-cover {
+      overflow-y: hidden;
+      touch-action: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-content { padding: 4vmin 5vmin 8vmin; }
+
+    .page-inner-scroll {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 105vmin;
+      margin: 0 auto;
+      padding-bottom: 6vmin;
+    }
+
+    /* 顶部月牙星轨光链导航 */
+    .moon-star-rail-nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3vmin;
+      margin-bottom: 2.5vmin;
+      width: 100%;
+      padding: 1vmin 0;
+    }
+    .moon-star-rail-nav::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 15%;
+      right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(190, 225, 255, 0.4), transparent);
+      z-index: 1;
+    }
+    .rail-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 0.4vmin 1vmin;
+      border-radius: 1vmin;
+      border: 1px solid rgba(190, 218, 250, 0.2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .rail-node.active-node {
+      border-color: rgba(210, 235, 255, 0.8);
+      box-shadow: 0 0 4px rgba(200, 230, 255, 0.7);
+    }
+    .rail-node .rail-moon {
+      font-size: clamp(14px, 2.2vmin, 20px);
+      color: #94a3b8;
+    }
+    .rail-node.active-node .rail-moon {
+      color: #f8fafc;
+      text-shadow: 0 0 6px rgba(255,255,255,0.9);
+    }
+    .rail-node .rail-label {
+      font-size: clamp(10px, 1.4vmin, 13px);
+      color: #cbd5e1;
+      letter-spacing: 0.2vmin;
+    }
+
+    /* 角花与飞燕自适应钳位 */
+    .corner-ornament {
+      position: absolute;
+      width: clamp(35px, 7.5vmin, 60px);
+      height: clamp(35px, 7.5vmin, 60px);
+      color: rgba(190, 218, 250, 0.45);
+      pointer-events: none;
+    }
+    .top-left { top: 2vmin; left: 2vmin; }
+    .top-right { top: 2vmin; right: 2vmin; }
+    .bottom-left { bottom: 2vmin; left: 2vmin; }
+    .bottom-right { bottom: 2vmin; right: 2vmin; }
+
+    .swallow-ornament {
+      position: absolute;
+      top: 12vmin;
+      width: clamp(40px, 8.5vmin, 70px);
+      height: clamp(40px, 8.5vmin, 70px);
+      color: rgba(190, 218, 250, 0.5);
+      pointer-events: none;
+    }
+    .swallow-left { left: 6vmin; animation: glideLeft 4.5s ease-in-out infinite; }
+    .swallow-right { right: 6vmin; animation: glideRight 4.5s ease-in-out infinite; }
+
+    /* 卷首肖像框 */
+    .cover-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 4vmin;
+      width: 100%;
+      max-width: 120vmin;
+      padding: 0 4vmin;
+    }
+
+    .mirror-portal-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .portal-frame {
+      position: relative;
+      padding: 1.4vmin;
+      border-radius: 2vmin;
+    }
+
+    .portal-disc {
+      position: relative;
+      width: clamp(160px, 32vmin, 260px);
+      height: clamp(160px, 32vmin, 260px);
+      border-radius: 1.4vmin;
+      border: 1px solid rgba(190, 218, 250, 0.4);
+      background: radial-gradient(circle at 45% 40%, #334155 0%, #1e293b 45%, #090d16 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .portal-ring-dashed {
+      position: absolute;
+      inset: 2.2vmin;
+      border-radius: 50%;
+      border: 1px dashed rgba(190, 218, 250, 0.3);
+    }
+
+    .portal-ring-solid {
+      position: absolute;
+      inset: 4.5vmin;
+      border-radius: 50%;
+      border: 1px solid rgba(203, 213, 225, 0.3);
+    }
+
+    .moon-core {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .moon-glyph {
+      font-size: clamp(48px, 11vmin, 96px);
+      color: #f8fafc;
+      line-height: 1;
+      text-shadow: 0 0 3.5vmin rgba(210, 230, 255, 0.9);
+    }
+
+    .moon-sub {
+      font-family: "Cinzel", serif;
+      font-size: clamp(10px, 1.6vmin, 16px);
+      letter-spacing: 0.5vmin;
+      color: #94a3b8;
+      margin-top: 0.5vmin;
+    }
+
+    .star-dot {
+      position: absolute;
+      font-size: clamp(10px, 1.4vmin, 16px);
+      color: rgba(190, 218, 250, 0.7);
+    }
+    .dot-tl { top: 2vmin; left: 2vmin; }
+    .dot-tr { top: 2vmin; right: 2vmin; }
+    .dot-bl { bottom: 2vmin; left: 2vmin; }
+    .dot-br { bottom: 2vmin; right: 2vmin; }
+
+    .portal-title-vertical {
+      position: absolute;
+      right: -5.2vmin;
+      top: 3vmin;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .moon-tiny {
+      font-size: clamp(14px, 2.2vmin, 20px);
+      color: rgba(203, 213, 225, 0.9);
+      margin-bottom: 0.8vmin;
+    }
+
+    .vertical-title-text {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      font-family: "Cinzel", "Noto Serif SC", serif;
+      font-size: clamp(16px, 2.6vmin, 28px);
+      letter-spacing: 1.1vmin;
+      color: rgba(226, 232, 240, 0.95);
+      text-shadow: 0 0 1.5vmin rgba(200, 225, 255, 0.7);
+    }
+
+    .quill-pens-svg {
+      position: absolute;
+      bottom: -3vmin;
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(120px, 26vmin, 220px);
+      height: 6.5vmin;
+      color: rgba(203, 213, 225, 0.8);
+      pointer-events: none;
+    }
+
+    .cover-text-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .main-title-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5vmin;
+    }
+
+    .title-flourish { color: rgba(190, 218, 250, 0.75); font-size: 2.5vmin; }
+
+    .main-title {
+      font-family: "Cinzel", "Noto Serif SC", serif;
+      font-size: clamp(40px, 8vmin, 80px);
+      letter-spacing: 2vmin;
+      color: #f8fafc;
+      text-shadow: 0 0 3vmin rgba(190, 220, 255, 0.8);
+    }
+
+    .sub-title-code {
+      font-size: clamp(14px, 2.4vmin, 24px);
+      letter-spacing: 1.5vmin;
+      color: rgba(190, 218, 250, 0.9);
+      margin-top: 0.5vmin;
+    }
+
+    .star-emblem {
+      margin: 2vmin 0;
+      color: #f8fafc;
+      filter: drop-shadow(0 0 6px rgba(190, 225, 255, 0.8));
+    }
+    .star-emblem svg {
+      width: clamp(24px, 5vmin, 48px);
+      height: clamp(24px, 5vmin, 48px);
+    }
+
+    .cover-tagline {
+      font-size: clamp(14px, 2.2vmin, 20px);
+      letter-spacing: 0.4vmin;
+      color: rgba(220, 235, 255, 0.9);
+    }
+
+    .cover-subtag {
+      font-size: clamp(12px, 1.8vmin, 18px);
+      letter-spacing: 0.3vmin;
+      color: rgba(190, 210, 235, 0.85);
+      margin-top: 0.8vmin;
+    }
+
+    .explore-btn {
+      margin-top: 3vmin;
+      padding: 1.2vmin 3vmin;
+      border-radius: 3vmin;
+      color: #f8fafc;
+      font-size: clamp(12px, 1.8vmin, 18px);
+      letter-spacing: 0.5vmin;
+      cursor: pointer;
+    }
+    .explore-btn:hover {
+      border-color: #f8fafc;
+      box-shadow: 0 0 8px rgba(190, 225, 255, 0.8);
+    }
+
+    /* 文本排版通用 */
+    .section-header { text-align: center; margin-bottom: 2vmin; }
+    .header-line { font-size: 2vmin; color: #64748b; }
+
+    .vintage-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5vmin;
+      margin-top: 0.5vmin;
+    }
+
+    .vintage-divider h2 {
+      font-family: "Cinzel", "Noto Serif SC", serif;
+      font-size: clamp(22px, 3.2vmin, 36px);
+      letter-spacing: 0.8vmin;
+      color: #f1f5f9;
+    }
+
+    .star-icon { font-size: 2vmin; color: #94a3b8; }
+    .name-sub { font-size: clamp(22px, 3.2vmin, 36px); font-weight: bold; letter-spacing: 1.2vmin; color: #f8fafc; margin-top: 1vmin; }
+    .meta-row { font-size: clamp(14px, 2.2vmin, 22px); color: #cbd5e1; margin-top: 0.5vmin; }
+    .desc-row { font-size: clamp(13px, 2vmin, 19px); color: #94a3b8; margin-top: 0.4vmin; }
+
+    .card-highlight {
+      width: 100%;
+      padding: 2.2vmin;
+      margin: 1.5vmin 0;
+      border-radius: 1.2vmin;
+      text-align: center;
+      font-size: clamp(14px, 2.2vmin, 22px);
+      color: #f8fafc;
+      font-weight: 500;
+    }
+
+    .rule-block {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.4vmin;
+      font-size: clamp(13px, 2.1vmin, 20px);
+      line-height: 1.85;
+      color: #e2e8f0;
+    }
+    .rule-block p:hover { color: #fff; }
+
+    .text-important { color: #f8fafc; font-weight: 600; margin-top: 1.5vmin; }
+
+    .divider-hairline {
+      width: 12vmin;
+      height: 1px;
+      background: rgba(190, 218, 250, 0.3);
+      margin: 0.5vmin auto;
+    }
+
+    .letter-cipher {
+      display: flex;
+      justify-content: center;
+      gap: 4vmin;
+      margin-top: 3vmin;
+      padding-top: 2vmin;
+      border-top: 1px solid rgba(190, 218, 250, 0.25);
+      width: 100%;
+      max-width: 60vmin;
+    }
+    .letter-cipher span {
+      font-family: "Cinzel", serif;
+      font-size: clamp(18px, 2.6vmin, 28px);
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    /* 板位须知卡片 (完全转为纯白色正文) */
+    .card-block {
+      width: 100%;
+      margin: 1.5vmin 0;
+      padding: 2.5vmin;
+      border-radius: 1.2vmin;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.2vmin;
+      font-size: clamp(13px, 2vmin, 19px);
+    }
+
+    .card-title {
+      font-size: clamp(18px, 2.6vmin, 28px);
+      font-weight: bold;
+      letter-spacing: 0.6vmin;
+      color: #f8fafc;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    }
+
+    .rule-footer {
+      padding-top: 0.8vmin;
+      border-top: 1px solid rgba(190, 218, 250, 0.2);
+      width: 100%;
+      color: #f8fafc;
+    }
+
+    .num-list {
+      list-style: none;
+      width: 100%;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 1vmin;
+      padding: 0 2vmin;
+      font-size: clamp(13px, 1.95vmin, 19px);
+    }
+    .num-list li {
+      display: flex;
+      gap: 1vmin;
+    }
+    .num-list span {
+      font-family: "Cinzel", serif;
+      color: rgba(220, 235, 255, 0.9);
+      flex-shrink: 0;
+    }
+    /* 条款正文与序号统一纯白 */
+    .num-list li, .num-list span {
+      color: #f8fafc !important;
+      font-weight: 500;
+    }
+    .card-block p {
+      color: #f8fafc !important;
+      font-weight: 500;
+    }
+
+    /* 好友码页 */
+    .quote-text {
+      font-style: italic;
+      font-size: clamp(18px, 2.8vmin, 30px);
+      letter-spacing: 0.5vmin;
+      color: #f8fafc;
+      text-shadow: 0 0 2vmin rgba(180, 210, 240, 0.5);
+    }
+
+    .qr-heading {
+      font-family: "Cinzel", serif;
+      font-size: clamp(22px, 3.2vmin, 36px);
+      letter-spacing: 0.8vmin;
+      color: #f8fafc;
+      margin-bottom: 2vmin;
+    }
+
+    .qr-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-box {
+      position: relative;
+      width: clamp(160px, 28vmin, 220px);
+      height: clamp(160px, 28vmin, 220px);
+      background: #fff;
+      padding: 1.5vmin;
+      border-radius: 1vmin;
+      box-shadow: 0 0 4vmin rgba(160, 195, 235, 0.3);
+    }
+
+    .qr-svg { width: 100%; height: 100%; display: block; }
+
+    .qr-corner-star {
+      position: absolute;
+      color: #cbd5e1;
+      font-size: clamp(10px, 1.4vmin, 16px);
+    }
+    .qr-corner-star.tl { top: -1.5vmin; left: -1.5vmin; }
+    .qr-corner-star.tr { top: -1.5vmin; right: -1.5vmin; }
+    .qr-corner-star.bl { bottom: -1.5vmin; left: -1.5vmin; }
+    .qr-corner-star.br { bottom: -1.5vmin; right: -1.5vmin; }
+
+    .qr-actions {
+      display: flex;
+      align-items: center;
+      gap: 2vmin;
+      margin-top: 2.5vmin;
+    }
+
+    .copy-btn {
+      padding: 1.2vmin 3vmin;
+      border-radius: 3vmin;
+      color: #f1f5f9;
+      font-size: clamp(13px, 1.9vmin, 19px);
+      cursor: pointer;
+    }
+    .copy-btn:hover { border-color: #f8fafc; box-shadow: 0 0 8px rgba(190, 225, 255, 0.8); }
+
+    .epilogue-note {
+      font-size: clamp(12px, 1.8vmin, 18px);
+      color: #94a3b8;
+      letter-spacing: 0.3vmin;
+      margin-top: 2vmin;
+    }
+
+    /* 页码指示点 */
+    #dots {
+      position: absolute;
+      bottom: 2.2vmin;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1.5vmin;
+      z-index: 30;
+      padding: 0.8vmin 2vmin;
+      border-radius: 3vmin;
+    }
+
+    #dots span {
+      width: clamp(10px, 1.4vmin, 18px);
+      height: clamp(8px, 1vmin, 14px);
+      border-radius: 0.5vmin;
+      background: rgba(148, 163, 184, 0.3);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    #dots span.active {
+      width: clamp(24px, 3.2vmin, 40px);
+      background: #f8fafc;
+      box-shadow: 0 0 1.5vmin rgba(200, 225, 255, 0.8);
+    }
+
+    /* 飘落羽毛特效样式 (放大3倍) */
+    .luminous-feather {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      background: radial-gradient(circle, #f8fafc 20%, rgba(190, 225, 255, 0.95) 70%, transparent 100%);
+      clip-path: ellipse(50% 20% at 50% 50%);
+      filter: drop-shadow(0 0 18px rgba(190, 225, 255, 0.95));
+      will-change: transform, opacity;
+      animation: featherDrift 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes featherDrift {
+      0% {
+        transform: translate(0, 0) scale(0.6) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--end-x), var(--end-y)) scale(1) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
+
+    /* 点击月亮掉落的较大月亮特效样式 */
+    .falling-big-moon {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 42px;
+      color: #f8fafc;
+      text-shadow: 0 0 15px rgba(210, 230, 255, 0.95);
+      will-change: transform, opacity;
+      animation: bigMoonDrift 1.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes bigMoonDrift {
+      0% {
+        transform: translate(0, 0) scale(0.5) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--end-x), var(--end-y)) scale(1.2) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-1vmin); }
+    }
+
+    @keyframes shimmerGlow {
+      0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 0.5vmin rgba(186, 215, 245, 0.3)); }
+      50% { opacity: 0.85; filter: drop-shadow(0 0 1.8vmin rgba(210, 230, 255, 0.7)); }
+    }
+
+    @keyframes glideLeft {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(0.8vmin, -0.6vmin); }
+    }
+
+    @keyframes glideRight {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-0.8vmin, -0.6vmin); }
+    }
+
+    .anim-float { animation: floatY 5s ease-in-out infinite; }
+    .anim-shimmer { animation: shimmerGlow 4s ease-in-out infinite; }
+
+    /* ============================================================
+       新增 · 全屏视频背景 / 叠加氛围层 / 手电筒黑雾 / 折叠音乐播放器
+       层级：① 备用底 → ② 视频 → ③ 原有背景+暗色蒙版 → ④ 黑雾手电筒
+             → ⑤ 页面内容 → ⑥ 音乐控件
+    ============================================================ */
+
+    /* ① 备用底 + ② 全屏循环视频背景（固定视口，不随内容滚动） */
+    .site-video-layer {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 38%, #16233c 0%, #0b1524 44%, #060a12 100%);
+    }
+    .site-video-layer video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 104%;
+      height: 104%;
+      /* 轻微放大预留边缘，避免鼠标视差移动时露出空白 */
+      transform: translate(calc(-50% + var(--video-shift-x, 0px)), calc(-50% + var(--video-shift-y, 0px))) translateZ(0);
+      object-fit: cover;
+      object-position: center center;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+      will-change: transform;
+      filter: brightness(0.55) saturate(0.82) contrast(1.05);
+    }
+    .site-video-layer.loaded video { opacity: 1; }
+
+    /* ③ 原有静态背景以极低透明度叠加在视频之上，保留纹理轮廓 */
+    .ambient-backdrop { opacity: 0.03; }
+
+    /* ③ 附加：独立暗色氛围层，进一步压低画面亮度 */
+    .dark-mood-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 46%, rgba(6, 10, 18, 0.30) 0%, rgba(4, 8, 15, 0.62) 52%, rgba(2, 4, 9, 0.92) 100%),
+        linear-gradient(180deg, rgba(5, 9, 16, 0.28), rgba(4, 7, 13, 0.42));
+    }
+
+    /* ④ 黑色雾气 + 鼠标手电筒照明遮罩（不拦截鼠标事件） */
+    .torch-fog-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      --mx: -80vmax;
+      --my: 50%;
+      --torch-r: 78vmax;
+      background: radial-gradient(
+        circle var(--torch-r) at var(--mx) var(--my),
+        rgba(3, 6, 12, 0.00) 0%,
+        rgba(3, 6, 12, 0.035) 34%,
+        rgba(3, 6, 12, 0.16) 54%,
+        rgba(2, 5, 11, 0.48) 72%,
+        rgba(1, 3, 8, 0.76) 88%,
+        rgba(0, 1, 4, 0.91) 100%
+      );
+    }
+    .torch-fog-layer.coarse { opacity: 0.72; }
+
+    /* 手电筒补光层：只提高照明亮度，不改变 --torch-r 的照明范围 */
+    .torch-fog-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle var(--torch-r) at var(--mx) var(--my),
+        rgba(220, 235, 255, 0.24) 0%,
+        rgba(185, 215, 255, 0.16) 24%,
+        rgba(155, 195, 245, 0.075) 48%,
+        rgba(120, 165, 220, 0.025) 68%,
+        rgba(100, 145, 210, 0) 100%
+      );
+      mix-blend-mode: screen;
+      opacity: 0.95;
+    }
+
+    /* 星屑叠层：稀疏冷白星点，独立随机呼吸、柔和泛光 */
+    #starlightCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.9;
+      mix-blend-mode: screen;
+    }
+
+    /* ⑥ 音乐播放器：默认折叠为图标，位于内容之上 */
+    .music-widget {
+      position: fixed;
+      right: max(2.4vmin, 14px);
+      bottom: max(2.4vmin, 14px);
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1.2vmin;
+      pointer-events: none;
+    }
+    .music-toggle {
+      pointer-events: auto;
+      width: clamp(42px, 6vmin, 58px);
+      height: clamp(42px, 6vmin, 58px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #dbe8ff;
+      cursor: pointer;
+      position: relative;
+      border: 1px solid rgba(190, 218, 250, 0.34);
+    }
+    .music-disc {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 58%;
+      height: 58%;
+      transition: transform 0.4s ease;
+    }
+    .music-disc svg { width: 100%; height: 100%; }
+    .music-widget.playing .music-disc {
+      color: #f4f9ff;
+      animation: musicSpin 3.4s linear infinite;
+      filter: drop-shadow(0 0 8px rgba(190, 225, 255, 0.85));
+    }
+    @keyframes musicSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .music-widget.playing .music-toggle::after {
+      content: '';
+      position: absolute;
+      inset: -0.4vmin;
+      border-radius: 50%;
+      border: 1px solid rgba(190, 225, 255, 0.5);
+      animation: musicPulse 2.2s ease-out infinite;
+    }
+    @keyframes musicPulse {
+      0% { transform: scale(0.92); opacity: 0.85; }
+      100% { transform: scale(1.38); opacity: 0; }
+    }
+
+    .music-panel {
+      pointer-events: none;
+      visibility: hidden;
+      width: clamp(220px, 34vmin, 300px);
+      padding: 1.6vmin 1.8vmin;
+      border-radius: 1.4vmin;
+      transform-origin: bottom right;
+      opacity: 0;
+      transform: translateY(0.8vmin) scale(0.94);
+      transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s;
+    }
+    .music-widget.open .music-panel {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      visibility: visible;
+    }
+    .music-panel-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1vmin;
+      margin-bottom: 1.4vmin;
+    }
+    .music-title {
+      font-size: clamp(12px, 1.7vmin, 16px);
+      letter-spacing: 0.15vmin;
+      color: #eaf2ff;
+    }
+    .music-state {
+      font-size: clamp(10px, 1.4vmin, 13px);
+      color: #8ea6c6;
+    }
+    .music-widget.playing .music-state { color: #bcd8ff; }
+    .music-row {
+      display: flex;
+      align-items: center;
+      gap: 1.4vmin;
+    }
+    .music-btn {
+      flex: 0 0 auto;
+      width: clamp(30px, 4.4vmin, 42px);
+      height: clamp(30px, 4.4vmin, 42px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #eaf2ff;
+      cursor: pointer;
+      border: 1px solid rgba(190, 218, 250, 0.3);
+      background: rgba(20, 30, 48, 0.5);
+    }
+    .music-btn svg { width: 52%; height: 52%; }
+    .music-btn .icon-pause { display: none; }
+    .music-btn.is-playing .icon-pause { display: block; }
+    .music-btn.is-playing .icon-play { display: none; }
+    .music-volume-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.8vmin;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .music-vol-icon { color: #9db6d6; font-size: clamp(12px, 1.7vmin, 16px); }
+    .music-volume {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 3px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, rgba(150, 195, 245, 0.85), rgba(190, 218, 250, 0.25));
+      outline: none;
+      cursor: pointer;
+    }
+    .music-volume::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #eaf4ff;
+      box-shadow: 0 0 6px rgba(190, 225, 255, 0.9);
+      cursor: pointer;
+    }
+    .music-volume::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: none;
+      border-radius: 50%;
+      background: #eaf4ff;
+      box-shadow: 0 0 6px rgba(190, 225, 255, 0.9);
+      cursor: pointer;
+    }
+    .music-hint {
+      margin-top: 1.1vmin;
+      font-size: clamp(9px, 1.3vmin, 12px);
+      color: #6f86a4;
+      letter-spacing: 0.1vmin;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .music-widget.playing .music-disc { animation: none; }
+      .music-widget.playing .music-toggle::after { animation: none; opacity: 0; }
+      .site-video-layer video { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 自定义八角星芒光标 (桌面端) -->
+<div class="custom-star-cursor" id="starCursor">
+  <svg viewBox="0 0 100 100" fill="currentColor">
+    <path d="M50 0 L58 35 L90 20 L65 45 L100 50 L65 55 L90 80 L58 65 L50 100 L42 65 L10 80 L35 55 L0 50 L35 45 L10 20 L42 35 Z"/>
+    <circle cx="50" cy="50" r="8" fill="#ffffff"/>
+  </svg>
+</div>
+
+<!-- 新增 · 第二层：全屏循环视频背景（固定视口，不随内容滚动，object-fit 铺满） -->
+<div class="site-video-layer" id="siteVideoLayer" aria-hidden="true">
+  <video id="bgVideo" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
+    <source src="videos.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div id="app">
+  <!-- 全屏动态背景 -->
+  <div class="ambient-backdrop">
+    <canvas id="ambientCanvas"></canvas>
+    <video id="heroVideo" autoplay muted loop playsinline>
+      <source src="assets/video.mp4" type="video/mp4">
+    </video>
+    <div class="vignette-overlay"></div>
+  </div>
+
+  <!-- 新增 · 第三层附加：独立暗色氛围层，压低画面亮度 -->
+  <div class="dark-mood-overlay" aria-hidden="true"></div>
+  <!-- 新增 · 第四层：黑色雾气 + 鼠标手电筒照明遮罩 -->
+  <div class="torch-fog-layer" id="torchFogLayer" aria-hidden="true"></div>
+  <canvas id="starlightCanvas" aria-hidden="true"></canvas>
+
+  <!-- 顶部轻盈工具条 -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <span class="brand-title">月光の骸骨 · 厄命</span>
+      <span class="brand-sep">|</span>
+      <span id="pageIndicator" class="brand-sub">1 / 4</span>
+    </div>
+    <div class="nav-actions">
+      <button id="rotateToggleBtn" class="action-btn frosted-glass-box" title="模拟手机竖屏CSS旋转90度">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12.01" y2="18"/>
+        </svg>
+      </button>
+      <button id="fullscreenBtn" class="action-btn frosted-glass-box" title="全屏横屏展示">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 3 21 3 21 9"/>
+          <polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/>
+          <line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- 横向多页容器 -->
+  <div id="pages">
+
+    <!-- 第一页：卷首·月光骸骨 -->
+    <section class="page page-cover">
+      <!-- 四角巴洛克纯矢量花纹 -->
+      <div class="corner-ornament top-left"><svg viewBox="0 0 100 100"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
+      <div class="corner-ornament top-right"><svg viewBox="0 0 100 100" style="transform:scaleX(-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
+      <div class="corner-ornament bottom-left"><svg viewBox="0 0 100 100" style="transform:scaleY(-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
+      <div class="corner-ornament bottom-right"><svg viewBox="0 0 100 100" style="transform:scale(-1,-1)"><path d="M 10 90 L 10 25 C 10 15, 15 10, 25 10 L 90 10 M 18 90 L 18 30 C 18 20, 20 18, 30 18 L 90 18 M 12 45 C 15 35, 25 25, 35 25 C 45 25, 45 35, 38 38 C 30 40, 28 30, 36 26" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="28" cy="28" r="2.5" fill="currentColor"/></svg></div>
+
+      <!-- 对飞月光燕剪影 -->
+      <div class="swallow-ornament swallow-left">
+        <svg viewBox="0 0 120 100" fill="currentColor"><path d="M 115 15 C 85 20, 60 40, 45 60 C 40 45, 30 25, 5 10 C 25 35, 38 65, 40 85 C 30 92, 10 98, 0 100 C 25 96, 45 88, 55 75 C 65 65, 85 55, 115 45 C 95 50, 75 58, 65 68 C 75 48, 95 30, 115 15 Z" opacity="0.85"/></svg>
+      </div>
+      <div class="swallow-ornament swallow-right">
+        <svg viewBox="0 0 120 100" style="transform:scaleX(-1)" fill="currentColor"><path d="M 115 15 C 85 20, 60 40, 45 60 C 40 45, 30 25, 5 10 C 25 35, 38 65, 40 85 C 30 92, 10 98, 0 100 C 25 96, 45 88, 55 75 C 65 65, 85 55, 115 45 C 95 50, 75 58, 65 68 C 75 48, 95 30, 115 15 Z" opacity="0.85"/></svg></div>
+
+      <div class="cover-content">
+        <!-- 月相法阵肖像镜框 (添加了点击掉落较大月亮交互) -->
+        <div class="mirror-portal-box" id="moonPortalBox" title="点击掉落月亮">
+          <div class="portal-frame frosted-glass-box">
+            <div class="portal-disc">
+              <div class="portal-ring-dashed"></div>
+              <div class="portal-ring-solid"></div>
+              <div class="moon-core anim-float">
+                <span class="moon-glyph">☾</span>
+                <span class="moon-sub">L U N A</span>
+              </div>
+              <span class="star-dot dot-tl">✦</span>
+              <span class="star-dot dot-tr">✦</span>
+              <span class="star-dot dot-bl">✦</span>
+              <span class="star-dot dot-br">✦</span>
+            </div>
+            <div class="portal-title-vertical">
+              <span class="moon-tiny">☾</span>
+              <span class="vertical-title-text">月光の骸骨</span>
+            </div>
+            <div class="quill-pens-svg">
+              <svg viewBox="0 0 200 80" fill="none" stroke="currentColor">
+                <g transform="translate(100, 40) rotate(-22) translate(-100, -40)">
+                  <path d="M 30 70 Q 60 40 95 10" stroke-width="1.8"/>
+                  <path d="M 35 62 Q 55 45 65 30 Q 55 35 45 50" fill="currentColor" fill-opacity="0.25" stroke-width="0.8"/>
+                  <path d="M 50 48 Q 72 32 82 18 Q 70 25 60 38" fill="currentColor" fill-opacity="0.3" stroke-width="0.8"/>
+                  <polygon points="28,73 32,67 25,68" fill="currentColor"/>
+                </g>
+                <circle cx="100" cy="45" r="4" fill="#e2e8f0" stroke="currentColor" stroke-width="1"/>
+                <g transform="translate(100, 40) scale(-1, 1) rotate(-22) translate(-100, -40)">
+                  <path d="M 30 70 Q 60 40 95 10" stroke-width="1.8"/>
+                  <path d="M 35 62 Q 55 45 65 30 Q 55 35 45 50" fill="currentColor" fill-opacity="0.25" stroke-width="0.8"/>
+                  <path d="M 50 48 Q 72 32 82 18 Q 70 25 60 38" fill="currentColor" fill-opacity="0.3" stroke-width="0.8"/>
+                  <polygon points="28,73 32,67 25,68" fill="currentColor"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 标题区 -->
+        <div class="cover-text-group">
+          <div class="main-title-row">
+            <span class="title-flourish">✦ —</span>
+            <h1 class="main-title">厄命</h1>
+            <span class="title-flourish">— ✦</span>
+          </div>
+          <div class="sub-title-code">INKCELF</div>
+          
+          <div class="star-emblem anim-shimmer">
+            <svg viewBox="0 0 100 100" fill="currentColor">
+              <path d="M50 0 L58 35 L90 20 L65 45 L100 50 L65 55 L90 80 L58 65 L50 100 L42 65 L10 80 L35 55 L0 50 L35 45 L10 20 L42 35 Z"/>
+              <circle cx="50" cy="50" r="5" fill="#f8fafc"/>
+            </svg>
+          </div>
+
+          <p class="cover-tagline">此卡既作板卡 · 又为扩列卡</p>
+          <p class="cover-subtag">“ 病恋 · 虐恋 · 渴望灵魂共鸣 · 发展长期关系 ”</p>
+
+          <button id="startExploreBtn" class="explore-btn frosted-glass-box">
+            ◄ 滑动或轻触翻阅 · 开启画卷 ►
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第二页：卷一·个人信息 -->
+    <section class="page page-content">
+      <div class="page-inner-scroll">
+        <!-- 顶部月牙连缀光弧导航 -->
+        <div class="moon-star-rail-nav">
+          <div class="rail-node active-node" onclick="window.goToPage(0)"><span class="rail-moon">☾</span><span class="rail-label">卷首</span></div>
+          <div class="rail-node active-node" onclick="window.goToPage(1)"><span class="rail-moon">☾</span><span class="rail-label">信息</span></div>
+          <div class="rail-node" onclick="window.goToPage(2)"><span class="rail-moon">☾</span><span class="rail-label">准则</span></div>
+          <div class="rail-node" onclick="window.goToPage(3)"><span class="rail-moon">☾</span><span class="rail-label">友码</span></div>
+        </div>
+
+        <div class="section-header">
+          <span class="header-line">—</span>
+          <div class="vintage-divider">
+            <span class="star-icon">✦</span>
+            <h2>个人信息</h2>
+            <span class="star-icon">✦</span>
+          </div>
+          <div class="name-sub">十厄</div>
+          <div class="meta-row">23 | LE·P | ESTJ | 金牛座</div>
+          <div class="desc-row">此卡既作板卡 又为扩列卡</div>
+        </div>
+
+        <div class="card-highlight frosted-glass-box">
+          病恋 · 虐恋 · 渴望灵魂共鸣 · 发展长期关系
+        </div>
+
+        <div class="rule-block text-center frosted-glass-box" style="padding: 3vmin; border-radius: 1.2vmin;">
+          <p>目前在国外工作 · 摸鱼时间长 · 适合作为长期 追剧搭子 游戏搭子 聊天搭子</p>
+          <div class="divider-hairline"></div>
+          <p>一般与人善 · 温柔待人 · 有时话少直接</p>
+          <p>比较真诚 · 不会回避处理事情 · 可以不用弯绕</p>
+          <p>有较强边界划分 · 尤其在情感方面 · 喜欢就是喜欢 会主动开屏</p>
+          <p>不喜欢就是不喜欢 · 但是易恋爱脑 · 请敲醒我</p>
+          <p>不会轻易外放需求 · 可以放心聊天 · 尽量不消耗你</p>
+          <div class="divider-hairline"></div>
+          <p class="text-important">扩列请说明来意 · 互换称呼</p>
+        </div>
+
+        <div class="letter-cipher">
+          <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第三页：卷二·板位须知 (全纯白字高亮) -->
+    <section class="page page-content">
+      <div class="page-inner-scroll">
+        <!-- 顶部月牙连缀光弧导航 -->
+        <div class="moon-star-rail-nav">
+          <div class="rail-node active-node" onclick="window.goToPage(0)"><span class="rail-moon">☾</span><span class="rail-label">卷首</span></div>
+          <div class="rail-node active-node" onclick="window.goToPage(1)"><span class="rail-moon">☾</span><span class="rail-label">信息</span></div>
+          <div class="rail-node active-node" onclick="window.goToPage(2)"><span class="rail-moon">☾</span><span class="rail-label">准则</span></div>
+          <div class="rail-node" onclick="window.goToPage(3)"><span class="rail-moon">☾</span><span class="rail-label">友码</span></div>
+        </div>
+
+        <div class="section-header">
+          <span class="header-line">—</span>
+          <div class="vintage-divider">
+            <span class="star-icon">✦</span>
+            <h2>板位须知</h2>
+            <span class="star-icon">✦</span>
+          </div>
+        </div>
+
+        <!-- 板块 1：关于病恋喜点 -->
+        <div class="card-block frosted-glass-box">
+          <div class="card-title">✦ 关于病恋喜点 ✦</div>
+          <ol class="num-list">
+            <li><span>1.</span> 多风格尝试，喜带 ds 调</li>
+            <li><span>2.</span> 逻辑回合制，喜欢收集各种观点</li>
+            <li><span>3.</span> 灵活应对 不拘泥于上下位置，放轻松些</li>
+            <li><span>4.</span> 白话，少动描，有动描我希望是暴力美学，不要落入俗套，要么不做要么请做到极致</li>
+            <li><span>5.</span> 用词准确，语言简洁，快速切入主题</li>
+          </ol>
+        </div>
+
+        <!-- 板块 2：关于病恋雷点 -->
+        <div class="card-block frosted-glass-box">
+          <div class="card-title">✦ 关于病恋雷点 ✦</div>
+          <ol class="num-list">
+            <li><span>1.</span> 敷衍，套公式预设，低/无互动</li>
+            <li><span>2.</span> 不要把我代入需要拯救的角色，我并不认为你比我更了解我自己</li>
+            <li><span>3.</span> 对我的回答过度揣测，一个话题兜兜绕很久，水单</li>
+            <li><span>4.</span> 逻辑崩塌的辩论，强扣帽子强压，虚与委蛇</li>
+            <li><span>5.</span> 没有写板评的习惯，禁止单内外以板评或者送礼评判我是否喜爱你</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第四页：卷三·好友码 -->
+    <section class="page page-content">
+      <div class="page-inner-scroll flex-center">
+        <!-- 顶部月牙连缀光弧导航 -->
+        <div class="moon-star-rail-nav">
+          <div class="rail-node active-node" onclick="window.goToPage(0)"><span class="rail-moon">☾</span><span class="rail-label">卷首</span></div>
+          <div class="rail-node active-node" onclick="window.goToPage(1)"><span class="rail-moon">☾</span><span class="rail-label">信息</span></div>
+          <div class="rail-node active-node" onclick="window.goToPage(2)"><span class="rail-moon">☾</span><span class="rail-label">准则</span></div>
+          <div class="rail-node active-node" onclick="window.goToPage(3)"><span class="rail-moon">☾</span><span class="rail-label">友码</span></div>
+        </div>
+
+        <p class="quote-text">“ 我也不是十恶不赦的人 ”</p>
+        <span class="header-line">—</span>
+        <h2 class="qr-heading">《 好 友 码 》</h2>
+
+        <div class="qr-wrapper">
+          <div class="qr-box frosted-glass-box">
+            <svg class="qr-svg" viewBox="0 0 100 100">
+              <rect x="5" y="5" width="26" height="26" fill="black" />
+              <rect x="9" y="9" width="18" height="18" fill="white" />
+              <rect x="13" y="13" width="10" height="10" fill="black" />
+              <rect x="69" y="5" width="26" height="26" fill="black" />
+              <rect x="73" y="9" width="18" height="18" fill="white" />
+              <rect x="77" y="13" width="10" height="10" fill="black" />
+              <rect x="5" y="69" width="26" height="26" fill="black" />
+              <rect x="9" y="73" width="18" height="18" fill="white" />
+              <rect x="13" y="77" width="10" height="10" fill="black" />
+              <rect x="36" y="8" width="5" height="5" />
+              <rect x="46" y="8" width="5" height="5" />
+              <rect x="56" y="8" width="5" height="5" />
+              <rect x="46" y="24" width="5" height="5" />
+              <rect x="8" y="38" width="5" height="5" />
+              <rect x="24" y="38" width="5" height="5" />
+              <rect x="12" y="52" width="5" height="5" />
+              <rect x="42" y="42" width="16" height="16" fill="black" rx="2" />
+              <polygon points="50,44 52,48 56,50 52,52 50,56 48,52 44,50 48,48" fill="white" />
+              <rect x="66" y="38" width="5" height="5" />
+              <rect x="76" y="44" width="5" height="5" />
+              <rect x="86" y="38" width="5" height="5" />
+              <rect x="38" y="68" width="5" height="5" />
+              <rect x="48" y="74" width="5" height="5" />
+              <rect x="58" y="68" width="5" height="5" />
+              <rect x="68" y="76" width="5" height="5" />
+              <rect x="82" y="82" width="5" height="5" />
+            </svg>
+            <span class="qr-corner-star tl">✦</span>
+            <span class="qr-corner-star tr">✦</span>
+            <span class="qr-corner-star bl">✦</span>
+            <span class="qr-corner-star br">✦</span>
+          </div>
+        </div>
+
+        <div class="qr-actions">
+          <button id="copyCodeBtn" class="copy-btn frosted-glass-box">
+            <span id="copyText">点击复制好友码</span>
+          </button>
+          <button id="restartBtn" class="action-btn frosted-glass-box" title="返回卷首">
+            <svg viewBox="0 0 24 24" width="2vmin" height="2vmin" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="epilogue-note">— 扩列请说明来意 · 愿遇共鸣之魂 —</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 底部页码指示点 -->
+  <div id="dots" class="frosted-glass-box">
+    <span class="active" data-index="0"></span>
+    <span data-index="1"></span>
+    <span data-index="2"></span>
+    <span data-index="3"></span>
+  </div>
+</div>
+
+<!-- 新增 · 第六层：音乐播放器（默认折叠为图标，位于所有内容之上） -->
+<div class="music-widget" id="musicWidget">
+  <div class="music-panel frosted-glass-box" id="musicPanel" role="group" aria-label="背景音乐控制">
+    <div class="music-panel-head">
+      <span class="music-title">☾ 夜之回声</span>
+      <span class="music-state" id="musicState">未播放</span>
+    </div>
+    <div class="music-row">
+      <button class="music-btn" id="musicPlayBtn" type="button" aria-label="播放 / 暂停">
+        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72c0 .83.92 1.33 1.62.88l10.55-6.86a1.05 1.05 0 0 0 0-1.76L9.62 4.26A1.05 1.05 0 0 0 8 5.14z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.2v14H7zM13.8 5H17v14h-3.2z"/></svg>
+      </button>
+      <div class="music-volume-wrap">
+        <span class="music-vol-icon" aria-hidden="true">♪</span>
+        <input type="range" id="musicVolume" class="music-volume" min="0" max="1" step="0.01" value="0.6" aria-label="音量">
+      </div>
+    </div>
+    <div class="music-hint">轻触页面任意处亦可开始播放</div>
+  </div>
+
+  <button class="music-toggle frosted-glass-box" id="musicToggle" type="button" aria-label="背景音乐" aria-expanded="false">
+    <span class="music-disc" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.5v11.2a3.1 3.1 0 1 1-1.9-2.86V6.2l-8.7 1.7v9.3a3.1 3.1 0 1 1-1.9-2.86V6.4c0-.5.35-.93.84-1.03l10.6-2.07c.62-.12 1.16.35 1.16.98z"/></svg>
+    </span>
+  </button>
+
+  <!-- 背景音频实例：随机播放 music.mp3 或 music2.mp3 -->
+  <audio id="bgMusic" loop preload="auto"></audio>
+</div>
+
+<script>
+  (function () {
+    'use strict';
+
+    const appEl = document.getElementById('app');
+    const pagesEl = document.getElementById('pages');
+    const dots = document.querySelectorAll('#dots span');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const rotateToggleBtn = document.getElementById('rotateToggleBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const copyText = document.getElementById('copyText');
+    const restartBtn = document.getElementById('restartBtn');
+    const startExploreBtn = document.getElementById('startExploreBtn');
+    const canvasEl = document.getElementById('ambientCanvas');
+    const starCursor = document.getElementById('starCursor');
+    const moonPortalBox = document.getElementById('moonPortalBox');
+
+    const total = dots.length;
+    let current = 0;
+    let forceRotated = false;
+
+    function isRotated() {
+      if (forceRotated) return true;
+      try {
+        return window.matchMedia('(orientation: portrait) and (max-width: 900px)').matches;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function toVisual(clientX, clientY) {
+      if (!isRotated()) return { x: clientX, y: clientY };
+      return {
+        x: clientY,
+        y: window.innerWidth - clientX
+      };
+    }
+
+    function getPageWidth() {
+      const rect = pagesEl.getBoundingClientRect();
+      return isRotated() ? rect.height : rect.width;
+    }
+
+    function setTranslate(x) {
+      pagesEl.style.transform = `translateX(${x}px)`;
+    }
+
+    function updateMoonRail(activeIndex) {
+      document.querySelectorAll('.moon-star-rail-nav').forEach(nav => {
+        const nodes = nav.querySelectorAll('.rail-node');
+        nodes.forEach((node, idx) => {
+          if (idx <= activeIndex) {
+            node.classList.add('active-node');
+          } else {
+            node.classList.remove('active-node');
+          }
+        });
+      });
+    }
+
+    function goTo(index, animated = true) {
+      current = (index + total) % total;
+      const w = getPageWidth();
+
+      pagesEl.style.transition = animated
+        ? 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
+        : 'none';
+
+      setTranslate(-current * w);
+
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      if (pageIndicator) pageIndicator.textContent = `${current + 1} / ${total}`;
+      updateMoonRail(current);
+    }
+
+    window.goToPage = (idx) => goTo(idx, true);
+
+    goTo(0, false);
+
+    window.addEventListener('resize', () => goTo(current, false));
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => goTo(current, false), 150);
+    });
+
+    // 鼠标八角星芒光标跟随
+    document.addEventListener('mousemove', (e) => {
+      if (starCursor) {
+        starCursor.style.left = e.clientX + 'px';
+        starCursor.style.top = e.clientY + 'px';
+      }
+    });
+
+    // 点击第一页月亮图案掉落 2-3 个较大月亮交互
+    if (moonPortalBox) {
+      moonPortalBox.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        const count = Math.floor(Math.random() * 2) + 2; // 2到3个
+        const rect = moonPortalBox.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        for (let i = 0; i < count; i++) {
+          const bigMoon = document.createElement('div');
+          bigMoon.className = 'falling-big-moon';
+          bigMoon.textContent = '☾';
+          
+          bigMoon.style.left = centerX + (Math.random() * 40 - 20) + 'px';
+          bigMoon.style.top = centerY + (Math.random() * 40 - 20) + 'px';
+          
+          const endX = (Math.random() - 0.5) * 220;
+          const endY = Math.random() * 160 + 80;
+          const rot = Math.random() * 360 - 180;
+          
+          bigMoon.style.setProperty('--end-x', endX + 'px');
+          bigMoon.style.setProperty('--end-y', endY + 'px');
+          bigMoon.style.setProperty('--rot', rot + 'deg');
+          
+          document.body.appendChild(bigMoon);
+          setTimeout(() => bigMoon.remove(), 1800);
+        }
+      });
+    }
+
+    // 点击飘落放大3倍的泛光羽毛特效 (3-5根) & 屏幕空白处点击翻页逻辑
+    document.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox')) return;
+
+      const count = Math.floor(Math.random() * 3) + 3; // 3 到 5 根
+      for (let i = 0; i < count; i++) {
+        const feather = document.createElement('div');
+        feather.className = 'luminous-feather';
+        
+        // 放大3倍尺寸 (原本 14px-24px，现在 42px-72px)
+        const size = (Math.random() * 10 + 14) * 3; 
+        feather.style.width = size + 'px';
+        feather.style.height = (size * 0.4) + 'px';
+        
+        feather.style.left = e.clientX + (Math.random() * 30 - 15) + 'px';
+        feather.style.top = e.clientY + (Math.random() * 30 - 15) + 'px';
+        
+        const endX = (Math.random() - 0.5) * 200;
+        const endY = Math.random() * 150 + 80;
+        const rot = Math.random() * 360 - 180;
+        
+        feather.style.setProperty('--end-x', endX + 'px');
+        feather.style.setProperty('--end-y', endY + 'px');
+        feather.style.setProperty('--rot', rot + 'deg');
+        
+        document.body.appendChild(feather);
+        setTimeout(() => feather.remove(), 1600);
+      }
+    });
+
+    // 纯轻触/点击任意空白区域循环切页监听
+    let clickStartX = 0;
+    let clickStartY = 0;
+    document.addEventListener('pointerdown', (e) => {
+      clickStartX = e.clientX;
+      clickStartY = e.clientY;
+    });
+    document.addEventListener('pointerup', (e) => {
+      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox')) return;
+      const dx = Math.abs(e.clientX - clickStartX);
+      const dy = Math.abs(e.clientY - clickStartY);
+      if (dx < 10 && dy < 10) {
+        goTo(current + 1, true);
+      }
+    });
+
+    // 触摸滑动逻辑
+    let touchStart = null;
+    let decided = false;
+    let axis = null;
+    let dragging = false;
+    let startTranslate = 0;
+    let cachedWidth = 0;
+    let rafId = null;
+
+    document.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      touchStart = toVisual(t.clientX, t.clientY);
+      decided = false;
+      axis = null;
+      dragging = false;
+      cachedWidth = getPageWidth();
+      startTranslate = -current * cachedWidth;
+      pagesEl.style.transition = 'none';
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!touchStart) return;
+      const t = e.touches[0];
+      const p = toVisual(t.clientX, t.clientY);
+      const dx = p.x - touchStart.x;
+      const dy = p.y - touchStart.y;
+
+      if (!decided) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+          decided = true;
+          if (axis === 'x') {
+            dragging = true;
+            e.preventDefault();
+          }
+        }
+        return;
+      }
+
+      if (axis === 'x' && dragging) {
+        e.preventDefault();
+        let offset = startTranslate + dx;
+        const minLimit = -(total - 1) * cachedWidth;
+
+        if (offset > 0) offset *= 0.35;
+        else if (offset < minLimit) offset = minLimit + (offset - minLimit) * 0.35;
+
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => setTranslate(offset));
+      }
+    }, { passive: false });
+
+    document.addEventListener('touchend', (e) => {
+      if (!touchStart) return;
+      const t = e.changedTouches[0];
+      const end = toVisual(t.clientX, t.clientY);
+      const dx = end.x - touchStart.x;
+
+      if (axis === 'x' && dragging) {
+        const threshold = cachedWidth * 0.22;
+        if (dx < -threshold) goTo(current + 1, true);
+        else if (dx > threshold) goTo(current - 1, true);
+        else goTo(current, true);
+      }
+
+      touchStart = null;
+      decided = false;
+      axis = null;
+      setTimeout(() => { dragging = false; }, 50);
+    }, { passive: true });
+
+    // 桌面端鼠标拖动支持
+    let mouseStart = null;
+    let mouseDragging = false;
+    let mouseStartTranslate = 0;
+    let mouseCachedWidth = 0;
+
+    document.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button, #dots, a, .rail-node, #moonPortalBox')) return;
+      mouseCachedWidth = getPageWidth();
+      mouseStart = { x: e.clientX };
+      mouseStartTranslate = -current * mouseCachedWidth;
+      mouseDragging = true;
+      pagesEl.style.transition = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!mouseDragging || !mouseStart) return;
+      const dx = e.clientX - mouseStart.x;
+      let offset = mouseStartTranslate + dx;
+      const minLimit = -(total - 1) * mouseCachedWidth;
+      if (offset > 0) offset *= 0.35;
+      else if (offset < minLimit) offset = minLimit + (offset - minLimit) * 0.35;
+      setTranslate(offset);
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      if (!mouseDragging || !mouseStart) return;
+      const dx = e.clientX - mouseStart.x;
+      const threshold = mouseCachedWidth * 0.16;
+      if (dx < -threshold) goTo(current + 1, true);
+      else if (dx > threshold) goTo(current - 1, true);
+      else goTo(current, true);
+      mouseStart = null;
+      mouseDragging = false;
+    });
+
+    dots.forEach((dot) => {
+      const handleJump = (e) => {
+        e.stopPropagation();
+        const idx = parseInt(dot.getAttribute('data-index'), 10);
+        goTo(idx, true);
+      };
+      dot.addEventListener('touchend', handleJump);
+      dot.addEventListener('click', handleJump);
+    });
+
+    if (startExploreBtn) {
+      startExploreBtn.addEventListener('click', () => goTo(1, true));
+    }
+
+    if (restartBtn) {
+      restartBtn.addEventListener('click', () => goTo(0, true));
+    }
+
+    if (copyCodeBtn) {
+      copyCodeBtn.addEventListener('click', () => {
+        const friendId = "INKCELF_YEMING_2026";
+        try {
+          navigator.clipboard.writeText(friendId);
+        } catch (err) {}
+        if (copyText) {
+          copyText.textContent = "已复制好友码";
+          setTimeout(() => { copyText.textContent = "点击复制好友码"; }, 2000);
+        }
+      });
+    }
+
+    if (rotateToggleBtn) {
+      rotateToggleBtn.addEventListener('click', () => {
+        forceRotated = !forceRotated;
+        appEl.classList.toggle('force-rotated', forceRotated);
+        setTimeout(() => goTo(current, false), 100);
+      });
+    }
+
+    if (fullscreenBtn) {
+      fullscreenBtn.addEventListener('click', () => {
+        try {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().then(() => {
+              try {
+                if (screen.orientation && screen.orientation.lock) {
+                  screen.orientation.lock('landscape').catch(() => {});
+                }
+              } catch (e) {}
+            }).catch(() => {});
+          } else {
+            document.exitFullscreen().catch(() => {});
+          }
+        } catch (e) {}
+      });
+    }
+
+    if (canvasEl) {
+      const ctx = canvasEl.getContext('2d');
+      let width = (canvasEl.width = window.innerWidth);
+      let height = (canvasEl.height = window.innerHeight);
+
+      window.addEventListener('resize', () => {
+        width = canvasEl.width = window.innerWidth;
+        height = canvasEl.height = window.innerHeight;
+      });
+
+      const particles = Array.from({ length: 45 }).map(() => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2 + 0.8,
+        speedY: -Math.random() * 0.4 - 0.1,
+        speedX: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.6 + 0.2
+      }));
+
+      let t = 0;
+      function renderMist() {
+        t += 0.015;
+        ctx.clearRect(0, 0, width, height);
+
+        const grad = ctx.createRadialGradient(
+          width * 0.5 + Math.sin(t * 0.5) * (width * 0.1),
+          height * 0.35,
+          20,
+          width * 0.5,
+          height * 0.5,
+          Math.max(width, height) * 0.8
+        );
+        grad.addColorStop(0, 'rgba(40, 65, 95, 0.45)');
+        grad.addColorStop(0.5, 'rgba(15, 25, 40, 0.3)');
+        grad.addColorStop(1, 'rgba(6, 10, 16, 0.95)');
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        for (const p of particles) {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          if (p.y < 0) p.y = height;
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(200, 225, 255, ${p.alpha})`;
+          ctx.fill();
+        }
+
+        requestAnimationFrame(renderMist);
+      }
+      renderMist();
+    }
+
+    /* ============================================================
+       新增逻辑 · 视频背景 / 手电筒黑雾 / 背景音乐
+    ============================================================ */
+
+    /* ---- 全屏视频背景：平滑淡入，失败不影响其他功能 ---- */
+    const siteVideoLayer = document.getElementById('siteVideoLayer');
+    const bgVideo = document.getElementById('bgVideo');
+    if (siteVideoLayer && bgVideo) {
+      const revealVideo = () => siteVideoLayer.classList.add('loaded');
+      if (bgVideo.readyState >= 2) revealVideo();
+      bgVideo.addEventListener('loadeddata', revealVideo);
+      bgVideo.addEventListener('canplay', revealVideo);
+      bgVideo.addEventListener('playing', revealVideo);
+      const vp = bgVideo.play();
+      if (vp && vp.catch) vp.catch(() => {});
+      // 若首次自动播放被拦截，用户首次交互时补播
+      document.addEventListener('pointerdown', () => {
+        if (bgVideo.paused) {
+          const p = bgVideo.play();
+          if (p && p.catch) p.catch(() => {});
+        }
+      }, { passive: true });
+    }
+
+    /* ---- 视频背景微弱鼠标视差：幅度小、平滑跟随，不影响页面内容 ---- */
+    if (siteVideoLayer && bgVideo) {
+      const finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (finePointer) {
+        let targetX = 0, targetY = 0;
+        let currentX = 0, currentY = 0;
+        let videoMotionRaf = 0;
+        const maxShift = 10; // 最大位移仅 10px，呈现微微晃动
+
+        function animateVideoMotion() {
+          currentX += (targetX - currentX) * 0.055;
+          currentY += (targetY - currentY) * 0.055;
+          siteVideoLayer.style.setProperty('--video-shift-x', currentX.toFixed(2) + 'px');
+          siteVideoLayer.style.setProperty('--video-shift-y', currentY.toFixed(2) + 'px');
+          if (Math.abs(targetX - currentX) > 0.08 || Math.abs(targetY - currentY) > 0.08) {
+            videoMotionRaf = requestAnimationFrame(animateVideoMotion);
+          } else {
+            videoMotionRaf = 0;
+          }
+        }
+
+        window.addEventListener('pointermove', (event) => {
+          const nx = (event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1;
+          const ny = (event.clientY / Math.max(window.innerHeight, 1)) * 2 - 1;
+          targetX = -nx * maxShift;
+          targetY = -ny * maxShift;
+          if (!videoMotionRaf) videoMotionRaf = requestAnimationFrame(animateVideoMotion);
+        }, { passive: true });
+
+        window.addEventListener('pointerleave', () => {
+          targetX = 0;
+          targetY = 0;
+          if (!videoMotionRaf) videoMotionRaf = requestAnimationFrame(animateVideoMotion);
+        }, { passive: true });
+      }
+    }
+
+    /* ---- 鼠标手电筒黑雾：rAF 平滑跟随，触摸设备降低强度 ---- */
+    const torchLayer = document.getElementById('torchFogLayer');
+    if (torchLayer) {
+      let isCoarse = false;
+      try { isCoarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
+      if (isCoarse) torchLayer.classList.add('coarse');
+
+      let tX = -100000, tY = -100000;   // 目标坐标（初始在屏外 → 画面幽暗）
+      let cX = -100000, cY = -100000;   // 当前坐标（缓动）
+      let torchRaf = null;
+
+      function sizeTorch() {
+        const base = Math.max(window.innerWidth, window.innerHeight);
+        const radius = Math.round(base * (isCoarse ? 0.88 : 0.72));
+        torchLayer.style.setProperty('--torch-r', radius + 'px');
+      }
+      sizeTorch();
+      window.addEventListener('resize', sizeTorch);
+
+      function stepTorch() {
+        cX += (tX - cX) * 0.2;
+        cY += (tY - cY) * 0.2;
+        torchLayer.style.setProperty('--mx', cX + 'px');
+        torchLayer.style.setProperty('--my', cY + 'px');
+        if (Math.abs(tX - cX) > 0.5 || Math.abs(tY - cY) > 0.5) {
+          torchRaf = requestAnimationFrame(stepTorch);
+        } else {
+          torchRaf = null;
+        }
+      }
+
+      function moveTorch(clientX, clientY) {
+        const p = toVisual(clientX, clientY);
+        tX = p.x;
+        tY = p.y;
+        if (!torchRaf) torchRaf = requestAnimationFrame(stepTorch);
+      }
+
+      document.addEventListener('mousemove', (e) => moveTorch(e.clientX, e.clientY), { passive: true });
+      document.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        if (t) moveTorch(t.clientX, t.clientY);
+      }, { passive: true });
+      document.addEventListener('touchmove', (e) => {
+        const t = e.touches[0];
+        if (t) moveTorch(t.clientX, t.clientY);
+      }, { passive: true });
+    }
+
+    /* ---- 稀疏泛光星屑：轻微漂浮、闪烁，不拦截页面交互 ---- */
+    const starCanvas = document.getElementById('starlightCanvas');
+    if (starCanvas) {
+      const ctx = starCanvas.getContext('2d');
+      let starW = 0, starH = 0, starDpr = 1, stars = [];
+      let starFrame = null;
+      const starCount = 58;
+      function resizeStars() {
+        starDpr = Math.min(window.devicePixelRatio || 1, 2);
+        starW = window.innerWidth;
+        starH = window.innerHeight;
+        starCanvas.width = Math.round(starW * starDpr);
+        starCanvas.height = Math.round(starH * starDpr);
+        starCanvas.style.width = starW + 'px';
+        starCanvas.style.height = starH + 'px';
+        ctx.setTransform(starDpr, 0, 0, starDpr, 0, 0);
+        stars = Array.from({ length: starCount }, () => ({
+          x: Math.random() * starW,
+          y: Math.random() * starH,
+          r: 0.55 + Math.random() * 1.35,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.18 + Math.random() * 0.62,
+          drift: 0.08 + Math.random() * 0.24,
+          glow: 7 + Math.random() * 17,
+          bright: 0.42 + Math.random() * 0.58,
+          breathe: 0.65 + Math.random() * 0.7
+        }));
+        if (!starFrame) starFrame = requestAnimationFrame(drawStars);
+      }
+      function drawStars(time) {
+        starFrame = null;
+        ctx.clearRect(0, 0, starW, starH);
+        const t = (time || 0) * 0.001;
+        for (const star of stars) {
+          // 每颗星星拥有独立相位、速度与呼吸幅度，避免整片星光同步闪烁
+          const wave = (Math.sin(t * star.speed + star.phase) + 1) * 0.5;
+          const pulse = 0.22 + wave * 0.78;
+          const alpha = Math.min(1, pulse * star.bright * star.breathe);
+          star.y -= star.drift * 0.12;
+          if (star.y < -4) { star.y = starH + 4; star.x = Math.random() * starW; }
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.shadowBlur = star.glow;
+          ctx.shadowColor = 'rgba(190, 220, 255, 0.95)';
+          ctx.fillStyle = 'rgba(225, 239, 255, 0.95)';
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fill();
+          // 少量星点带微弱十字星芒，避免画面过于花哨
+          if (star.r > 1.35) {
+            ctx.globalAlpha = alpha * 0.48;
+            ctx.lineWidth = 0.55;
+            ctx.strokeStyle = 'rgba(210, 232, 255, 0.9)';
+            ctx.beginPath();
+            ctx.moveTo(star.x - star.r * 2.4, star.y);
+            ctx.lineTo(star.x + star.r * 2.4, star.y);
+            ctx.moveTo(star.x, star.y - star.r * 2.4);
+            ctx.lineTo(star.x, star.y + star.r * 2.4);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+        starFrame = requestAnimationFrame(drawStars);
+      }
+      resizeStars();
+      window.addEventListener('resize', resizeStars, { passive: true });
+    }
+
+    /* ---- 背景音乐：默认折叠，首次点击任意处启动，随机播放 music.mp3 与 music2.mp3 ---- */
+    const musicWidget = document.getElementById('musicWidget');
+    const musicToggle = document.getElementById('musicToggle');
+    const musicPlayBtn = document.getElementById('musicPlayBtn');
+    const musicVolume = document.getElementById('musicVolume');
+    const musicStateEl = document.getElementById('musicState');
+    const bgMusic = document.getElementById('bgMusic');
+
+    if (musicWidget && bgMusic) {
+      let userPaused = false;   // 用户主动暂停标记
+      const playlist = ['music.mp3', 'music2.mp3'];
+
+      function setRandomTrack() {
+        const randomIndex = Math.floor(Math.random() * playlist.length);
+        bgMusic.src = playlist[randomIndex];
+      }
+
+      // 初始化时随机设定一首曲目
+      setRandomTrack();
+
+      // 当一首曲目播放结束时，自动随机切换另一首并播放
+      bgMusic.addEventListener('ended', () => {
+        setRandomTrack();
+        startMusic();
+      });
+
+      function updateMusicUI() {
+        const playing = !bgMusic.paused && !bgMusic.ended;
+        musicWidget.classList.toggle('playing', playing);
+        if (musicPlayBtn) musicPlayBtn.classList.toggle('is-playing', playing);
+        if (musicStateEl) musicStateEl.textContent = playing ? '播放中' : (userPaused ? '已暂停' : '未播放');
+      }
+
+      function startMusic() {
+        if (!bgMusic.paused) return;
+        const p = bgMusic.play();
+        if (p && p.catch) p.catch(() => {});
+      }
+
+      // 首次点击页面任意位置（包括播放器图标）→ 尝试启动音乐；主动暂停后尊重用户选择
+      document.addEventListener('pointerdown', () => {
+        if (bgMusic.paused && !userPaused) startMusic();
+      }, { passive: true });
+
+      // 展开 / 收起控制面板
+      musicToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = musicWidget.classList.toggle('open');
+        musicToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+
+      // 播放 / 暂停
+      musicPlayBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (bgMusic.paused) {
+          userPaused = false;
+          startMusic();
+        } else {
+          userPaused = true;
+          bgMusic.pause();
+        }
+      });
+
+      // 音量
+      if (musicVolume) {
+        const v = parseFloat(musicVolume.value);
+        if (!isNaN(v)) bgMusic.volume = v;
+        musicVolume.addEventListener('input', (e) => {
+          e.stopPropagation();
+          const val = parseFloat(e.target.value);
+          if (!isNaN(val)) bgMusic.volume = val;
+        });
+      }
+
+      // 控件区域的交互不冒泡到全局（避免误触翻页 / 羽毛等）
+      ['pointerdown', 'pointerup', 'click', 'mousedown', 'mouseup'].forEach((ev) => {
+        musicWidget.addEventListener(ev, (e) => e.stopPropagation());
+      });
+
+      bgMusic.addEventListener('play', updateMusicUI);
+      bgMusic.addEventListener('playing', updateMusicUI);
+      bgMusic.addEventListener('pause', updateMusicUI);
+      bgMusic.addEventListener('ended', updateMusicUI);
+      updateMusicUI();
+    }
+
+  })();
+</script>
+</body>
+</html>
