@@ -64,6 +64,21 @@
                  textBreatheGlow 3.5s ease-in-out 0.5s infinite;
     }
 
+    /* 新增：月亮卡片点击果冻动效 (Jelly Animation) */
+    @keyframes jellyEffect {
+      0% { transform: scale(1, 1); }
+      30% { transform: scale(1.25, 0.75); }
+      40% { transform: scale(0.75, 1.25); }
+      50% { transform: scale(1.15, 0.85); }
+      65% { transform: scale(0.95, 1.05); }
+      75% { transform: scale(1.05, 0.95); }
+      100% { transform: scale(1, 1); }
+    }
+
+    .jelly-anim {
+      animation: jellyEffect 0.6s ease;
+    }
+
     /* 桌面端自定义八角星芒光标 */
     @media (pointer: fine) {
       html, body, button, a, section, div {
@@ -1562,6 +1577,13 @@
     if (moonPortalBox) {
       moonPortalBox.addEventListener('pointerdown', (e) => {
         e.stopPropagation();
+
+        // 触发果冻动效
+        moonPortalBox.classList.remove('jelly-anim');
+        void moonPortalBox.offsetWidth; // 触发重绘
+        moonPortalBox.classList.add('jelly-anim');
+
+        // 保留原有的掉落月亮效果
         const count = Math.floor(Math.random() * 2) + 2;
         const rect = moonPortalBox.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
