@@ -31,6 +31,39 @@
       -webkit-user-select: none;
     }
 
+    /* ============================================================
+       新增：文字浮现入场动画与呼吸闪烁特效（已将入场动画时间设为 0.5s）
+    ============================================================ */
+    @keyframes textFadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(2.5vmin);
+        filter: blur(4px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes textBreatheGlow {
+      0%, 100% {
+        opacity: 0.75;
+        text-shadow: 0 0 1vmin rgba(190, 220, 255, 0.4);
+      }
+      50% {
+        opacity: 1;
+        text-shadow: 0 0 2.5vmin rgba(210, 240, 255, 0.95), 0 0 5vmin rgba(150, 200, 255, 0.5);
+      }
+    }
+
+    /* 组合动画：先执行浮现入场（持续 0.5s），随后无限循环呼吸闪烁 */
+    .anim-fade-breathe {
+      animation: textFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+                 textBreatheGlow 3.5s ease-in-out 0.5s infinite;
+    }
+
     /* 桌面端自定义八角星芒光标 */
     @media (pointer: fine) {
       html, body, button, a, section, div {
@@ -198,7 +231,6 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      /* 将滚动条做到页面顶部关键：调整滚动条方向 */
       direction: rtl;
     }
     
@@ -206,7 +238,6 @@
       direction: ltr;
     }
 
-    /* 蓝白渐变滚动条 */
     .page::-webkit-scrollbar {
       width: 6px;
     }
@@ -1058,6 +1089,7 @@
       .music-widget.playing .music-disc { animation: none; }
       .music-widget.playing .music-toggle::after { animation: none; opacity: 0; }
       .site-video-layer video { transition: none; }
+      .anim-fade-breathe { animation: none; opacity: 1; }
     }
   </style>
 </head>
@@ -1145,7 +1177,7 @@
             </div>
             <div class="portal-title-vertical">
               <span class="moon-tiny">☾</span>
-              <span class="vertical-title-text">月光の骸骨</span>
+              <span class="vertical-title-text anim-fade-breathe">月光の骸骨</span>
             </div>
             <div class="quill-pens-svg">
               <svg viewBox="0 0 200 80" fill="none" stroke="currentColor">
@@ -1170,10 +1202,11 @@
         <div class="cover-text-group">
           <div class="main-title-row">
             <span class="title-flourish">✦ —</span>
-            <h1 class="main-title">厄命</h1>
+            <!-- 应用浮现与呼吸闪烁动画 -->
+            <h1 class="main-title anim-fade-breathe">厄命</h1>
             <span class="title-flourish">— ✦</span>
           </div>
-          <div class="sub-title-code">INKCELF</div>
+          <div class="sub-title-code anim-fade-breathe" style="animation-delay: 0.1s;">INKCELF</div>
           
           <div class="star-emblem anim-shimmer">
             <svg viewBox="0 0 100 100" fill="currentColor">
@@ -1182,8 +1215,9 @@
             </svg>
           </div>
 
-          <p class="cover-tagline">此卡既作板卡 · 又为扩列卡</p>
-          <p class="cover-subtag">“ 病恋 · 虐恋 · 渴望灵魂共鸣 ”</p>
+          <!-- 应用浮现与呼吸闪烁动画 -->
+          <p class="cover-tagline anim-fade-breathe" style="animation-delay: 0.2s;">此卡既作板卡 · 又为扩列卡</p>
+          <p class="cover-subtag anim-fade-breathe" style="animation-delay: 0.3s;">“ 病恋 · 虐恋 · 渴望灵魂共鸣 ”</p>
 
           <button id="startExploreBtn" class="explore-btn frosted-glass-box">
             ◄ 滑动或轻触翻阅 · 开启画卷 ►
@@ -1206,15 +1240,16 @@
           <span class="header-line">—</span>
           <div class="vintage-divider">
             <span class="star-icon">✦</span>
-            <h2>个人信息</h2>
+            <!-- 应用浮现与呼吸闪烁动画 -->
+            <h2 class="anim-fade-breathe">个人信息</h2>
             <span class="star-icon">✦</span>
           </div>
-          <div class="name-sub">十厄</div>
-          <div class="meta-row">23 | LE·P | ESTJ | 金牛座</div>
+          <div class="name-sub anim-fade-breathe" style="animation-delay: 0.08s;">十厄</div>
+          <div class="meta-row anim-fade-breathe" style="animation-delay: 0.15s;">23 | LE·P | ESTJ | 金牛座</div>
           <div class="desc-row">此卡既作板卡 又为扩列卡</div>
         </div>
 
-        <div class="card-highlight frosted-glass-box">
+        <div class="card-highlight frosted-glass-box anim-fade-breathe" style="animation-delay: 0.2s;">
           病恋 · 虐恋 · 渴望灵魂共鸣
         </div>
 
@@ -1250,13 +1285,15 @@
           <span class="header-line">—</span>
           <div class="vintage-divider">
             <span class="star-icon">✦</span>
-            <h2>板位须知</h2>
+            <!-- 应用浮现与呼吸闪烁动画 -->
+            <h2 class="anim-fade-breathe">板位须知</h2>
             <span class="star-icon">✦</span>
           </div>
         </div>
 
         <div class="card-block frosted-glass-box">
-          <div class="card-title">✦ 关于病恋喜点 ✦</div>
+          <!-- 应用浮现与呼吸闪烁动画 -->
+          <div class="card-title anim-fade-breathe">✦ 关于病恋喜点 ✦</div>
           <ol class="num-list">
             <li><span>1.</span> 多风格尝试，喜逻辑剖析</li>
             <li><span>2.</span> 逻辑回合制，喜欢收集各种观点</li>
@@ -1267,7 +1304,8 @@
         </div>
 
         <div class="card-block frosted-glass-box">
-          <div class="card-title">✦ 关于病恋雷点 ✦</div>
+          <!-- 应用浮现与呼吸闪烁动画 -->
+          <div class="card-title anim-fade-breathe">✦ 关于病恋雷点 ✦</div>
           <ol class="num-list">
             <li><span>1.</span> 敷衍，套公式预设，低/无互动</li>
             <li><span>2.</span> 不要把我代入需要拯救的角色，我并不认为你比我更了解我自己</li>
@@ -1289,9 +1327,11 @@
           <div class="rail-node active-node" onclick="window.goToPage(3)"><span class="rail-moon">☾</span><span class="rail-label">友码</span></div>
         </div>
 
-        <p class="quote-text">“ 我也不是十恶不赦的人 ”</p>
+        <!-- 应用浮现与呼吸闪烁动画 -->
+        <p class="quote-text anim-fade-breathe">“ 我也不是十恶不赦的人 ”</p>
         <span class="header-line">—</span>
-        <h2 class="qr-heading">《 好 友 码 》</h2>
+        <!-- 应用浮现与呼吸闪烁动画 -->
+        <h2 class="qr-heading anim-fade-breathe" style="animation-delay: 0.1s;">《 好 友 码 》</h2>
 
         <div class="qr-wrapper">
           <div class="qr-box frosted-glass-box">
@@ -1485,9 +1525,6 @@
       }
     });
 
-    // ============================================================
-    // 优化：保留点击翻页的同时，鼠标左右滑动页面 20% 也进行翻页
-    // ============================================================
     let slideStartX = 0;
     let slideStartY = 0;
     let isTrackingSlide = false;
@@ -1506,15 +1543,13 @@
       const dy = e.clientY - slideStartY;
       const width = window.innerWidth;
 
-      // 如果水平滑动距离达到了屏幕宽度的 20%
       if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > width * 0.20) {
         if (dx > 0) {
-          goTo(current - 1, true); // 向右滑动 -> 上一页
+          goTo(current - 1, true);
         } else {
-          goTo(current + 1, true); // 向左滑动 -> 下一页
+          goTo(current + 1, true);
         }
       } else {
-        // 维持原有的点击边缘区域翻页
         const x = e.clientX;
         if (x < width * 0.18) {
           goTo(current - 1, true);
