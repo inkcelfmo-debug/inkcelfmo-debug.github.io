@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>我的主站导航</title>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    /* 网格布局核心 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    /* 单个方格样式 */
+    .grid-item {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+    }
+    .grid-item:hover {
+      background: #334155;
+      transform: translateY(-5px);
+      border-color: #38bdf8;
+      box-shadow: 0 10px 20px rgba(56, 189, 248, 0.1);
+    }
+    .grid-item h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+    .grid-item p {
+      margin: 0;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>主站导航矩阵</h1>
+
+  <div class="grid-container">
+    <!-- 方格 1 -->
+    <a href="pages/Liang/liang.html" class="grid-item">
+      <h3>项目一：Liang 的空间</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 2：已更新为 pages/wuci/wuci.html -->
+    <a href="pages/wuci/wuci.html" class="grid-item">
+      <h3>项目二：WuCi 空间</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 3：已链接至 pages/shie/shie.html -->
+    <a href="pages/shie/shie.html" class="grid-item">
+      <h3>项目三：Shie 空间</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 4 -->
+    <a href="#" class="grid-item">
+      <h3>项目四：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 5 -->
+    <a href="#" class="grid-item">
+      <h3>项目五：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 6 -->
+    <a href="#" class="grid-item">
+      <h3>项目六：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 7 -->
+    <a href="#" class="grid-item">
+      <h3>项目七：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 8 -->
+    <a href="#" class="grid-item">
+      <h3>项目八：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 9 -->
+    <a href="#" class="grid-item">
+      <h3>项目九：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 10 -->
+    <a href="#" class="grid-item">
+      <h3>项目十：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 11 -->
+    <a href="#" class="grid-item">
+      <h3>项目十一：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+
+    <!-- 方格 12 -->
+    <a href="#" class="grid-item">
+      <h3>项目十二：空白方格</h3>
+      <p>点击进入二级页面</p>
+    </a>
+  </div>
+
+</body>
+</html>
