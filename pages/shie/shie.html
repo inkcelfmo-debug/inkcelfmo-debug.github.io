@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     /* ============================================================
-       全局重置与自定义样式 (含蓝白渐变滚动条 & 鼠标视差视频)
+       全局重置与自定义样式 (含蓝白渐变滚动条置顶 & 鼠标左右 20% 触发)
     ============================================================ */
     * {
       margin: 0;
@@ -198,11 +198,15 @@
       position: relative;
       display: flex;
       flex-direction: column;
+      /* 将滚动条做到页面顶部关键：调整滚动条方向 */
+      direction: rtl;
+    }
+    
+    .page > * {
+      direction: ltr;
     }
 
-    /* ============================================================
-       优化：滚动条做到顶端，采用精致的蓝白渐变样式
-    ============================================================ */
+    /* 蓝白渐变滚动条 */
     .page::-webkit-scrollbar {
       width: 6px;
     }
@@ -1365,8 +1369,8 @@
       </button>
       <div class="music-volume-wrap">
         <span class="music-vol-icon" aria-hidden="true">♪</span>
-        <!-- 默认音量调整为 10% (0.1) -->
-        <input type="range" id="musicVolume" class="music-volume" min="0" max="1" step="0.01" value="0.1" aria-label="音量">
+        <!-- 音量默认调整为 7% (0.07) -->
+        <input type="range" id="musicVolume" class="music-volume" min="0" max="1" step="0.01" value="0.07" aria-label="音量">
       </div>
     </div>
     <div class="music-hint">轻触页面任意处亦可开始播放</div>
@@ -1467,9 +1471,6 @@
       setTimeout(() => goTo(current, false), 150);
     });
 
-    // ============================================================
-    // 新增：跟随鼠标位置背景视频移动 (Mouse Parallax for Video)
-    // ============================================================
     document.addEventListener('mousemove', (e) => {
       if (starCursor) {
         starCursor.style.left = e.clientX + 'px';
@@ -1477,7 +1478,7 @@
       }
 
       if (siteVideoLayer) {
-        const xOffset = (e.clientX / window.innerWidth - 0.5) * 30; // 最大偏移 30px
+        const xOffset = (e.clientX / window.innerWidth - 0.5) * 30;
         const yOffset = (e.clientY / window.innerHeight - 0.5) * 30;
         siteVideoLayer.style.setProperty('--video-shift-x', xOffset + 'px');
         siteVideoLayer.style.setProperty('--video-shift-y', yOffset + 'px');
@@ -1485,18 +1486,41 @@
     });
 
     // ============================================================
-    // 新增：点击屏幕边缘切页支持 (Click to Switch Pages)
+    // 优化：保留点击翻页的同时，鼠标左右滑动页面 20% 也进行翻页
     // ============================================================
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox, .music-widget, .frosted-glass-box')) return;
-      
-      const x = e.clientX;
+    let slideStartX = 0;
+    let slideStartY = 0;
+    let isTrackingSlide = false;
+
+    document.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox, .music-widget')) return;
+      isTrackingSlide = true;
+      slideStartX = e.clientX;
+      slideStartY = e.clientY;
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      if (!isTrackingSlide) return;
+      isTrackingSlide = false;
+      const dx = e.clientX - slideStartX;
+      const dy = e.clientY - slideStartY;
       const width = window.innerWidth;
-      // 点击左侧 18% 区域切到上一页，点击右侧 18% 区域切到下一页
-      if (x < width * 0.18) {
-        goTo(current - 1, true);
-      } else if (x > width * 0.82) {
-        goTo(current + 1, true);
+
+      // 如果水平滑动距离达到了屏幕宽度的 20%
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > width * 0.20) {
+        if (dx > 0) {
+          goTo(current - 1, true); // 向右滑动 -> 上一页
+        } else {
+          goTo(current + 1, true); // 向左滑动 -> 下一页
+        }
+      } else {
+        // 维持原有的点击边缘区域翻页
+        const x = e.clientX;
+        if (x < width * 0.18) {
+          goTo(current - 1, true);
+        } else if (x > width * 0.82) {
+          goTo(current + 1, true);
+        }
       }
     });
 
@@ -1554,50 +1578,6 @@
         document.body.appendChild(feather);
         setTimeout(() => feather.remove(), 1600);
       }
-    });
-
-    let mouseDragStart = null;
-    let isMouseDragging = false;
-    let mouseStartTranslate = 0;
-
-    document.addEventListener('mousedown', (e) => {
-      if (e.target.closest('button, #dots, a, input, textarea, .rail-node, #moonPortalBox, .music-widget')) return;
-      isMouseDragging = true;
-      const p = toVisual(e.clientX, e.clientY);
-      mouseDragStart = p;
-      cachedWidth = getPageWidth();
-      mouseStartTranslate = -current * cachedWidth;
-      pagesEl.style.transition = 'none';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isMouseDragging || !mouseDragStart) return;
-      const p = toVisual(e.clientX, e.clientY);
-      const dx = p.x - mouseDragStart.x;
-      let offset = mouseStartTranslate + dx;
-      const minLimit = -(total - 1) * cachedWidth;
-
-      if (offset > 0) offset *= 0.35;
-      else if (offset < minLimit) offset = minLimit + (offset - minLimit) * 0.35;
-
-      setTranslate(offset);
-    });
-
-    document.addEventListener('mouseup', (e) => {
-      if (!isMouseDragging || !mouseDragStart) return;
-      isMouseDragging = false;
-      const p = toVisual(e.clientX, e.clientY);
-      const dx = p.x - mouseDragStart.x;
-      const threshold = cachedWidth * 0.22;
-
-      if (dx < -threshold) {
-        goTo(current + 1, true);
-      } else if (dx > threshold) {
-        goTo(current - 1, true);
-      } else {
-        goTo(current, true);
-      }
-      mouseDragStart = null;
     });
 
     let touchStart = null;
@@ -1799,7 +1779,7 @@
     if (torchLayer) {
       let isCoarse = false;
       try { isCoarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
-      if (isCoarse) torchLayer.classList.sadd('coarse');
+      if (isCoarse) torchLayer.classList.add('coarse');
 
       let tX = -100000, tY = -100000;
       let cX = -100000, cY = -100000;
