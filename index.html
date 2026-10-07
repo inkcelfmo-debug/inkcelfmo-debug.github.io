@@ -275,6 +275,56 @@
       text-align: right;
     }
 
+    .town-control-panel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .town-control-hint {
+      max-width: 170px;
+    }
+
+    .town-button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 34px);
+      gap: 4px;
+    }
+
+    .town-button,
+    .town-jump-button {
+      min-width: 34px;
+      min-height: 32px;
+      border: 2px solid #633b55;
+      background: #fff5fa;
+      color: #633b55;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #d98ab2;
+    }
+
+    .town-button:hover,
+    .town-jump-button:hover {
+      background: #f8b5d3;
+    }
+
+    .town-button:active,
+    .town-jump-button:active {
+      box-shadow: none;
+      transform: translate(2px, 2px);
+    }
+
+    .town-button:focus-visible,
+    .town-jump-button:focus-visible {
+      outline: 3px solid #d95f98;
+      outline-offset: 2px;
+    }
+
+    .town-button-empty {
+      visibility: hidden;
+    }
+
     .town-board {
       position: relative;
       overflow: hidden;
@@ -621,6 +671,11 @@
         padding: 18px 14px;
       }
 
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
       .grid-container {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 88px 38px;
@@ -660,6 +715,16 @@
 
       .section-heading p {
         font-size: 10px;
+      }
+
+      .town-control-panel {
+        align-items: flex-end;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .town-control-hint {
+        max-width: 140px;
       }
     }
 
@@ -712,7 +777,18 @@
     <section class="town-section" aria-labelledby="projects-heading">
       <div class="section-heading">
         <h2 id="projects-heading">✦ &nbsp; PROJECT WINDOWS</h2>
-        <p class="town-controls" id="town-controls" tabindex="0" aria-label="小猫移动控制：使用方向键或 WASD 移动，空格跳跃">点击街道开始 · WASD / 方向键移动 · 空格跳跃</p>
+        <div class="town-control-panel town-controls" id="town-controls" tabindex="0" aria-label="小猫控制：点击方向键移动，点击跳跃键跳跃，也可使用键盘方向键或 WASD">
+          <p class="town-control-hint">点击按键控制小猫 · 也可用方向键 / WASD</p>
+          <div class="town-button-grid" aria-label="小猫方向控制">
+            <span class="town-button-empty" aria-hidden="true"></span>
+            <button class="town-button" type="button" data-direction="up" aria-label="向上移动小猫">↑</button>
+            <span class="town-button-empty" aria-hidden="true"></span>
+            <button class="town-button" type="button" data-direction="left" aria-label="向左移动小猫">←</button>
+            <button class="town-button" type="button" data-direction="down" aria-label="向下移动小猫">↓</button>
+            <button class="town-button" type="button" data-direction="right" aria-label="向右移动小猫">→</button>
+          </div>
+          <button class="town-jump-button" type="button" data-action="jump">跳跃</button>
+        </div>
       </div>
 
       <div class="town-board" aria-describedby="town-controls">
@@ -726,62 +802,62 @@
         <div class="grid-container">
         <a href="pages/Liang/liang.html" class="project-card">
           <div class="card-topline"><span class="card-number">WINDOW_01</span><span class="card-icon" aria-hidden="true">♡</span></div>
-          <div><h3>项目一：Liang 的空间</h3><p>打开 Liang 的专属空间</p></div>
+          <div><h3>房主：谅</h3><p>打开谅的专属空间</p></div>
           <div class="card-link"><span>OPEN WINDOW</span><span aria-hidden="true">↗</span></div>
         </a>
         <a href="pages/wuci/wuci.html" class="project-card">
           <div class="card-topline"><span class="card-number">WINDOW_02</span><span class="card-icon" aria-hidden="true">✿</span></div>
-          <div><h3>项目二：WuCi 空间</h3><p>打开 WuCi 的专属空间</p></div>
+          <div><h3>房主：雾辞</h3><p>打开雾辞的专属空间</p></div>
           <div class="card-link"><span>OPEN WINDOW</span><span aria-hidden="true">↗</span></div>
         </a>
         <a href="pages/shie/shie.html" class="project-card">
           <div class="card-topline"><span class="card-number">WINDOW_03</span><span class="card-icon" aria-hidden="true">☆</span></div>
-          <div><h3>项目三：Shie 空间</h3><p>打开 Shie 的专属空间</p></div>
+          <div><h3>房主：十厄</h3><p>打开十厄的专属空间</p></div>
           <div class="card-link"><span>OPEN WINDOW</span><span aria-hidden="true">↗</span></div>
         </a>
         <a href="pages/wanshang/wanshang.html" class="project-card">
           <div class="card-topline"><span class="card-number">WINDOW_04</span><span class="card-icon" aria-hidden="true">♡</span></div>
-          <div><h3>项目四：Wanshang 空间</h3><p>打开 Wanshang 的专属空间</p></div>
+          <div><h3>房主：挽商</h3><p>打开挽商的专属空间</p></div>
+          <div class="card-link"><span>OPEN WINDOW</span><span aria-hidden="true">↗</span></div>
+        </a>
+        <a href="https://yw-iris.github.io/qingjiu/" class="project-card">
+          <div class="card-topline"><span class="card-number">WINDOW_05</span><span class="card-icon" aria-hidden="true">＋</span></div>
+          <div><h3>房主：清酒</h3><p>打开清酒的专属空间</p></div>
           <div class="card-link"><span>OPEN WINDOW</span><span aria-hidden="true">↗</span></div>
         </a>
         <a href="#" class="project-card empty-card">
-          <div class="card-topline"><span class="card-number">WINDOW_05</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目五：空白方格</h3><p>新的小天地正在准备中</p></div>
-          <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
-        </a>
-        <a href="#" class="project-card empty-card">
           <div class="card-topline"><span class="card-number">WINDOW_06</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目六：空白方格</h3><p>新的小天地正在准备中</p></div>
+          <div><h3>房主：未入住</h3><p>新的小天地正在准备中</p></div>
           <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
         </a>
         <a href="#" class="project-card empty-card">
           <div class="card-topline"><span class="card-number">WINDOW_07</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目七：空白方格</h3><p>新的小天地正在准备中</p></div>
+          <div><h3>房主：未入住</h3><p>新的小天地正在准备中</p></div>
           <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
         </a>
         <a href="#" class="project-card empty-card">
           <div class="card-topline"><span class="card-number">WINDOW_08</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目八：空白方格</h3><p>新的小天地正在准备中</p></div>
+          <div><h3>房主：未入住</h3><p>新的小天地正在准备中</p></div>
           <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
         </a>
         <a href="#" class="project-card empty-card">
           <div class="card-topline"><span class="card-number">WINDOW_09</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目九：空白方格</h3><p>新的小天地正在准备中</p></div>
+          <div><h3>房主：未入住</h3><p>新的小天地正在准备中</p></div>
           <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
         </a>
         <a href="#" class="project-card empty-card">
           <div class="card-topline"><span class="card-number">WINDOW_10</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目十：空白方格</h3><p>新的小天地正在准备中</p></div>
+          <div><h3>房主：未入住</h3><p>新的小天地正在准备中</p></div>
           <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
         </a>
         <a href="#" class="project-card empty-card">
           <div class="card-topline"><span class="card-number">WINDOW_11</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目十一：空白方格</h3><p>新的小天地正在准备中</p></div>
+          <div><h3>房主：未入住</h3><p>新的小天地正在准备中</p></div>
           <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
         </a>
         <a href="#" class="project-card empty-card">
           <div class="card-topline"><span class="card-number">WINDOW_12</span><span class="card-icon" aria-hidden="true">＋</span></div>
-          <div><h3>项目十二：空白方格</h3><p>新的小天地正在准备中</p></div>
+          <div><h3>房主：未入住</h3><p>新的小天地正在准备中</p></div>
           <div class="card-link"><span>COMING SOON</span><span aria-hidden="true">♡</span></div>
         </a>
         </div>
@@ -852,6 +928,7 @@
       const catSize = { width: 42, height: 42 };
       const catPosition = { x: 10, y: 8 };
       const stepSize = 4;
+      const buttonStepSize = 24;
 
       function placeCat() {
         townCat.style.left = `${catPosition.x}px`;
@@ -909,8 +986,31 @@
         });
       }
 
+      function moveCat(direction, distance) {
+        const bounds = townBoard.getBoundingClientRect();
+        const nextX = Math.max(4, Math.min(catPosition.x + direction[0] * distance, bounds.width - catSize.width - 4));
+        const nextY = Math.max(4, Math.min(catPosition.y + direction[1] * distance, bounds.height - catSize.height - 4));
+
+        if (collidesWithHouse(nextX, nextY)) return false;
+
+        catPosition.x = nextX;
+        catPosition.y = nextY;
+        if (direction[0] !== 0) {
+          townCat.style.setProperty("--cat-direction", direction[0] < 0 ? "-1" : "1");
+        }
+        placeCat();
+        return true;
+      }
+
+      function jumpCat() {
+        townCat.classList.remove("is-jumping");
+        void townCat.getBoundingClientRect();
+        townCat.classList.add("is-jumping");
+        townStatus.textContent = "小猫跳起来啦！";
+      }
+
       function handleTownKeydown(event) {
-        if (document.activeElement !== townControls) return;
+        if (!townControls.contains(document.activeElement)) return;
 
         const key = event.key.toLowerCase();
         const directions = {
@@ -926,10 +1026,7 @@
 
         if (key === " " || key === "spacebar") {
           event.preventDefault();
-          townCat.classList.remove("is-jumping");
-          void townCat.getBoundingClientRect();
-          townCat.classList.add("is-jumping");
-          townStatus.textContent = "小猫跳起来啦！";
+          jumpCat();
           return;
         }
 
@@ -937,26 +1034,27 @@
         if (!direction) return;
 
         event.preventDefault();
-        const bounds = townBoard.getBoundingClientRect();
-        const nextX = Math.max(4, Math.min(catPosition.x + direction[0], bounds.width - catSize.width - 4));
-        const nextY = Math.max(4, Math.min(catPosition.y + direction[1], bounds.height - catSize.height - 4));
-
-        if (!collidesWithHouse(nextX, nextY)) {
-          catPosition.x = nextX;
-          catPosition.y = nextY;
-          if (direction[0] !== 0) {
-            townCat.style.setProperty("--cat-direction", direction[0] < 0 ? "-1" : "1");
-          }
-          placeCat();
-        }
+        moveCat(direction, stepSize);
       }
 
       if (townBoard && townCat) {
         startCatOnStreet();
         window.addEventListener("resize", startCatOnStreet);
         townSection.addEventListener("keydown", handleTownKeydown);
+        townControls.querySelectorAll("[data-direction]").forEach((button) => {
+          const directions = {
+            up: [0, -1],
+            down: [0, 1],
+            left: [-1, 0],
+            right: [1, 0]
+          };
+          button.addEventListener("click", () => {
+            moveCat(directions[button.dataset.direction], buttonStepSize);
+          });
+        });
+        townControls.querySelector('[data-action="jump"]').addEventListener("click", jumpCat);
         townBoard.addEventListener("pointerdown", (event) => {
-          if (!event.target.closest("a")) townControls.focus({ preventScroll: true });
+          if (!event.target.closest("a, button")) townControls.focus({ preventScroll: true });
         });
         townCat.addEventListener("animationend", () => {
           townCat.classList.remove("is-jumping");
