@@ -712,7 +712,7 @@
         throw error;
       }
     }
-    function loadGLTF(url, onLoad) {
+    function loadGLTF(url, onLoad, onError) {
       pendingModelLoads++;
       let modelPromise = modelLoadPromises.get(url);
       if (!modelPromise) {
@@ -726,9 +726,13 @@
           pendingModelLoads--;
           hideOpeningScreenWhenReady();
         }
-      }, () => {
-        pendingModelLoads--;
-        hideOpeningScreenWhenReady();
+      }, (error) => {
+        try {
+          if (onError) onError(error);
+        } finally {
+          pendingModelLoads--;
+          hideOpeningScreenWhenReady();
+        }
       });
     }
     const lineArtMaterial = new THREE.LineBasicMaterial({
