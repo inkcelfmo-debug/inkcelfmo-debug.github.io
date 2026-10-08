@@ -30,6 +30,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -R index.html assets pages _site/
+          rm -rf _site/pages/wanshang/dist
           cp -R pages/wanshang/dist/. _site/pages/wanshang/
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
