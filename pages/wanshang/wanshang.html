@@ -697,17 +697,19 @@
       .setKTX2Loader(ktx2Loader)
       .setMeshoptDecoder(MeshoptDecoder);
     const modelLoadPromises = new Map();
-    const reportedModelErrors = new Set();
-    function loadGLTF(url, onLoad, onError) {
+    function loadGLTF(url, onLoad) {
       pendingModelLoads++;
       let modelPromise = modelLoadPromises.get(url);
       if (!modelPromise) {
-        modelPromise = gltfLoader.loadAsync(url).catch(() => (
-          gltfLoader.loadAsync(url).catch((error) => {
-            modelLoadPromises.delete(url);
-            throw error;
-          })
-        ));
+        let firstError;
+        modelPromise = gltfLoader.loadAsync(url).catch((error) => {
+          firstError = error;
+          return gltfLoader.loadAsync(url);
+        }).catch((error) => {
+          modelLoadPromises.delete(url);
+          console.error(`Failed to load model ${url} after retry. Initial failure:`, firstError, 'Retry failure:', error);
+          throw error;
+        });
         modelLoadPromises.set(url, modelPromise);
       }
       modelPromise.then((gltf) => {
@@ -717,17 +719,9 @@
           pendingModelLoads--;
           hideOpeningScreenWhenReady();
         }
-      }, (error) => {
-        try {
-          if (!reportedModelErrors.has(url)) {
-            reportedModelErrors.add(url);
-            console.error(`Failed to load model ${url} after retry:`, error);
-          }
-          if (onError) onError(error);
-        } finally {
-          pendingModelLoads--;
-          hideOpeningScreenWhenReady();
-        }
+      }, () => {
+        pendingModelLoads--;
+        hideOpeningScreenWhenReady();
       });
     }
     const lineArtMaterial = new THREE.LineBasicMaterial({
