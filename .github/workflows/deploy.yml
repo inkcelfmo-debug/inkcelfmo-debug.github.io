@@ -24,14 +24,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Build SSR static site
-        run: npm run build
+      - name: Build SSR site
+        run: npm run build --prefix pages/wanshang
+      - name: Stage site
+        run: |
+          mkdir -p _site
+          cp -R index.html assets pages _site/
+          cp -R pages/wanshang/dist/. _site/pages/wanshang/
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
   deploy:
     environment:

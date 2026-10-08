@@ -8,7 +8,9 @@ const DIR = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = join(DIR, 'dist');
 
 await mkdir(OUTPUT_DIR, { recursive: true });
-await writeFile(join(OUTPUT_DIR, 'index.html'), await renderPage(), 'utf8');
+const html = await renderPage();
+await writeFile(join(OUTPUT_DIR, 'index.html'), html, 'utf8');
+await writeFile(join(OUTPUT_DIR, 'wanshang.html'), html, 'utf8');
 await cp(join(DIR, 'slots-data.mjs'), join(OUTPUT_DIR, 'slots-data.mjs'));
 await cp(join(DIR, 'music.mp3'), join(OUTPUT_DIR, 'music.mp3'));
 
