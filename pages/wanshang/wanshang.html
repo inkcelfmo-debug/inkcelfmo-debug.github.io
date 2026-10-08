@@ -697,11 +697,17 @@
       .setKTX2Loader(ktx2Loader)
       .setMeshoptDecoder(MeshoptDecoder);
     const modelLoadPromises = new Map();
+    const reportedModelErrors = new Set();
     function loadGLTF(url, onLoad, onError) {
       pendingModelLoads++;
       let modelPromise = modelLoadPromises.get(url);
       if (!modelPromise) {
-        modelPromise = gltfLoader.loadAsync(url);
+        modelPromise = gltfLoader.loadAsync(url).catch(() => (
+          gltfLoader.loadAsync(url).catch((error) => {
+            modelLoadPromises.delete(url);
+            throw error;
+          })
+        ));
         modelLoadPromises.set(url, modelPromise);
       }
       modelPromise.then((gltf) => {
@@ -713,8 +719,11 @@
         }
       }, (error) => {
         try {
+          if (!reportedModelErrors.has(url)) {
+            reportedModelErrors.add(url);
+            console.error(`Failed to load model ${url} after retry:`, error);
+          }
           if (onError) onError(error);
-          else console.error(`Failed to load model ${url}:`, error);
         } finally {
           pendingModelLoads--;
           hideOpeningScreenWhenReady();
@@ -745,7 +754,7 @@
     function applyWhiteLineArt(root, thresholdAngle = 18, material = lineArtMaterial, style = 'white') {
       const outlineMaterials = [];
       root.traverse((object) => {
-        if (!object.isMesh || object.userData.whiteLineArt) return;
+        if (!object.isMesh || object.userData.whiteLineArt || object.userData.skipWhiteLineArt) return;
         object.userData.whiteLineArt = true;
 
         const materials = Array.isArray(object.material) ? object.material : [object.material];
@@ -976,8 +985,6 @@
       scene.add(root);
       tearEmitterObject = root;
       tearEmitterLocal.set(-0.16, 6.3, 0.48);
-    }, (error) => {
-      console.error('Failed to load angel_silver_version.glb:', error);
     });
 
     /* ==========================================================
@@ -1107,6 +1114,7 @@
             child.material = devoteeCeramicMat;
             child.castShadow = true;
             child.receiveShadow = true;
+            child.userData.skipWhiteLineArt = true;
           }
         });
         devMesh.updateMatrixWorld(true);
@@ -1116,10 +1124,7 @@
           -bounds.min.y,
           -(bounds.min.z + bounds.max.z) / 2
         );
-        applyWhiteLineArt(devMesh);
         dGroup.add(devMesh);
-      }, (error) => {
-        console.error('Failed to load or decode il_commendatore.glb:', error);
       });
 
       // 手中圣杯 (对应 sm_goblet.glb)
@@ -1219,7 +1224,7 @@
           1
         ));
         cupGroup.add(gobMesh);
-      }, () => {});
+      });
 
       dGroup.add(cupGroup);
       // 注：已按要求去除石像头顶的浮动标识，保持石雕自然古朴沉静
