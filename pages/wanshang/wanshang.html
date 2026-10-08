@@ -560,8 +560,8 @@
   <script type="importmap">
     {
       "imports": {
-        "three": "https://unpkg.com/three@0.147.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.147.0/examples/jsm/"
+        "three": "./vendor/three/build/three.module.js",
+        "three/addons/": "./vendor/three/examples/jsm/"
       }
     }
   </script>
@@ -691,7 +691,7 @@
       hideOpeningScreenWhenReady();
     };
     const ktx2Loader = new KTX2Loader()
-      .setTranscoderPath('https://unpkg.com/three@0.147.0/examples/js/libs/basis/')
+      .setTranscoderPath('./vendor/three/examples/js/libs/basis/')
       .detectSupport(renderer);
     const gltfLoader = new GLTFLoader(loadingManager)
       .setKTX2Loader(ktx2Loader)
