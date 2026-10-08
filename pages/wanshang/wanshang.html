@@ -1102,6 +1102,9 @@
       const headM = new THREE.Mesh(new THREE.SphereGeometry(0.26, 16, 16), dMat);
       headM.position.set(0, 1.1, -0.05);
       dGroup.add(headM);
+      [body, torsoM, headM].forEach((mesh) => {
+        mesh.userData.skipWhiteLineArt = true;
+      });
 
       // 尝试引入同目录下的 il_commendatore.glb
       loadGLTF(MODEL_ASSETS[1], (gltf) => {
