@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { DEVOTEE_SLOTS, PAGE_META } from './slots-data.mjs';
+import { DEVOTEE_SLOTS, MODEL_ASSETS, PAGE_META } from './slots-data.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_PATH = join(DIR, 'wanshang.html');
@@ -45,6 +45,9 @@ function renderExtraHead() {
     `<meta property="og:title" content="${title}">`,
     `<meta property="og:description" content="${description}">`,
     '<meta property="og:type" content="website">',
+    ...MODEL_ASSETS.map((asset) =>
+      `<link rel="preload" href="${escapeHtml(asset)}" as="fetch" type="model/gltf-binary" crossorigin>`
+    ),
     `<script type="application/ld+json">${jsonLd}</script>`
   ].join('\n  ');
 }
@@ -64,6 +67,7 @@ function renderNoscript() {
 function renderStateScript() {
   const payload = JSON.stringify({
     slots: DEVOTEE_SLOTS,
+    modelAssets: MODEL_ASSETS,
     meta: PAGE_META,
     renderedAt: new Date().toISOString()
   });

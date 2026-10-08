@@ -570,12 +570,13 @@
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
     import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-    import { DEVOTEE_SLOTS as SHARED_SLOTS } from './slots-data.mjs';
+    import { DEVOTEE_SLOTS as SHARED_SLOTS, MODEL_ASSETS as SHARED_MODEL_ASSETS } from './slots-data.mjs';
 
     /* ==========================================================
        0. 席位禅意数据配置 (1..8 严格对应，优先使用 SSR 注入)
        ========================================================== */
     const DEVOTEE_SLOTS = window.__WANSHANG_SSR__?.slots || SHARED_SLOTS;
+    const MODEL_ASSETS = window.__WANSHANG_SSR__?.modelAssets || SHARED_MODEL_ASSETS;
 
     /* ==========================================================
        1. 原生 Web Audio 纯音频合成器
@@ -695,18 +696,25 @@
     const gltfLoader = new GLTFLoader(loadingManager)
       .setKTX2Loader(ktx2Loader)
       .setMeshoptDecoder(MeshoptDecoder);
+    const modelLoadPromises = new Map();
     function loadGLTF(url, onLoad, onError) {
       pendingModelLoads++;
-      gltfLoader.load(url, (gltf) => {
+      let modelPromise = modelLoadPromises.get(url);
+      if (!modelPromise) {
+        modelPromise = gltfLoader.loadAsync(url);
+        modelLoadPromises.set(url, modelPromise);
+      }
+      modelPromise.then((gltf) => {
         try {
           onLoad(gltf);
         } finally {
           pendingModelLoads--;
           hideOpeningScreenWhenReady();
         }
-      }, undefined, (error) => {
+      }, (error) => {
         try {
           if (onError) onError(error);
+          else console.error(`Failed to load model ${url}:`, error);
         } finally {
           pendingModelLoads--;
           hideOpeningScreenWhenReady();
@@ -951,7 +959,7 @@
     const tearEmitterLocal = new THREE.Vector3(-0.16, 2.12, 0.48);
 
     // 尝试引入同目录下的 angel_silver_version.glb
-    loadGLTF('./angel_silver_version.glb', (gltf) => {
+    loadGLTF(MODEL_ASSETS[0], (gltf) => {
       scene.remove(angelGroup);
       const root = gltf.scene;
       angelModelRoot = root;
@@ -1089,7 +1097,7 @@
       dGroup.add(headM);
 
       // 尝试引入同目录下的 il_commendatore.glb
-      loadGLTF('./il_commendatore.glb', (gltf) => {
+      loadGLTF(MODEL_ASSETS[1], (gltf) => {
         dGroup.remove(body); dGroup.remove(torsoM); dGroup.remove(headM);
         const devMesh = gltf.scene.clone();
         devMesh.rotation.y = Math.PI / 2;
@@ -1190,7 +1198,7 @@
       });
 
       // 尝试引入同目录下的 sm_goblet.glb
-      loadGLTF('./sm_goblet.glb', (gltf) => {
+      loadGLTF(MODEL_ASSETS[2], (gltf) => {
         cupGroup.remove(bowl); cupGroup.remove(stem);
         const gobMesh = gltf.scene.clone();
         gobMesh.scale.set(4.25, 4.25, 4.25);

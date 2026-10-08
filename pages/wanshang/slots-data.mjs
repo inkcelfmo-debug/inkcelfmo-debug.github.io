@@ -4,6 +4,12 @@ export const PAGE_META = {
   description: '请依次点击圣杯，直到圣杯注满。拖动转盘旋转，圣杯全满后可点选席位查看文字。'
 };
 
+export const MODEL_ASSETS = [
+  './angel_silver_version.glb',
+  './il_commendatore.glb',
+  './sm_goblet.glb'
+];
+
 export const DEVOTEE_SLOTS = [
   { num: 1, title: '自介', verse: '挽商 21 天蝎座', sub: 'estp le–h switch' },
   { num: 2, title: '风格', verse: '温病 引导 剖析 逻辑\n近期多情绪病 温疯不定\n伪高 诱导 调侃 压迫 微擦 微文艺', sub: '' },
