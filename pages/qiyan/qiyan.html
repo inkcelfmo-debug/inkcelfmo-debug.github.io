@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>祈宴 · 琉璃书</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+:root{
+  --bg:#0a0e1a;
+  --ink:#e8dcc8;
+  --gold:#c9a84c;
+  --gold-hi:#f0d68a;
+  --purple:#a08cc8;
+  --rose:#d4849a;
+  --paper:#fff9f0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, rgba(160,140,200,.10), transparent 60%),
+    radial-gradient(900px 500px at 80% 110%, rgba(201,168,76,.07), transparent 60%);
+  color:var(--ink);
+  font-family:'Noto Serif SC','STSong','SimSun',serif;
+  min-height:100vh;
+  overflow:hidden;
+  display:flex;justify-content:center;align-items:center;
+  text-align:center;
+}
+#terminal{max-width:560px;width:92%;position:relative;z-index:5;padding:24px 0}
+.hidden{display:none!important}
+
+/* ============ 星空 ============ */
+.star{position:fixed;width:2px;height:2px;background:#fff;border-radius:50%;pointer-events:none;z-index:0}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.9}}
+
+/* ============ 粒子画布 ============ */
+#burst{
+  position:fixed;inset:0;width:100vw;height:100vh;
+  pointer-events:none;z-index:30;opacity:1;
+  transition:opacity 1.6s ease;
+}
+#burst.fade{opacity:0}
+
+/* ============ 残月 ============ */
+.moon-wrap{position:relative;width:150px;height:150px;margin:10px auto 6px;cursor:pointer;user-select:none}
+.moon{
+  width:150px;height:150px;border-radius:50%;position:relative;overflow:hidden;
+  transition:transform 3s cubic-bezier(.4,.1,.2,1), box-shadow 3s ease;
+  box-shadow:0 0 24px rgba(201,168,76,.35);
+}
+.moon-body{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 38% 36%, #fdf6e3 0%, #f0d68a 35%, var(--gold) 62%, #8a7030 100%);
+}
+.moon-shadow{
+  position:absolute;top:-8px;left:26px;width:128px;height:166px;border-radius:50%;
+  background:var(--bg);
+  transition:transform 3s cubic-bezier(.4,.1,.2,1), opacity 3s ease;
+}
+.moon-wrap:hover .moon{transform:rotate(18deg)}
+.moon-wrap:hover .moon-shadow{transform:translateX(-26px)}
+.moon-wrap.rotating .moon,.moon-wrap.done .moon{
+  transform:rotate(360deg);
+  box-shadow:0 0 60px rgba(240,214,138,.85), 0 0 120px rgba(201,168,76,.45);
+}
+.moon-wrap.rotating .moon-shadow,.moon-wrap.done .moon-shadow{
+  transform:translateX(-116px);
+}
+.moon-halo{
+  position:absolute;inset:-40px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle, rgba(240,214,138,.28), transparent 65%);
+  opacity:0;transition:opacity 2.4s ease;
+}
+.moon-wrap.done .moon-halo{opacity:1}
+
+.moon-hint{font-size:.78rem;color:var(--gold);opacity:0;transition:opacity 1s;margin:6px 0 4px;letter-spacing:4px}
+.moon-hint.show{opacity:.75;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.95}}
+
+/* ============ 落英 ============ */
+.petal{position:fixed;width:10px;height:10px;border-radius:50% 0 50% 50%;pointer-events:none;z-index:1;opacity:.55}
+@keyframes fall{0%{transform:translateY(-10vh) rotate(0deg);opacity:.7}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ============ 按钮 ============ */
+button{
+  background:transparent;border:1.5px solid var(--gold);color:var(--gold);
+  padding:10px 30px;margin:10px 6px;cursor:pointer;font-family:inherit;
+  font-size:.95rem;transition:.4s;letter-spacing:3px;border-radius:2px;
+}
+button:hover{background:var(--gold);color:#241a08;box-shadow:0 0 22px rgba(201,168,76,.45)}
+button:disabled{opacity:.28;cursor:not-allowed;pointer-events:none;box-shadow:none}
+
+#s0 h1{font-size:2.1rem;color:var(--ink);opacity:0;transition:opacity 1.6s;letter-spacing:10px}
+#s0 h1.show{opacity:1}
+#s0 .sub{color:var(--purple);font-size:.9rem;margin:8px 0 26px;opacity:0;transition:opacity 1.6s .4s;letter-spacing:2px}
+#s0 .sub.show{opacity:1}
+
+.log-line{text-align:left;padding:5px 0 5px 12px;font-size:.9rem;color:var(--purple);opacity:0;transform:translateX(-10px);transition:opacity .7s,transform .7s;border-left:1px solid rgba(201,168,76,.35)}
+.log-line.show{opacity:1;transform:translateX(0)}
+
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0;text-align:left}
+.profile-grid span{padding:9px 13px;border:1px solid rgba(160,140,200,.28);border-radius:8px;font-size:.9rem;background:rgba(255,255,255,.02)}
+.quote{color:var(--purple);font-style:italic;margin:16px 0;font-size:1rem;letter-spacing:1px}
+.warn{border:1px solid rgba(212,132,154,.6);color:var(--rose);padding:9px;border-radius:8px;font-size:.85rem;margin:12px 0;background:rgba(212,132,154,.06)}
+
+.flower{
+  display:inline-block;width:84px;height:84px;border-radius:50%;
+  border:1.5px solid var(--gold);line-height:82px;margin:12px 10px;
+  cursor:pointer;font-size:1.35rem;color:var(--gold);transition:.45s;
+  background:radial-gradient(circle at 50% 40%, rgba(201,168,76,.10), transparent 70%);
+}
+.flower:hover{background:rgba(201,168,76,.16);transform:scale(1.12);box-shadow:0 0 26px rgba(201,168,76,.4)}
+.flower.wrong{animation:shake .55s;border-color:var(--rose);color:var(--rose)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+
+.tag{display:inline-block;border:1px solid var(--purple);color:var(--purple);padding:5px 14px;margin:5px;border-radius:22px;font-size:.85rem;opacity:0;transform:translateY(12px);transition:.55s}
+.tag.show{opacity:1;transform:translateY(0)}
+
+.seal{
+  display:inline-block;width:74px;height:74px;border:1.5px solid var(--ink);
+  border-radius:10px;line-height:71px;margin:12px 10px;cursor:pointer;
+  font-size:.82rem;color:var(--ink);transition:.45s;letter-spacing:1px;
+}
+.seal:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-3px)}
+.seal.active{background:var(--gold);color:#241a08;border-color:var(--gold);box-shadow:0 0 22px rgba(201,168,76,.5)}
+.seal-detail{text-align:left;font-size:.85rem;margin:12px 0;min-height:30px;color:var(--purple);line-height:1.9}
+
+.err-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--rose);font-size:1.15rem;z-index:40;opacity:0;transition:opacity .35s;pointer-events:none;letter-spacing:2px}
+.err-msg.show{opacity:1}
+
+h2{font-weight:400;letter-spacing:6px;margin-bottom:6px}
+.note{font-size:.82rem;color:var(--purple);opacity:.8;letter-spacing:1px}
+</style>
+<audio id="bgMusic" src="https://videotourl.com/videos/1791440077976-97422d00-4ee8-47e7-9e51-5b227414c91b.mp4" autoplay loop muted playsinline></audio>
+<script>
+// 尝试取消静音（浏览器可能需要用户交互后才能播放带声音的音乐）
+document.addEventListener('DOMContentLoaded', function() {
+  var audio = document.getElementById('bgMusic');
+  if (audio) {
+    audio.play().then(function() {
+      console.log('背景音乐已播放');
+    }).catch(function(e) {
+      console.log('自动播放被阻止，等待用户交互');
+    });
+  }
+});
+// 用户首次点击任意位置时尝试恢复声音
+document.addEventListener('click', function() {
+  var audio = document.getElementById('bgMusic');
+  if (audio) {
+    audio.muted = false;
+    audio.play().catch(function(e) { console.log(e); });
+  }
+}, { once: true });
+</script>
+</head>
+<body>
+
+<canvas id="burst"></canvas>
+
+<div id="terminal">
+
+<!-- S0 残月启封 -->
+<div id="s0">
+  <div class="moon-wrap" id="moonWrap" onclick="rotateMoon()">
+    <div class="moon-halo"></div>
+    <div class="moon">
+      <div class="moon-body"></div>
+      <div class="moon-shadow" id="moonShadow"></div>
+    </div>
+  </div>
+  <p class="moon-hint" id="moonHint">· 轻触残月 令其盈满 ·</p>
+  <h1 id="title">祈 宴</h1>
+  <p class="sub" id="sub">明月宴群山 · 惟许有情知</p>
+  <button id="enterBtn" class="hidden" onclick="goS1()">[ 启 封 ]</button>
+</div>
+
+<!-- S1 琉璃信笺 -->
+<div id="s1" class="hidden">
+  <h2 style="color:var(--purple)">—— 琉璃信笺 ——</h2>
+  <p class="note" style="margin-bottom:16px">月华流转，字迹渐显</p>
+  <div id="logBox"></div>
+</div>
+
+<!-- S2 目标档案 -->
+<div id="s2" class="hidden">
+  <h2 style="color:var(--purple)">—— 目标档案 ——</h2>
+  <div class="profile-grid">
+    <span>年龄 二十二</span><span>星座 天蝎</span>
+    <span>人格 ENFP</span><span>建模 耳坠鸟</span>
+    <span>时段 20:00-23:00</span><span>价目 五十 / 时</span>
+  </div>
+  <p class="quote">明月宴群山，惟许有情知</p>
+  <p class="warn">单前须知：未读须知者，恕不接待</p>
+  <button onclick="goS3()">[ 继续翻阅 ]</button>
+</div>
+
+<!-- S3 花印 -->
+<div id="s3" class="hidden">
+  <h2 style="color:var(--purple)">—— 请选择花印 ——</h2>
+  <p class="note" style="margin:12px 0 6px">三瓣之中，唯有一瓣通往真名</p>
+  <div>
+    <span class="flower" onclick="pickFlower(this,'ETERNAL')">永</span>
+    <span class="flower" onclick="pickFlower(this,'QI_YAN')">宴</span>
+    <span class="flower" onclick="pickFlower(this,'MOMENT')">瞬</span>
+  </div>
+</div>
+
+<!-- S4 风格谱系 -->
+<div id="s4" class="hidden">
+  <h2 style="color:var(--purple)">—— 风格谱系 ——</h2>
+  <div id="tagBox" style="margin:18px 0"></div>
+  <button onclick="goS5()">[ 展开书卷 ]</button>
+</div>
+
+<!-- S5 最终书卷 -->
+<div id="s5" class="hidden">
+  <h2 style="color:var(--purple)">—— 最终书卷 ——</h2>
+  <p class="note" style="margin:12px 0 4px">点齐三枚印章，方可启卷</p>
+  <div id="sealBox">
+    <span class="seal" data-id="1" onclick="pickSeal(this)">知我</span>
+    <span class="seal" data-id="2" onclick="pickSeal(this)">见我</span>
+    <span class="seal" data-id="3" onclick="pickSeal(this)">念我</span>
+  </div>
+  <div class="seal-detail" id="sealDetail"></div>
+  <button id="sealBtn" disabled onclick="goS6()">[ 启 卷 ]</button>
+</div>
+
+<!-- S6 已启卷 -->
+<div id="s6" class="hidden">
+  <h2 style="color:var(--gold)">—— 已启卷 ——</h2>
+  <a href="http://45.207.195.35/" target="_blank" style="background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:10px 30px;margin:10px 6px;cursor:pointer;font-family:inherit;font-size:.95rem;transition:.4s;letter-spacing:3px;border-radius:2px;text-decoration:none;display:inline-block;">[ 在 册 ]</a><br>
+  <a href="https://www.kdocs.cn/l/cqEVIHf65C5Q" target="_blank" style="background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:10px 30px;margin:10px 6px;cursor:pointer;font-family:inherit;font-size:.95rem;transition:.4s;letter-spacing:3px;border-radius:2px;text-decoration:none;display:inline-block;">[ 排单表 ]</a>
+  <a href="https://docs.qq.com/doc/DRmduUXJ6VHRxTGRK" target="_blank" style="background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:10px 30px;margin:10px 6px;cursor:pointer;font-family:inherit;font-size:.95rem;transition:.4s;letter-spacing:3px;border-radius:2px;text-decoration:none;display:inline-block;">[ 单前须知 ]</a>
+  <a href="https://docs.qq.com/doc/DVVdSZ3d3amxqbnJy" target="_blank" style="background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:10px 30px;margin:10px 6px;cursor:pointer;font-family:inherit;font-size:.95rem;transition:.4s;letter-spacing:3px;border-radius:2px;text-decoration:none;display:inline-block;">[ 话术 ]</a>
+  <a href="https://www.kdocs.cn/l/cv70oOjGzEQy" target="_blank" style="background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:10px 30px;margin:10px 6px;cursor:pointer;font-family:inherit;font-size:.95rem;transition:.4s;letter-spacing:3px;border-radius:2px;text-decoration:none;display:inline-block;">[ 头牌卡 ]</a>
+  <a href="https://docs.qq.com/doc/DVWJjZnpDdmhqa1J0" target="_blank" style="background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:10px 30px;margin:10px 6px;cursor:pointer;font-family:inherit;font-size:.95rem;transition:.4s;letter-spacing:3px;border-radius:2px;text-decoration:none;display:inline-block;">[ 板评 ]</a>
+  <p style="margin-top:22px;font-size:.9rem;color:var(--purple)">算来好景只如斯，惟许有情知</p>
+  <button onclick="location.reload()" style="margin-top:14px;font-size:.8rem">[ 重新启封 ]</button>
+</div>
+
+</div>
+
+<div class="err-msg" id="errMsg"></div>
+
+<script>
+/* ================= 星空 ================= */
+(function spawnStars(){
+  for(var i=0;i<70;i++){
+    var s=document.createElement('div');s.className='star';
+    s.style.left=Math.random()*100+'vw';
+    s.style.top=Math.random()*100+'vh';
+    var sz=(Math.random()*1.6+1).toFixed(1);
+    s.style.width=sz+'px';s.style.height=sz+'px';
+    s.style.animation='twinkle '+(2+Math.random()*4).toFixed(1)+'s ease '+(Math.random()*3).toFixed(1)+'s infinite';
+    document.body.appendChild(s);
+  }
+})();
+
+/* ================= 落英 ================= */
+(function spawnPetals(){
+  var colors=['#d4849a','#c9a84c','#e8b4bc','#a08cc8'];
+  for(var i=0;i<14;i++){
+    var p=document.createElement('div');p.className='petal';
+    p.style.left=Math.random()*100+'vw';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    var w=(6+Math.random()*8).toFixed(1)+'px';
+    p.style.width=w;p.style.height=w;
+    p.style.animation='fall '+(9+Math.random()*12).toFixed(1)+'s linear '+(Math.random()*10).toFixed(1)+'s infinite';
+    document.body.appendChild(p);
+  }
+})();
+
+/* ================= 粒子绽放 ================= */
+var cv=document.getElementById('burst');
+var ctx=cv.getContext('2d');
+var particles=[];
+var rings=[];
+var rafId=null;
+
+function sizeCanvas(){
+  cv.width=window.innerWidth;
+  cv.height=window.innerHeight;
+}
+sizeCanvas();
+window.addEventListener('resize',sizeCanvas);
+
+var PALETTE=[
+  [240,214,138],
+  [255,246,224],
+  [212,132,154],
+  [160,140,200],
+  [255,255,255]
+];
+
+function emitBurst(cx,cy,count){
+  for(var i=0;i<count;i++){
+    var ang=Math.random()*Math.PI*2;
+    var sp=1.2+Math.random()*6.2;
+    var c=PALETTE[Math.floor(Math.random()*PALETTE.length)];
+    particles.push({
+      x:cx,y:cy,
+      vx:Math.cos(ang)*sp,
+      vy:Math.sin(ang)*sp-0.9,
+      g:0.018+Math.random()*0.03,
+      drag:0.982,
+      r:0.8+Math.random()*2.6,
+      life:1,
+      decay:0.006+Math.random()*0.011,
+      col:c,
+      flick:Math.random()*6.28
+    });
+  }
+  rings.push({x:cx,y:cy,r:18,life:1,add:5.2});
+  rings.push({x:cx,y:cy,r:6,life:1,add:3.1});
+  if(!rafId) loop();
+}
+
+function loop(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.globalCompositeOperation='lighter';
+
+  for(var i=particles.length-1;i>=0;i--){
+    var p=particles[i];
+    p.vx*=p.drag;p.vy*=p.drag;p.vy+=p.g;
+    p.x+=p.vx;p.y+=p.vy;
+    p.life-=p.decay;p.flick+=0.22;
+    if(p.life<=0){particles.splice(i,1);continue;}
+    var a=p.life*(0.62+0.38*Math.sin(p.flick));
+    var R=p.r*(1+p.life*1.8);
+    var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,R*4);
+    var c=p.col;
+    g.addColorStop(0,'rgba('+c[0]+','+c[1]+','+c[2]+','+a.toFixed(3)+')');
+    g.addColorStop(0.4,'rgba('+c[0]+','+c[1]+','+c[2]+','+(a*0.35).toFixed(3)+')');
+    g.addColorStop(1,'rgba('+c[0]+','+c[1]+','+c[2]+',0)');
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.arc(p.x,p.y,R*4,0,6.2832);ctx.fill();
+    ctx.fillStyle='rgba(255,252,240,'+(a*0.9).toFixed(3)+')';
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r*0.7,0,6.2832);ctx.fill();
+  }
+
+  for(var j=rings.length-1;j>=0;j--){
+    var rg=rings[j];
+    rg.r+=rg.add;rg.life-=0.022;rg.add*=0.95;
+    if(rg.life<=0){rings.splice(j,1);continue;}
+    ctx.strokeStyle='rgba(240,214,138,'+(rg.life*0.55).toFixed(3)+')';
+    ctx.lineWidth=2.2*rg.life+0.4;
+    ctx.beginPath();ctx.arc(rg.x,rg.y,rg.r,0,6.2832);ctx.stroke();
+  }
+
+  ctx.globalCompositeOperation='source-over';
+  if(particles.length||rings.length){
+    rafId=requestAnimationFrame(loop);
+  }else{
+    rafId=null;ctx.clearRect(0,0,cv.width,cv.height);
+    cv.classList.add('fade');
+  }
+}
+
+function moonCenter(){
+  var rect=document.getElementById('moonWrap').getBoundingClientRect();
+  return {x:rect.left+rect.width/2, y:rect.top+rect.height/2};
+}
+
+/* ================= 残月旋转 ================= */
+var moonDone=false;
+function rotateMoon(){
+  if(moonDone)return;
+  moonDone=true;
+  var w=document.getElementById('moonWrap');
+  var hint=document.getElementById('moonHint');
+  hint.classList.remove('show');hint.style.opacity='0';
+  w.classList.add('rotating');
+  var c=moonCenter();
+  emitBurst(c.x,c.y,70);
+  setTimeout(function(){
+    var c2=moonCenter();
+    emitBurst(c2.x,c2.y,150);
+    setTimeout(function(){emitBurst(c2.x,c2.y,60)},260);
+  },2400);
+  setTimeout(function(){
+    w.classList.remove('rotating');
+    w.classList.add('done');
+    document.getElementById('title').classList.add('show');
+    document.getElementById('sub').classList.add('show');
+    setTimeout(function(){document.getElementById('enterBtn').classList.remove('hidden')},1300);
+  },3100);
+}
+setTimeout(function(){
+  if(!moonDone)document.getElementById('moonHint').classList.add('show');
+},1400);
+
+/* ================= 页面切换 ================= */
+function show(id){
+  var panes=document.querySelectorAll('#terminal>div');
+  for(var i=0;i<panes.length;i++)panes[i].classList.add('hidden');
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function goS1(){show('s1');runLog();}
+
+function runLog(){
+  var lines=['启封 · 琉璃信笺','校验 · 身份印记','读取 · 目标档案','解密 · 真名祈宴','载入 · 风格谱系','准备 · 最终书卷'];
+  var box=document.getElementById('logBox');box.innerHTML='';
+  var i=0;
+  var iv=setInterval(function(){
+    if(i<lines.length){
+      var p=document.createElement('div');p.className='log-line';p.textContent=lines[i];
+      box.appendChild(p);
+      setTimeout(function(){p.classList.add('show')},60);
+      i++;
+    }else{
+      clearInterval(iv);
+      setTimeout(function(){show('s2')},900);
+    }
+  },760);
+}
+
+function goS3(){show('s3');}
+
+function pickFlower(el,val){
+  if(val==='QI_YAN'){
+    show('s4');setTimeout(showTags,320);
+  }else{
+    el.classList.add('wrong');showErr('此印非真名');
+    setTimeout(function(){el.classList.remove('wrong')},640);
+  }
+}
+function showErr(msg){
+  var e=document.getElementById('errMsg');e.textContent=msg;e.classList.add('show');
+  setTimeout(function(){e.classList.remove('show')},1600);
+}
+
+function showTags(){
+  var tags=['中高恋','暧昧拉扯','恶趣挑逗','引导型','安全型','大白话','日常犯贱','对抗路','温柔安抚','重力系','偶尔掉落妹宝'];
+  var box=document.getElementById('tagBox');box.innerHTML='';
+  tags.forEach(function(t,i){
+    var s=document.createElement('span');s.className='tag';s.textContent=t;box.appendChild(s);
+    setTimeout(function(){s.classList.add('show')},i*110);
+  });
+}
+function goS5(){show('s5');}
+
+var sealInfo={1:'区区履历尽载于此，愿君先览',2:'无拘一格，应答皆随君行',3:'邂逅为缘，静候再会，遥祝君安'};
+var picked={};
+function pickSeal(el){
+  var id=el.dataset.id;if(picked[id])return;
+  picked[id]=1;el.classList.add('active');
+  var c=el.getBoundingClientRect();
+  emitBurst(c.left+c.width/2,c.top+c.height/2,40);
+  document.getElementById('sealDetail').innerHTML+='<p>『 '+sealInfo[id]+' 』</p>';
+  var n=Object.keys(picked).length;
+  if(n===3){
+    document.getElementById('sealBtn').disabled=false;
+    setTimeout(function(){
+      var b=document.getElementById('sealBtn').getBoundingClientRect();
+      emitBurst(b.left+b.width/2,b.top+b.height/2,90);
+    },220);
+  }
+}
+function goS6(){show('s6');}
+</script>
+</body>
+</html>
