@@ -475,7 +475,7 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
 
 <!-- ===== 底景：同目录 videos.mp4 铺满窗口 ===== -->
 <div class="scene" aria-hidden="true">
-  <video id="bgvideo" autoplay muted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture tabindex="-1">
+  <video id="bgvideo" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" disablepictureinpicture tabindex="-1">
     <source src="videos.mp4" type="video/mp4">
   </video>
 </div>
@@ -657,7 +657,15 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
       var p = bgVideo.play();
       if (p && p.catch) p.catch(function () { /* 等首次交互再补播 */ });
     };
+    bgVideo.muted = true;
+    bgVideo.setAttribute('x5-playsinline', '');
+    bgVideo.setAttribute('x5-video-player-type', 'h5-page');
     tryPlay();
+    // 微信内置浏览器：JSBridge 就绪后才允许无手势播放
+    document.addEventListener('WeixinJSBridgeReady', tryPlay, false);
+    if (window.WeixinJSBridge && WeixinJSBridge.invoke) {
+      WeixinJSBridge.invoke('getNetworkType', {}, tryPlay);
+    }
     bgVideo.addEventListener('loadeddata', tryPlay);
     bgVideo.addEventListener('canplay', tryPlay);
     // iOS / 低电量模式 / 部分浏览器会拒绝自动播放：首次触碰、点击、移动或按键时补播
@@ -670,6 +678,7 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
     };
     document.addEventListener('pointermove', kick);
     document.addEventListener('touchstart', kick, { passive: true });
+    document.addEventListener('touchend', tryPlay, { passive: true });
     document.addEventListener('pointerdown', kick);
     document.addEventListener('keydown', kick);
     document.addEventListener('visibilitychange', function () {
@@ -834,27 +843,10 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
           card.scrollTop -= dy;
           startY = t.clientY;
           startX = t.clientX;
-        } else if (Math.abs(dy) > 64) {
-          go(cur + (dy < 0 ? 1 : -1));
-          startY = t.clientY;
-          startX = t.clientX;
         }
         e.preventDefault();
       }
       return;
-    }
-    if (snowing) {
-      if (Math.abs(dy) > 64 && Math.abs(dy) > Math.abs(dx)) {
-        go(cur + (dy < 0 ? 1 : -1));
-        startY = t.clientY;
-        startX = t.clientX;
-      }
-      e.preventDefault();
-      return;
-    }
-    if (Math.abs(dy) > 64) {
-      go(cur + (dy < 0 ? 1 : -1));
-      startY = t.clientY;
     }
     e.preventDefault();
   }, { passive: false });
