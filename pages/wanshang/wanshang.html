@@ -912,7 +912,7 @@
     scene.add(musicStars);
 
     /* ==========================================================
-       4. 银质观音圣像模型 (优先加载同目录下 angel_silver_version.glb)
+       4. 银质观音圣像模型 (优先加载同目录下 angel-silver-version.glb)
        ========================================================== */
     const angelGroup = new THREE.Group();
     const silverMat = new THREE.MeshPhysicalMaterial({
@@ -958,7 +958,7 @@
     let tearEmitterObject = angelGroup;
     const tearEmitterLocal = new THREE.Vector3(-0.16, 2.12, 0.48);
 
-    // 尝试引入同目录下的 angel_silver_version.glb
+    // 尝试引入同目录下的 angel-silver-version.glb
     loadGLTF(MODEL_ASSETS[0], (gltf) => {
       scene.remove(angelGroup);
       const root = gltf.scene;
@@ -977,7 +977,7 @@
       tearEmitterObject = root;
       tearEmitterLocal.set(-0.16, 6.3, 0.48);
     }, (error) => {
-      console.error('Failed to load angel_silver_version.glb:', error);
+      console.error('Failed to load angel-silver-version.glb:', error);
     });
 
     /* ==========================================================
@@ -1084,7 +1084,7 @@
       dGroup.position.set(Math.cos(angle) * RADIUS, 0, Math.sin(angle) * RADIUS);
       dGroup.lookAt(-1.1, 0, -1.8);
 
-      // 跪拜求法者像 (对应 il_commendatore.glb)
+      // 跪拜求法者像 (对应 il-commendatore.glb)
       const dMat = new THREE.MeshStandardMaterial({ color: 0x1c1815, roughness: 0.88, metalness: 0.22 });
       const body = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.45, 1.15), dMat);
       body.position.set(0, 0.22, -0.15); body.rotation.x = 0.2;
@@ -1096,7 +1096,7 @@
       headM.position.set(0, 1.1, -0.05);
       dGroup.add(headM);
 
-      // 尝试引入同目录下的 il_commendatore.glb
+      // 尝试引入同目录下的 il-commendatore.glb
       loadGLTF(MODEL_ASSETS[1], (gltf) => {
         dGroup.remove(body); dGroup.remove(torsoM); dGroup.remove(headM);
         const devMesh = gltf.scene.clone();
@@ -1119,10 +1119,10 @@
         applyWhiteLineArt(devMesh);
         dGroup.add(devMesh);
       }, (error) => {
-        console.error('Failed to load or decode il_commendatore.glb:', error);
+        console.error('Failed to load or decode il-commendatore.glb:', error);
       });
 
-      // 手中圣杯 (对应 sm_goblet.glb)
+      // 手中圣杯 (对应 sm-goble.glb)
       const cupGroup = new THREE.Group();
       cupGroup.position.set(0, 0.58, 0.52);
       const chaliceMat = new THREE.MeshStandardMaterial({
@@ -1197,7 +1197,7 @@
         return { mesh, material, phaseOffset };
       });
 
-      // 尝试引入同目录下的 sm_goblet.glb
+      // 尝试引入同目录下的 sm-goble.glb
       loadGLTF(MODEL_ASSETS[2], (gltf) => {
         cupGroup.remove(bowl); cupGroup.remove(stem);
         const gobMesh = gltf.scene.clone();

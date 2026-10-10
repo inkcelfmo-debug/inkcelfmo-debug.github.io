@@ -5,9 +5,9 @@ export const PAGE_META = {
 };
 
 export const MODEL_ASSETS = [
-  './angel_silver_version.glb',
-  './il_commendatore.glb',
-  './sm_goblet.glb'
+  './angel-silver-version.glb',
+  './il-commendatore.glb',
+  './sm-goble.glb'
 ];
 
 export const DEVOTEE_SLOTS = [
