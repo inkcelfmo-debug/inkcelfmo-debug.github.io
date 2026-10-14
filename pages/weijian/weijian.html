@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#10161f">
-<title>书信集 · 纬简</title>
+<title>书信集 · 旭真</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231c2733'/%3E%3Cg stroke='%23eaf4fb' stroke-width='6' stroke-linecap='round'%3E%3Cline x1='50' y1='14' x2='50' y2='86'/%3E%3Cline x1='20' y1='32' x2='80' y2='68'/%3E%3Cline x1='20' y1='68' x2='80' y2='32'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Caveat:wght@500;600;700&family=Long+Cang&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap">
 <style>
-/* ============ 书信集 · 纬简 — 冬雪玻璃窗 ============ */
+/* ============ 书信集 · 旭真— 冬雪玻璃窗 ============ */
 :root{
   --ink:#26303c;
   --ink-soft:#4c5866;
@@ -162,7 +162,7 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
 /* 翻页阅读时收起封面文字（内页有自己的卡片标题） */
 .reveal.reading .measure,.reveal.reading .hint{visibility:hidden;opacity:0}
 
-/* ---------- 玻璃上的手写字（纬简）——仅用于量取位置与字体，不直接显示 ---------- */
+/* ---------- 玻璃上的手写字（旭真）——仅用于量取位置与字体，不直接显示 ---------- */
 /* 第三层：文字模板，与白雾同材质（白色低透明度），仅在雾被刷开处显现（遮罩同步更新） */
 .measure{
   position:absolute;inset:0;pointer-events:none;z-index:1;
@@ -495,8 +495,8 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
   <div class="measure" aria-hidden="true">
     <!-- 玻璃上的手写文字 -->
     <div class="writing" id="writing">
-      <div class="big">纬简</div>
-      <div class="sub">龙舌兰-我也想给你描述同样的景色</div>
+      <div class="big">旭真</div>
+      <div class="sub">我也想给你描述同样的景色</div>
     </div>
     <!-- 封面诗句 -->
     <div class="poem" id="poem">
@@ -546,13 +546,12 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
     <div class="meta"><span>当我感到脆弱的时候 //</span></div>
     <div class="rule"></div>
     <div class="kv">
-      <span>姓名：纬简</span>
-      <span>曾名：龙舌兰</span>
+      <span>姓名：旭真</span>
       <span>信息：天秤 20 · 六无</span>
       <span>属性：Le-T</span>
       <span>MBTI：ENTP</span>
-      <span>常驻团：素雪 审眸 雾山影</span>
-      <span>火耳正（非固定发型）</span>
+      <span>常驻团：暂无</span>
+      <span>耳鸟（非固定发型）</span>
     </div>
     <div class="sect">
       <div class="tag">:主风格</div>
@@ -592,7 +591,7 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
       <li>我的风格取决你的回应（话少我发挥会不稳定）</li>
       <li class="mid">You are a gift from the world<br>Love me</li>
       <li>如果单内强硬聊涉三等情况将转为暧昧普</li>
-      <li>不接受人身攻击/辱骂 有事请和我或派派说明</li>
+      <li>接受人身攻击/辱骂 有事请和我或派派说明</li>
       <li>请勿在未经我允许的情况下把本次约会内容与他人公开</li>
       <li>需要回合制（你一句我一句的我接不上来）</li>
       <li>目前婉拒非三无女孩 我怕调戏别人的小老婆被打</li>
@@ -1206,7 +1205,7 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
   });
 
   /* =====================================================================
-     封面雪面：整屏覆雪（连「纬简」与诗句一起）画在 canvas 上，
+     封面雪面：整屏覆雪（连「旭真」与诗句一起）画在 canvas 上，
      笔刷经过的位置把像素擦掉 —— 就是「把雪刷掉、透出后面的字」。
      ===================================================================== */
   var reveal = document.getElementById('reveal');
@@ -1257,14 +1256,14 @@ button:focus-visible{outline:2px solid var(--warm);outline-offset:2px;border-rad
     ctx.shadowColor = passFrost ? 'rgba(255,255,255,.35)' : 'rgba(8,16,28,.62)';
     ctx.shadowBlur = passFrost ? 30 : 12;
     ctx.shadowOffsetY = passFrost ? 0 : 4;
-    line(ctx, '纬简', 0, 0, FAM, bigSize, 500,
+    line(ctx, '旭真', 0, 0, FAM, bigSize, 500,
       'rgba(255,255,255,' + (0.80 * passA).toFixed(3) + ')', bigSize * 0.14, 'center', bigSize * 1.02);
     if (!passFrost) {
       // 灯下晕开的柔光（只在清晰那一遍画）
       ctx.shadowColor = 'rgba(255,255,255,.20)';
       ctx.shadowBlur = 46;
       ctx.shadowOffsetY = 0;
-      line(ctx, '纬简', 0, 0, FAM, bigSize, 500, 'rgba(255,255,255,.18)',
+      line(ctx, '旭真', 0, 0, FAM, bigSize, 500, 'rgba(255,255,255,.18)',
         bigSize * 0.14, 'center', bigSize * 1.02);
     }
     ctx.restore();
