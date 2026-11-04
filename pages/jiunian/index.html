@@ -1,0 +1,3127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ebebec">
+  <meta name="description" content="滚动浏览新版八页演示稿，观看七个月相沿中轴盘旋并回到起始位置。">
+  <title>月球 · 滚动演示</title>
+  <link rel="preload" as="image" href="./assets/ppt-slides/slide-1-base.png" fetchpriority="high">
+  <!-- Deployment: serve HTML with Cache-Control: no-cache; versioned static assets with public, max-age=31536000, immutable. -->
+  <style>
+    :root {
+      color-scheme: light;
+      background: #ebebec;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-width: 320px;
+      scroll-behavior: auto;
+    }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      overflow-x: clip;
+      overflow-y: auto;
+      background: #ebebec;
+    }
+
+    .presentation {
+      position: relative;
+    }
+
+    .interactive-run {
+      position: relative;
+      height: 400svh;
+    }
+
+    .presentation-screen {
+      position: sticky;
+      top: 0;
+      display: grid;
+      width: 100%;
+      height: 100svh;
+      place-items: center;
+      background: #fff;
+      isolation: isolate;
+    }
+
+    .document-slide {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: min(88vw, 156.444444svh);
+      left: calc((100vw - 100%) / 2);
+      margin-inline: auto;
+      aspect-ratio: 16 / 9;
+      background: #ebebec;
+    }
+
+    .document-slide--fifth {
+      aspect-ratio: auto;
+      min-height: 100svh;
+      margin-top: -100svh;
+      background: #133fff;
+      z-index: 2;
+      isolation: isolate;
+    }
+
+    .document-slide--notes {
+      z-index: 21;
+    }
+
+    .document-slide--last::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+      background: linear-gradient(to bottom, transparent 0%, #fff 100%);
+      pointer-events: none;
+    }
+
+    .document-slide > img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+
+    .order-notes {
+      position: absolute;
+      z-index: 2;
+      inset: 9% 10%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(14px, 1.8svh, 24px);
+      color: rgba(255, 255, 255, .96);
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      text-shadow: 0 0 8px rgba(255, 255, 255, .48), 0 0 20px rgba(197, 220, 255, .24);
+    }
+
+    .order-notes__header {
+      display: grid;
+      gap: 9px;
+    }
+
+    .order-notes__eyebrow {
+      color: rgba(255, 255, 255, .72);
+      font-family: "Rajdhani", "Bahnschrift", "Arial Narrow", sans-serif;
+      font-size: clamp(10px, .9vw, 13px);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .order-notes__title {
+      margin: 0;
+      font-size: clamp(26px, 2.25vw, 38px);
+      font-weight: 300;
+      letter-spacing: .16em;
+    }
+
+    .order-notes__rule {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .08));
+      box-shadow: 0 0 8px rgba(255, 255, 255, .35);
+    }
+
+    .order-notes__styles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(12px, 2vw, 28px);
+    }
+
+    .order-notes__style {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding-left: 12px;
+      border-left: 1px solid rgba(255, 255, 255, .46);
+      font-size: clamp(14px, 1.08vw, 18px);
+      line-height: 1.65;
+    }
+
+    .order-notes__style-label {
+      color: rgba(255, 255, 255, .7);
+      font-size: .78em;
+      letter-spacing: .14em;
+    }
+
+    .order-notes__list {
+      display: grid;
+      gap: clamp(9px, 1.35svh, 16px);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .order-notes__list li {
+      display: grid;
+      grid-template-columns: 2.8em minmax(0, 1fr);
+      align-items: start;
+      font-size: clamp(13px, 1.08vw, 18px);
+      font-weight: 300;
+      line-height: 1.65;
+    }
+
+    .order-notes__number {
+      color: rgba(255, 255, 255, .72);
+      font-family: "Rajdhani", "Bahnschrift", "Arial Narrow", sans-serif;
+      font-size: .9em;
+      letter-spacing: .08em;
+    }
+
+    .order-notes--last {
+      inset: 12% 12%;
+      top: calc(12% - min(49.5vw, 88svh));
+      gap: clamp(10px, 1.4svh, 18px);
+      justify-content: flex-start;
+      padding-top: clamp(10px, 3svh, 22px);
+    }
+
+    .order-notes--first {
+      justify-content: flex-start;
+      padding-top: clamp(10px, 3svh, 22px);
+      transform: translateY(clamp(-360px, -48svh, -300px));
+    }
+
+    .image-shelves {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(8px, 1.1vw, 14px);
+    }
+
+    .image-shelf {
+      min-width: 0;
+      border: 1px solid rgba(255, 255, 255, .36);
+      border-radius: 3px;
+      background: rgba(15, 39, 135, .14);
+      box-shadow: inset 0 0 18px rgba(255, 255, 255, .035);
+      transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .image-shelf[open] {
+      grid-column: 1 / -1;
+      border-color: rgba(255, 255, 255, .68);
+      background: rgba(15, 39, 135, .24);
+      box-shadow: 0 0 16px rgba(255, 255, 255, .1), inset 0 0 18px rgba(255, 255, 255, .05);
+    }
+
+    .image-shelf__title {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      color: rgba(255, 255, 255, .96);
+      cursor: pointer;
+      font-size: clamp(13px, 1vw, 16px);
+      font-weight: 400;
+      letter-spacing: .12em;
+      list-style: none;
+      text-shadow: inherit;
+    }
+
+    .image-shelf__title::-webkit-details-marker {
+      display: none;
+    }
+
+    .image-shelf__title::after {
+      content: "+";
+      color: rgba(255, 255, 255, .72);
+      font-family: "Rajdhani", "Bahnschrift", "Arial Narrow", sans-serif;
+      font-size: 1.35em;
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .image-shelf[open] .image-shelf__title::after {
+      content: "−";
+    }
+
+    .image-shelf__title:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, .9);
+      outline-offset: -3px;
+    }
+
+    .image-shelf__content {
+      min-height: clamp(72px, 12svh, 110px);
+      margin: 0 10px 10px;
+      border: 1px dashed rgba(255, 255, 255, .32);
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      color: rgba(255, 255, 255, .62);
+      font-size: clamp(11px, .85vw, 13px);
+      font-weight: 300;
+      letter-spacing: .08em;
+      text-align: center;
+    }
+
+    .image-shelf__content img {
+      display: block;
+      width: 140px;
+      max-width: 100%;
+      max-height: 180px;
+      height: auto;
+      margin: 0 auto;
+      object-fit: contain;
+    }
+
+    .image-shelf__gallery {
+      display: flex;
+      max-height: 65svh;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .image-preview {
+      display: grid;
+      min-width: 0;
+      place-items: center;
+      padding: 5px;
+      border: 1px solid rgba(255, 255, 255, .28);
+      background: rgba(8, 24, 87, .28);
+      cursor: zoom-in;
+    }
+
+    .image-preview:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, .9);
+      outline-offset: 2px;
+    }
+
+    .image-lightbox {
+      position: fixed;
+      inset: auto;
+      left: calc(var(--lightbox-viewport-left, 0px) + var(--lightbox-viewport-width, 100vw) / 2);
+      top: calc(var(--lightbox-viewport-top, 0px) + var(--lightbox-viewport-height, 100svh) / 2);
+      margin: 0;
+      width: min(calc(var(--lightbox-viewport-width, 100vw) - 24px), 1100px);
+      max-width: none;
+      max-height: calc(var(--lightbox-viewport-height, 100svh) - 24px);
+      padding: 42px 12px 12px;
+      overflow: auto;
+      border: 1px solid rgba(255, 255, 255, .32);
+      background: rgba(7, 12, 32, .96);
+      color: #fff;
+      transform: translate(-50%, -50%);
+    }
+
+    .image-lightbox::backdrop {
+      background: rgba(0, 0, 0, .82);
+      backdrop-filter: blur(5px);
+    }
+
+    .image-lightbox__image {
+      display: block;
+      width: auto;
+      max-width: 100%;
+      max-height: calc(var(--lightbox-viewport-height, 100svh) - 66px);
+      margin: 0 auto;
+      object-fit: contain;
+    }
+
+    .image-lightbox__close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      min-width: 36px;
+      min-height: 36px;
+      border: 1px solid rgba(255, 255, 255, .5);
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .document-slide--fifth > img {
+      right: auto;
+      bottom: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .transition-fifth-preview {
+      position: absolute;
+      z-index: 3;
+      display: block;
+      overflow: hidden;
+      background: #133fff;
+      isolation: isolate;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .transition-fifth-preview > img {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .particle-target-source {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .portrait-stack {
+      display: none;
+    }
+
+    .slide-frame {
+      position: relative;
+      z-index: 1;
+      --slide-frame-base-scale: .88;
+      width: min(100vw, 177.777778svh);
+      height: min(100svh, 56.25vw);
+      overflow: clip;
+      background: #fff;
+      transform: scale(var(--slide-frame-scale, var(--slide-frame-base-scale)));
+    }
+
+    .white-spine {
+      position: absolute;
+      z-index: 7;
+      inset: 0 auto 0 50%;
+      width: min(39vw, 69.333svh);
+      border: 1px solid rgba(255, 255, 255, .84);
+      background: #fff;
+      box-shadow:
+        0 0 0 1px rgba(67, 81, 116, .035),
+        inset 0 0 38px rgba(255, 255, 255, .12);
+      pointer-events: none;
+      transform: translateX(-50%);
+      transition: width 320ms ease;
+    }
+
+    .slide-image {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(.92);
+    }
+
+    .slide-image.is-active { visibility: visible; }
+    .slide-image:nth-child(n+2):nth-child(-n+7) { opacity: 0; }
+
+    .hands-transition-layer {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .falling-ppt-star {
+      position: fixed;
+      z-index: 110;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 0;
+      height: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transform-origin: center;
+      will-change: left, top, width, opacity, transform;
+    }
+
+    .transition-hand {
+      position: absolute;
+      display: block;
+      height: auto;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .scroll-cue {
+      display: none;
+    }
+
+    .identity-quote {
+      display: none;
+      color: #000;
+    }
+
+    .reference-layout {
+      position: absolute;
+      z-index: 5;
+      top: 50%;
+      left: 50%;
+      width: min(100vw, 177.777778svh);
+      height: min(100svh, 56.25vw);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      background: transparent;
+      transform: translate(-50%, -50%) scale(.88);
+    }
+
+    .reference-layout img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+
+    .ring-occlusion {
+      position: absolute;
+      z-index: 7;
+      top: 50%;
+      left: 50%;
+      width: min(100vw, 177.777778svh);
+      height: min(100svh, 56.25vw);
+      opacity: 0;
+      pointer-events: none;
+      background: url("./assets/ppt-slides/slide-2-web-art.png") center / 100% 100% no-repeat;
+      clip-path: ellipse(26% 44% at 50% 50%);
+      transform: translate(-50%, -50%) scale(.88);
+    }
+
+    .identity-copy {
+      position: absolute;
+      z-index: 30;
+      top: 50%;
+      left: 50%;
+      width: min(100vw, 177.777778svh);
+      height: min(100svh, 56.25vw);
+      overflow: hidden;
+      color: #101c40;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(.88);
+    }
+
+    .identity-copy.is-visible,
+    .identity-copy.is-exiting {
+      opacity: 1;
+    }
+
+    .identity-copy p,
+    .identity-copy h2 {
+      margin: 0;
+    }
+
+    .identity-meta,
+    .identity-role {
+      position: absolute;
+      left: 25%;
+      writing-mode: horizontal-tb;
+      font-family: "Source Han Sans Japanese", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      font-size: clamp(12px, 1.35vw, 17px);
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.4;
+      font-feature-settings: "palt" 1;
+    }
+
+    .identity-meta {
+      top: 56%;
+    }
+
+    .identity-role {
+      top: 73%;
+    }
+
+    .identity-name {
+      position: absolute;
+      left: 11%;
+      width: 22%;
+      font-family: "Source Han Sans Japanese", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      font-size: clamp(24px, 3.2vw, 42px);
+      font-weight: 300;
+      letter-spacing: -.04em;
+      line-height: 1.1;
+      white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .28);
+    }
+
+    .identity-name-bai-xiao {
+      top: 53%;
+      --exit-delay: .24s;
+    }
+
+    .identity-name-wizard {
+      top: 70%;
+      --exit-delay: .4s;
+    }
+
+    .identity-quote {
+      --entry-delay: .28s;
+      --exit-delay: .4s;
+    }
+
+    .identity-copy .identity-character {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(.65em);
+    }
+
+    .identity-copy.is-visible .identity-character {
+      animation: identity-rise-in .72s cubic-bezier(.2, .7, .25, 1) both;
+      animation-delay: calc(var(--character-delay, 0s) + var(--entry-delay, 0s));
+    }
+
+    .identity-meta { --entry-delay: 0s; --exit-delay: 0s; }
+    .identity-role { --entry-delay: .12s; --exit-delay: .12s; }
+    .identity-name-bai-xiao { --entry-delay: .2s; }
+    .identity-name-wizard { --entry-delay: .28s; }
+
+    .identity-copy.is-exiting .identity-character {
+      animation: identity-fade-out .42s ease-in both;
+      animation-delay: var(--exit-delay, 0s);
+    }
+
+    @keyframes identity-rise-in {
+      from { opacity: 0; transform: translateY(.65em); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes identity-fade-out {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-.35em); }
+    }
+
+    .profile-intro {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      color: #182449;
+      pointer-events: none;
+      animation: profile-reveal 1.1s cubic-bezier(.2, .7, .25, 1) both;
+    }
+
+    .profile-text-top-layer {
+      position: absolute;
+      z-index: 30;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .profile-text-top-layer .profile-intro {
+      inset: auto;
+      margin: 0;
+      animation: none;
+      transform-origin: top left;
+    }
+
+    .profile-kicker,
+    .profile-label,
+    .profile-number {
+      font-family: "Rajdhani", "Bahnschrift", "Arial Narrow", sans-serif;
+      font-weight: 400;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .profile-kicker {
+      position: absolute;
+      top: 12%;
+      left: 5.5%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(24, 36, 73, .66);
+      font-size: clamp(9px, 1.05vw, 13px);
+    }
+
+    .profile-kicker::before {
+      width: 24px;
+      height: 1px;
+      background: currentColor;
+      content: "";
+    }
+
+    .profile-name {
+      position: absolute;
+      top: 15%;
+      left: 5%;
+      margin: 0;
+      font-family: "Rajdhani", "Bahnschrift", "Arial Narrow", "Segoe UI Light", sans-serif;
+      width: 38%;
+      font-size: clamp(70px, 12vw, 150px);
+      font-weight: 300;
+      letter-spacing: -.055em;
+      line-height: .82;
+    }
+
+    .profile-rule {
+      position: absolute;
+      top: 36%;
+      left: 5.5%;
+      width: min(28%, 230px);
+      height: 1px;
+      background: linear-gradient(90deg, rgba(24, 36, 73, .56), transparent);
+    }
+
+    .profile-details {
+      position: absolute;
+      top: 15%;
+      right: 2%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 14px;
+      width: min(23%, 260px);
+    }
+
+    .profile-item {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .profile-item:first-child {
+      grid-column: 1 / -1;
+      grid-template-columns: 44px minmax(0, 1fr);
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .profile-label {
+      color: rgba(24, 36, 73, .54);
+      font-size: 9px;
+      line-height: 1.2;
+    }
+
+    .profile-value {
+      overflow: visible;
+      color: #182449;
+      font-size: clamp(10px, 1.1vw, 13px);
+      font-weight: 400;
+      letter-spacing: .035em;
+      line-height: 1.3;
+      text-overflow: clip;
+      white-space: nowrap;
+    }
+
+    .profile-number {
+      position: absolute;
+      top: 3%;
+      right: 2%;
+      color: rgba(24, 36, 73, .34);
+      font-size: 10px;
+      writing-mode: vertical-rl;
+    }
+
+    @keyframes profile-reveal {
+      from { transform: translate3d(0, 18px, 0); }
+      to { transform: translate3d(0, 0, 0); }
+    }
+
+    .piece-layer {
+      position: absolute;
+      z-index: 2;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .piece {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      transform-origin: 50% 50%;
+      will-change: transform;
+      filter: drop-shadow(0 10px 14px rgba(20, 28, 55, .18));
+    }
+
+    .slide-paper {
+      position: absolute;
+      top: -7.037037%;
+      left: 30.416667%;
+      width: 39.166667%;
+      height: 115.740741%;
+      background: #fff;
+      pointer-events: none;
+    }
+
+    .sphere-lens {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        radial-gradient(ellipse 62% 66% at 50% 46%, rgba(255, 255, 255, .22) 0%, rgba(255, 255, 255, 0) 60%),
+        radial-gradient(ellipse 74% 78% at 50% 50%, rgba(18, 26, 48, 0) 52%,         rgba(18, 26, 48, .12) 78%, rgba(12, 18, 36, .34) 100%),
+                linear-gradient(180deg, rgba(12, 18, 36, .1) 0%, rgba(12, 18, 36, 0) 22%, rgba(12, 18, 36, 0) 74%, rgba(12, 18, 36, .14) 100%);
+      box-shadow:
+                inset 0 0 12vmin rgba(12, 18, 36, .2),
+        inset 0 -3vmin 9vmin rgba(255, 255, 255, .12);
+    }
+
+    .particle-canvas {
+      position: absolute;
+      z-index: 4;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .space-canvas {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .moon-process {
+      position: fixed;
+      z-index: 130;
+      inset: 0;
+      display: block;
+      pointer-events: none;
+    }
+
+    .falling-star-trail {
+      position: fixed;
+      z-index: 109;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 0;
+      opacity: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 247, 191, .08),
+        rgba(255, 247, 191, .62) 55%,
+        rgba(255, 247, 191, .12)
+      );
+      box-shadow: 0 0 9px rgba(255, 231, 153, .48);
+      transform: translateX(-50%);
+      transform-origin: top center;
+      will-change: left, top, height, opacity;
+    }
+
+    .starfall-layer {
+      position: absolute;
+      z-index: 15;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .falling-star {
+      position: absolute;
+      width: var(--star-size);
+      height: var(--star-size);
+      color: #fff;
+      background: currentColor;
+      clip-path: polygon(50% 0, 61% 35%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 39% 36%);
+      filter: drop-shadow(0 0 5px rgba(255, 255, 255, .95))
+        drop-shadow(0 0 12px rgba(107, 174, 255, .9));
+      animation: star-fall var(--star-duration) cubic-bezier(.18, .72, .28, 1) var(--star-delay) both;
+    }
+
+    .click-ripple {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(105, 164, 255, .9);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(105, 164, 255, .65), inset 0 0 8px rgba(255, 255, 255, .5);
+      pointer-events: none;
+      animation: click-ripple-expand .8s ease-out both;
+    }
+
+    @keyframes click-ripple-expand {
+      from { opacity: .95; scale: .35; }
+      to { opacity: 0; scale: 5; }
+    }
+
+    .is-clicked {
+      animation: component-click-float .9s cubic-bezier(.2, .7, .25, 1);
+    }
+
+    @keyframes component-click-float {
+      0%, 100% {
+        filter: drop-shadow(0 0 0 rgba(100, 169, 255, 0));
+        translate: 0 0;
+      }
+      28% {
+        filter: drop-shadow(0 0 12px rgba(100, 169, 255, .95));
+        translate: 0 -9px;
+      }
+      62% {
+        filter: drop-shadow(0 0 6px rgba(100, 169, 255, .55));
+        translate: 0 -4px;
+      }
+    }
+
+    @keyframes star-fall {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(.25);
+      }
+      12% {
+        opacity: 1;
+        transform: translate3d(calc(var(--star-drift) * .12), -10px, 0) rotate(25deg) scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--star-drift), var(--star-fall), 0) rotate(240deg) scale(.2);
+      }
+    }
+
+    .phase-moon {
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
+      width: var(--moon-width);
+      height: var(--moon-height);
+      object-fit: fill;
+      transform: translate(-50%, -50%);
+      will-change: top, left, width, height, opacity, filter;
+    }
+
+    @media (max-width: 700px) {
+      .falling-star {
+        animation-duration: calc(var(--star-duration) * 1.5);
+      }
+
+      .order-notes {
+        inset: 8% 7%;
+        gap: clamp(12px, 1.8svh, 18px);
+      }
+
+      .order-notes__title {
+        font-size: clamp(23px, 6vw, 32px);
+      }
+
+      .order-notes__styles {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 9px;
+      }
+
+      .order-notes__style {
+        font-size: clamp(13px, 3.6vw, 16px);
+      }
+
+      .order-notes__list {
+        gap: clamp(8px, 1.25svh, 12px);
+      }
+
+      .order-notes__list li {
+        font-size: clamp(12px, 3.35vw, 15px);
+        line-height: 1.55;
+      }
+
+      .order-notes--last {
+        inset: 10% 8%;
+        top: calc(10% - 100svh);
+        gap: clamp(8px, 1.2svh, 12px);
+      }
+
+      .image-shelves {
+        gap: 6px;
+      }
+
+      .image-shelf__title {
+        min-height: 38px;
+        justify-content: center;
+        padding: 8px 5px;
+        font-size: clamp(11px, 3.2vw, 14px);
+        letter-spacing: .04em;
+      }
+
+      .image-shelf__title::after {
+        font-size: 1.1em;
+      }
+
+      .image-shelf__content {
+        min-height: 72px;
+        margin: 0 6px 6px;
+        padding: 8px 4px;
+        font-size: 10px;
+        letter-spacing: 0;
+      }
+
+      .document-slide {
+        width: 94vw;
+        left: 0;
+      }
+
+      .slide-frame {
+        width: 100vw;
+        height: 56.25vw;
+        --slide-frame-base-scale: .94;
+        transform: translateY(-7svh) scale(var(--slide-frame-scale, var(--slide-frame-base-scale)));
+      }
+
+      .profile-intro {
+        width: auto;
+      }
+
+      .profile-kicker { top: 10%; }
+
+      .profile-name {
+        top: 14%;
+        width: 30%;
+        font-size: clamp(38px, 12vw, 52px);
+      }
+
+      .profile-rule {
+        top: 29%;
+        width: 24%;
+      }
+
+      .profile-details {
+        top: 12%;
+        right: 2%;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 5px;
+        width: 28%;
+      }
+
+      .profile-item:first-child {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2px;
+      }
+
+      .profile-label {
+        font-size: 8px;
+      }
+
+      .profile-value {
+        overflow: visible;
+        font-size: 9px;
+        text-overflow: clip;
+        white-space: normal;
+      }
+
+      .profile-item:not(:first-child) {
+        grid-template-columns: 1fr auto;
+        align-items: baseline;
+        gap: 5px;
+      }
+
+      .white-spine {
+        transform: translateX(-50%);
+      }
+
+      .reference-layout {
+        width: 100vw;
+        height: 56.25vw;
+        transform: translate(-50%, calc(-50% - 7svh)) scale(.94);
+      }
+
+      .ring-occlusion {
+        width: 100vw;
+        height: 56.25vw;
+        transform: translate(-50%, calc(-50% - 7svh)) scale(.94);
+      }
+
+      .identity-copy {
+        width: 100vw;
+        height: 56.25vw;
+        transform: translate(-50%, calc(-50% - 7svh)) scale(.94);
+      }
+
+      .identity-meta,
+      .identity-role {
+        left: 25%;
+        font-size: clamp(9px, 2.7vw, 12px);
+      }
+
+      .identity-meta { top: 54%; }
+      .identity-role { top: 71%; }
+
+      .identity-name {
+        left: 11%;
+        width: 22%;
+        font-size: clamp(16px, 4.4vw, 24px);
+        letter-spacing: -.04em;
+      }
+
+      .identity-name-bai-xiao { top: 52%; }
+      .identity-name-wizard { top: 69%; }
+    }
+
+    @media (orientation: landscape) and (max-height: 520px) {
+      .order-notes {
+        inset: 7% 9%;
+        gap: 8px;
+      }
+
+      .order-notes__header {
+        gap: 4px;
+      }
+
+      .order-notes__title {
+        font-size: clamp(20px, 5svh, 28px);
+      }
+
+      .order-notes__styles {
+        gap: 14px;
+      }
+
+      .order-notes__style,
+      .order-notes__list li {
+        font-size: clamp(12px, 2.7svh, 15px);
+      }
+
+      .order-notes__list {
+        gap: 5px;
+      }
+
+      .order-notes--last {
+        inset: 9% 10%;
+        gap: 6px;
+      }
+
+      .image-shelf__title {
+        min-height: 32px;
+        padding: 6px 9px;
+        font-size: clamp(11px, 2.4svh, 14px);
+      }
+
+      .image-shelf__content {
+        min-height: 48px;
+        margin-bottom: 6px;
+        padding: 6px;
+        font-size: 10px;
+      }
+
+      .slide-frame {
+        transform: none;
+      }
+
+      .white-spine {
+        width: min(28vw, 34svh);
+      }
+
+      .reference-layout,
+      .ring-occlusion,
+      .identity-copy {
+        transform: translate(-50%, -50%);
+      }
+
+      .profile-name {
+        font-size: clamp(46px, 15svh, 70px);
+      }
+
+      .profile-details {
+        width: min(29%, 240px);
+      }
+
+      .identity-meta,
+      .identity-role {
+        font-size: clamp(12px, 3.2svh, 16px);
+      }
+
+      .identity-name {
+        font-size: clamp(30px, 9svh, 40px);
+      }
+    }
+
+    @media (max-width: 700px) and (orientation: portrait) {
+      .document-slide {
+        width: 100%;
+        height: 100svh;
+        aspect-ratio: auto;
+        overflow: hidden;
+      }
+
+      .document-slide > img {
+        object-fit: cover;
+      }
+
+      .document-slide--fifth > img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .document-slide--fifth {
+        background: #133fff;
+      }
+
+      .slide-frame.is-fifth-artwork {
+        background: #133fff;
+      }
+
+      .slide-frame.is-fifth-artwork .slide-image.is-active {
+        object-fit: contain;
+      }
+
+      .slide-frame {
+        width: 100%;
+        height: 100svh;
+        transform: none;
+      }
+
+      .slide-frame.is-landscape-artwork {
+        height: auto;
+        aspect-ratio: 16 / 9;
+      }
+
+      .slide-image {
+        object-fit: cover;
+        transform: none;
+      }
+
+      .slide-image:first-child {
+        object-fit: contain;
+      }
+
+      .scroll-cue {
+        position: fixed;
+        z-index: 12;
+        bottom: 5svh;
+        left: 50%;
+        display: block;
+        width: 2px;
+        height: 38px;
+        background: linear-gradient(to bottom, rgba(24, 36, 73, 0), rgba(24, 36, 73, .9));
+        animation: scroll-cue-blink 1.2s ease-in-out infinite;
+        pointer-events: none;
+        transform: translateX(-50%);
+      }
+
+      .profile-intro.is-landscape-artwork .profile-kicker {
+        top: 8%;
+        left: 8%;
+        font-size: 10px;
+      }
+
+      .profile-intro.is-landscape-artwork .profile-name {
+        top: 13%;
+        left: 7%;
+        width: 54%;
+        font-size: clamp(60px, 17vw, 76px);
+      }
+
+      .profile-intro.is-landscape-artwork .profile-rule {
+        top: 30%;
+        left: 8%;
+        width: 84%;
+      }
+
+      .profile-intro.is-landscape-artwork .profile-details {
+        top: auto;
+        right: auto;
+        bottom: 7%;
+        left: 8%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px 16px;
+        width: 84%;
+      }
+
+      .profile-intro.is-landscape-artwork .profile-item:first-child {
+        grid-column: 1 / -1;
+        grid-template-columns: 42px minmax(0, 1fr);
+        align-items: baseline;
+        gap: 7px;
+      }
+
+      .profile-intro.is-landscape-artwork .profile-label {
+        font-size: 9px;
+      }
+
+      .profile-intro.is-landscape-artwork .profile-value {
+        font-size: 12px;
+      }
+
+      .profile-intro.is-landscape-artwork .profile-item:not(:first-child) {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .profile-intro.is-landscape-artwork .profile-number {
+        top: 8%;
+        right: 8%;
+        font-size: 9px;
+      }
+
+      #profile-intro.is-landscape-artwork {
+        visibility: hidden;
+      }
+
+      .scroll-cue::after {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 7px;
+        height: 7px;
+        border-right: 1px solid #182449;
+        border-bottom: 1px solid #182449;
+        content: "";
+        transform: translateX(-50%) rotate(45deg);
+      }
+
+      @keyframes scroll-cue-blink {
+        0%, 100% { opacity: calc(var(--cue-opacity, 1) * .35); }
+        50% { opacity: var(--cue-opacity, 1); }
+      }
+
+      .white-spine {
+        width: min(23svw, 92px);
+      }
+
+      .reference-layout,
+      .ring-occlusion,
+      .identity-copy {
+        width: 100%;
+        height: 100svh;
+        transform: translate(-50%, -50%);
+      }
+
+      .reference-layout img {
+        object-fit: cover;
+      }
+
+      .ring-occlusion {
+        background-size: cover;
+        clip-path: ellipse(38% 29% at 50% 50%);
+      }
+
+      .profile-intro {
+        width: auto;
+      }
+
+      .profile-kicker {
+        top: 12%;
+        left: 8%;
+        font-size: 11px;
+      }
+
+      .profile-name {
+        top: 19%;
+        left: 8%;
+        width: 84%;
+        font-size: clamp(68px, 21vw, 100px);
+      }
+
+      .profile-rule {
+        top: 34%;
+        left: 8%;
+        width: 84%;
+      }
+
+      .profile-details {
+        top: 41%;
+        right: auto;
+        left: 8%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 14px;
+        width: 84%;
+      }
+
+      .profile-item:first-child {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .profile-label {
+        font-size: 10px;
+      }
+
+      .profile-value {
+        font-size: clamp(12px, 3.5vw, 15px);
+      }
+
+      .profile-item:not(:first-child) {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .profile-number {
+        top: 12%;
+        right: 8%;
+      }
+
+      .identity-meta,
+      .identity-role {
+        left: 54%;
+        font-size: clamp(12px, 3.8vw, 16px);
+      }
+
+      .identity-meta { top: 75%; }
+      .identity-role { top: 84%; }
+
+      .identity-name {
+        left: 12%;
+        width: 38%;
+        font-size: clamp(26px, 8vw, 42px);
+      }
+
+      .identity-name-bai-xiao { top: 75%; }
+      .identity-name-wizard { top: 84%; }
+
+      .identity-copy {
+        display: grid;
+        grid-template-areas:
+          "bai meta"
+          "wizard role";
+        grid-template-columns: auto auto;
+        align-content: end;
+        justify-content: start;
+        gap: 8px 14px;
+        overflow: visible;
+        padding: 0 24% 7% 7%;
+      }
+
+      .identity-copy .identity-meta,
+      .identity-copy .identity-role,
+      .identity-copy .identity-name {
+        position: static;
+        top: auto;
+        left: auto;
+        width: auto;
+        align-self: end;
+      }
+
+      .identity-copy .identity-meta {
+        grid-area: meta;
+        font-size: clamp(10px, 2.8vw, 13px);
+      }
+
+      .identity-copy .identity-role {
+        grid-area: role;
+        font-size: clamp(10px, 2.8vw, 13px);
+      }
+
+      .identity-copy .identity-name {
+        font-size: clamp(22px, 6vw, 32px);
+      }
+
+      .identity-copy .identity-name-bai-xiao { grid-area: bai; }
+      .identity-copy .identity-name-wizard { grid-area: wizard; }
+
+      .identity-quote {
+        position: absolute;
+        top: 50%;
+        right: 7%;
+        display: block;
+        height: 86svh;
+        max-height: 700px;
+        margin: 0;
+        font-size: clamp(13px, 3.8vw, 17px);
+        letter-spacing: .12em;
+        line-height: 1.8;
+        white-space: nowrap;
+        writing-mode: vertical-rl;
+        transform: translateY(-50%);
+      }
+
+      .presentation-screen {
+        position: sticky;
+        top: 0;
+        display: grid;
+        height: 100svh;
+      }
+
+      .portrait-stack {
+        display: none;
+      }
+
+      .portrait-page {
+        position: relative;
+        display: grid;
+        min-height: 100svh;
+        overflow: hidden;
+        place-items: center;
+        background: #ebebec;
+        cursor: pointer;
+        isolation: isolate;
+      }
+
+      .portrait-page-art {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .document-slide--notes {
+        overflow: visible;
+        z-index: 115;
+      }
+
+      .moon-process {
+        z-index: 110;
+      }
+
+      .order-notes--first,
+      .order-notes--last {
+        right: 7%;
+        bottom: auto;
+        left: 7%;
+        top: 50%;
+        max-height: none;
+        overflow: visible;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        transform: translateY(-50%);
+        gap: 12px;
+      }
+
+      .order-notes--first {
+        transform: translateY(-50%);
+      }
+
+      .order-notes--first .order-notes__header,
+      .order-notes--last .order-notes__header {
+        gap: 4px;
+      }
+
+      .order-notes--first .order-notes__eyebrow,
+      .order-notes--last .order-notes__eyebrow {
+        font-size: 9px;
+      }
+
+      .order-notes--first .order-notes__title,
+      .order-notes--last .order-notes__title {
+        font-size: clamp(20px, 5.5vw, 25px);
+      }
+
+      .order-notes--first .order-notes__styles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .order-notes--first .order-notes__style {
+        gap: 4px;
+        padding-left: 7px;
+        font-size: clamp(11px, 3.2vw, 13px);
+        line-height: 1.45;
+      }
+
+      .order-notes--first .order-notes__list,
+      .order-notes--last .order-notes__list {
+        gap: 8px;
+      }
+
+      .order-notes--first .order-notes__list li,
+      .order-notes--last .order-notes__list li {
+        grid-template-columns: 2.4em minmax(0, 1fr);
+        font-size: clamp(12px, 3.5vw, 14px);
+        line-height: 1.5;
+      }
+
+      .order-notes--last .image-shelves {
+        gap: 5px;
+      }
+
+      .order-notes--last .image-shelf__title {
+        min-height: 34px;
+        padding: 6px 4px;
+        font-size: 11px;
+      }
+
+      .order-notes--last .image-shelf__content {
+        min-height: 50px;
+        margin: 0 4px 4px;
+        padding: 6px 4px;
+      }
+
+      .order-notes--last .image-shelf__gallery {
+        max-height: 44svh;
+        gap: 8px;
+      }
+
+      .order-notes--last .image-shelf__content img {
+        width: clamp(88px, 25vw, 120px);
+        max-height: 150px;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .portrait-moon-orbit {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        left: 50%;
+        width: min(78vw, 62svh);
+        aspect-ratio: 1;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        animation: portrait-moon-revolution 32s linear infinite;
+      }
+
+      .portrait-phase-moon {
+        position: absolute;
+        width: clamp(34px, 13vw, 54px);
+        height: auto;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 6px rgba(18, 26, 48, .2));
+        pointer-events: auto;
+      }
+
+      .portrait-phase-moon:nth-child(1) { top: 50%; left: 100%; }
+      .portrait-phase-moon:nth-child(2) { top: 11%; left: 81%; }
+      .portrait-phase-moon:nth-child(3) { top: 0; left: 50%; }
+      .portrait-phase-moon:nth-child(4) { top: 11%; left: 19%; }
+      .portrait-phase-moon:nth-child(5) { top: 50%; left: 0; }
+      .portrait-phase-moon:nth-child(6) { top: 81%; left: 19%; }
+      .portrait-phase-moon:nth-child(7) { top: 81%; left: 81%; }
+
+      @keyframes portrait-moon-revolution {
+        to { rotate: 1turn; }
+      }
+
+      .portrait-page:first-child .portrait-page-art {
+        opacity: .24;
+      }
+
+      .portrait-profile {
+        position: absolute;
+        z-index: 3;
+        inset: 0;
+        color: #182449;
+      }
+
+      .portrait-profile > * {
+        pointer-events: auto;
+      }
+
+      .portrait-profile .profile-kicker {
+        top: 20%;
+        left: 9%;
+        font-size: 11px;
+      }
+
+      .portrait-profile .profile-name {
+        top: 25%;
+        left: 9%;
+        width: 82%;
+        font-size: clamp(64px, 20vw, 92px);
+      }
+
+      .portrait-profile .profile-rule {
+        top: 42%;
+        left: 9%;
+        width: 82%;
+      }
+
+      .portrait-profile .profile-details {
+        top: 48%;
+        right: auto;
+        left: 9%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        width: 82%;
+      }
+
+      .portrait-profile .profile-item:first-child {
+        grid-column: 1 / -1;
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .portrait-profile .profile-label {
+        font-size: 10px;
+      }
+
+      .portrait-profile .profile-value {
+        font-size: 13px;
+        white-space: normal;
+      }
+
+      .portrait-profile .profile-number {
+        top: 20%;
+        right: 8%;
+      }
+
+      .portrait-identity {
+        position: absolute;
+        z-index: 4;
+        right: 8%;
+        bottom: 10%;
+        left: 8%;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px 16px;
+        padding: 16px 18px;
+        border: 1px solid rgba(16, 28, 64, .14);
+        background: rgba(255, 255, 255, .88);
+        color: #101c40;
+      }
+
+      .portrait-click-layer {
+        position: absolute;
+        z-index: 20;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .portrait-identity-copy {
+        display: contents;
+      }
+
+      .portrait-identity-copy p {
+        margin: 0;
+      }
+
+      .portrait-identity-name {
+        grid-row: span 2;
+        align-self: center;
+        font-size: clamp(24px, 7vw, 34px);
+        font-weight: 300;
+        line-height: 1.2;
+      }
+
+      .portrait-identity-meta,
+      .portrait-identity-role {
+        align-self: center;
+        font-size: clamp(11px, 3.2vw, 14px);
+      }
+
+      .portrait-identity-character {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(.55em);
+      }
+
+      .portrait-identity-copy.is-visible .portrait-identity-character {
+        animation: identity-rise-in .65s cubic-bezier(.2, .7, .25, 1) both;
+        animation-delay: calc(var(--character-delay, 0s) + var(--entry-delay, 0s));
+      }
+
+      .portrait-identity-copy.is-exiting .portrait-identity-character {
+        animation: identity-fade-out .42s ease-in both;
+        animation-delay: calc(var(--exit-delay, 0s) + var(--character-delay, 0s));
+      }
+
+      .portrait-name-bai { --entry-delay: .12s; --exit-delay: 0s; }
+      .portrait-name-wizard { --entry-delay: .06s; --exit-delay: .08s; }
+      .portrait-identity-meta { --entry-delay: .18s; --exit-delay: .16s; }
+      .portrait-identity-role { --entry-delay: .24s; --exit-delay: .24s; }
+
+      .portrait-white-spine {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 50%;
+        width: min(24vw, 92px);
+        height: 100%;
+        border: 1px solid rgba(255, 255, 255, .84);
+        background: #fff;
+        box-shadow: 0 0 0 1px rgba(67, 81, 116, .035);
+        pointer-events: none;
+        transform: translateX(-50%);
+      }
+    }
+
+    .music-player {
+      position: fixed;
+      z-index: 120;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+      width: 38px;
+      height: 38px;
+    }
+
+    .music-player__toggle {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .38);
+      border-radius: 50%;
+      background: rgba(16, 28, 64, .88);
+      box-shadow: 0 4px 16px rgba(16, 28, 64, .2);
+      color: #f2d994;
+      cursor: pointer;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+
+    .music-player__toggle:hover {
+      background: rgba(32, 48, 92, .96);
+      transform: scale(1.08);
+    }
+
+    .music-player__toggle:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .music-player__icon {
+      width: 21px;
+      height: 21px;
+      fill: currentColor;
+    }
+
+    .music-player.is-playing .music-player__toggle {
+      box-shadow: 0 0 0 3px rgba(242, 217, 148, .14), 0 4px 18px rgba(16, 28, 64, .24);
+    }
+
+    @media (max-width: 700px) {
+      .music-player {
+        right: max(12px, env(safe-area-inset-right));
+        bottom: max(12px, env(safe-area-inset-bottom));
+        width: 34px;
+        height: 34px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .identity-copy .identity-character {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      .portrait-moon-orbit { animation: none; }
+      .scroll-cue { animation: none; }
+      .is-clicked { animation-duration: .45s; }
+      .click-ripple { animation-duration: .45s; }
+      .portrait-identity-copy .portrait-identity-character {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+      .falling-star { animation-duration: .45s; }
+    }
+  </style>
+</head>
+<body>
+  <main class="presentation" aria-label="PPT 页面滚动演示">
+    <section class="interactive-run" id="interactive-run" aria-label="前三页到第五页粒子过渡">
+    <div class="presentation-screen">
+      <canvas class="space-canvas" id="space-canvas" aria-hidden="true"></canvas>
+      <div class="slide-frame" id="slide-frame">
+        <img class="slide-image is-active" src="./assets/ppt-slides/slide-1-base.png" width="1600" height="900" fetchpriority="high" decoding="async" alt="PPT 第 1 页原始排版" draggable="false">
+        <img class="slide-image" src="./assets/ppt-slides/slide-2.png" alt="PPT 第 2 页原始排版" draggable="false">
+        <img class="slide-image" src="./assets/ppt-slides/slide-3.png" alt="PPT 第 3 页原始排版" draggable="false">
+        <img class="slide-image" src="./assets/ppt-slides/slide-5.png" alt="PPT 第 5 页原始排版" draggable="false">
+        <div class="scroll-cue" id="scroll-cue" aria-hidden="true"></div>
+        <section class="profile-intro" id="profile-intro" aria-label="Lain 个人信息">
+          <span class="profile-kicker">Personal index</span>
+          <h1 class="profile-name">Lain</h1>
+          <div class="profile-rule" aria-hidden="true"></div>
+          <div class="profile-details">
+            <div class="profile-item">
+              <span class="profile-label">Info</span>
+              <span class="profile-value">21 · 巨蟹座 · 稳定七无</span>
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">Attribute</span>
+              <span class="profile-value">Le P</span>
+            </div>
+            <div class="profile-item">
+              <span class="profile-label">MBTI</span>
+              <span class="profile-value">INTJ-T</span>
+            </div>
+          </div>
+          <span class="profile-number" aria-hidden="true">01 / PROFILE</span>
+        </section>
+      </div>
+      <div class="transition-fifth-preview" id="transition-fifth-preview" aria-hidden="true">
+        <img src="./assets/ppt-slides/slide-5.png" alt="" draggable="false">
+      </div>
+      <div class="reference-layout" id="reference-layout" aria-hidden="true">
+        <img src="./assets/ppt-slides/slide-2-web-art.png" alt="" draggable="false">
+      </div>
+      <div class="ring-occlusion" id="ring-occlusion" aria-hidden="true"></div>
+      <section class="identity-copy" id="identity-copy" aria-label="常驻团：暂无。倒影（建模）：巫师 白枭。" aria-hidden="true">
+        <p class="identity-meta" data-copy-text="常驻团：暂无" aria-hidden="true"></p>
+        <p class="identity-role" data-copy-text="倒影（建模）" aria-hidden="true"></p>
+        <p class="identity-name identity-name-bai-xiao" data-copy-text="白枭" aria-hidden="true"></p>
+        <h2 class="identity-name identity-name-wizard" data-copy-text="巫师" aria-hidden="true"></h2>
+        <p class="identity-quote" data-copy-text="爱明月高悬照众人，恨明月高悬独不照我。" aria-hidden="true"></p>
+      </section>
+      <div class="piece-layer" id="piece-layer" aria-hidden="true"></div>
+      <div class="white-spine" aria-hidden="true"></div>
+      <div class="sphere-lens" aria-hidden="true"></div>
+      <div class="starfall-layer" id="starfall-layer" aria-hidden="true"></div>
+      <canvas class="particle-canvas" id="particle-canvas" aria-hidden="true"></canvas>
+      <div class="profile-text-top-layer" id="profile-text-top-layer" aria-hidden="true"></div>
+    </div>
+    </section>
+    <div class="hands-transition-layer" id="hands-transition-layer" aria-hidden="true">
+      <img class="transition-hand" id="transition-hand-left" src="./assets/ppt-hand-assets/hand-left.png" alt="" draggable="false">
+      <img class="transition-hand" id="transition-hand-right" src="./assets/ppt-hand-assets/hand-right.png" alt="" draggable="false">
+    </div>
+    <div class="falling-star-trail" id="falling-star-trail" aria-hidden="true"></div>
+    <img class="falling-ppt-star" id="falling-ppt-star" src="./assets/ppt-hand-assets/falling-star.png" alt="" aria-hidden="true" draggable="false">
+    <div class="moon-process" id="moon-process" aria-hidden="true">
+      <img class="phase-moon" src="./assets/ppt-moons/moon-1.png" alt="" draggable="false">
+      <img class="phase-moon" src="./assets/ppt-moons/moon-2.png" alt="" draggable="false">
+      <img class="phase-moon" src="./assets/ppt-moons/moon-3.png" alt="" draggable="false">
+      <img class="phase-moon" src="./assets/ppt-moons/moon-4.png" alt="" draggable="false">
+      <img class="phase-moon" src="./assets/ppt-moons/moon-5.png" alt="" draggable="false">
+      <img class="phase-moon" src="./assets/ppt-moons/moon-6.png" alt="" draggable="false">
+      <img class="phase-moon" src="./assets/ppt-moons/moon-7.png" alt="" draggable="false">
+    </div>
+    <section class="document-slide document-slide--fifth" aria-label="PPT 第五页">
+      <img class="ppt-fifth-render" src="./assets/ppt-slides/slide-5.png" alt="PPT 第五页画面" draggable="false">
+    </section>
+    <section class="document-slide document-slide--notes" aria-label="PPT 第六页：风格与点单须知">
+      <img src="./assets/ppt-slides/slide-6.png" width="1920" height="1080" loading="lazy" decoding="async" alt="PPT 第六页画面" draggable="false">
+      <div class="order-notes order-notes--first">
+        <header class="order-notes__header">
+          <span class="order-notes__eyebrow">PERSONAL GUIDELINES · 06 / 07</span>
+          <h2 class="order-notes__title">点单须知</h2>
+          <div class="order-notes__rule" aria-hidden="true"></div>
+        </header>
+        <div class="order-notes__styles" aria-label="风格">
+          <p class="order-notes__style">
+            <span class="order-notes__style-label">主风格</span>
+            <span>中高恋 · 白话 · 剖析 · 涉三 · 共情 · 温柔刀</span>
+          </p>
+          <p class="order-notes__style">
+            <span class="order-notes__style-label">副风格</span>
+            <span>病虐 · 微文艺 · 贬低 · 诡辩拉扯</span>
+          </p>
+        </div>
+        <ol class="order-notes__list">
+          <li><span class="order-notes__number">01</span><span>请注意，未发个人雷点导致踩到暗雷不予受理</span></li>
+          <li><span class="order-notes__number">02</span><span>单口请加钱，凌晨以后请加钱</span></li>
+          <li><span class="order-notes__number">03</span><span>约好时间后五分钟之内不取则视为存单，鸽单三次视为送单</span></li>
+          <li><span class="order-notes__number">04</span><span>单内0.5h/5min内可退，1h/10min内可退，请不要卡点退单，彼此尊重。单子结束时间均上下浮动5分钟左右，望谅解</span></li>
+        </ol>
+      </div>
+    </section>
+    <section class="document-slide document-slide--last document-slide--notes" aria-label="PPT 第七页：点单须知续">
+      <img src="./assets/ppt-slides/slide-7.png" width="1920" height="1080" loading="lazy" decoding="async" alt="PPT 第七页画面" draggable="false">
+      <div class="order-notes order-notes--last">
+        <header class="order-notes__header">
+          <span class="order-notes__eyebrow">PERSONAL GUIDELINES · 07 / 07</span>
+          <h2 class="order-notes__title">相处与边界</h2>
+          <div class="order-notes__rule" aria-hidden="true"></div>
+        </header>
+        <ol class="order-notes__list" start="5">
+          <li><span class="order-notes__number">05</span><span>旁观请保持安静不要贴脸站互相尊重</span></li>
+          <li><span class="order-notes__number">06</span><span>如一直强势抢我的话和我辩论拉扯导致体验感不好的情况下，我不负责不退款</span></li>
+          <li><span class="order-notes__number">07</span><span>单内话术、逻辑禁止截屏/录频外传/照搬/学习模仿使用，如有发现十倍赔偿并追责</span></li>
+        </ol>
+        <div class="image-shelves" aria-label="图片分类">
+          <details class="image-shelf">
+            <summary class="image-shelf__title">话术</summary>
+            <div class="image-shelf__content image-shelf__gallery" aria-label="话术图片">
+              <button class="image-preview" type="button" aria-label="放大查看：伏特加：生命之水">
+                <img src="./huashu/01-vodka-life-water.jpg" width="768" height="878" loading="lazy" decoding="async" alt="伏特加：生命之水">
+              </button>
+              <button class="image-preview" type="button" aria-label="放大查看：人不能两次踏进同一条河流">
+                <img src="./huashu/02-river-change.jpg" width="750" height="1992" loading="lazy" decoding="async" alt="人不能两次踏进同一条河流">
+              </button>
+              <button class="image-preview" type="button" aria-label="放大查看：写给铃印的信">
+                <img src="./huashu/03-letter.jpg" width="768" height="2819" loading="lazy" decoding="async" alt="写给铃印的信">
+              </button>
+            </div>
+          </details>
+          <details class="image-shelf">
+            <summary class="image-shelf__title">板评</summary>
+            <div class="image-shelf__content">图片预留区 · 后续可在此处添加图片</div>
+          </details>
+          <details class="image-shelf">
+            <summary class="image-shelf__title">小卡</summary>
+            <div class="image-shelf__content image-shelf__gallery" aria-label="小卡图片">
+              <button class="image-preview" type="button" aria-label="放大查看：蓝白主题个人小卡">
+                <img src="./xiaoka/01-profile-card.jpg" width="768" height="768" loading="lazy" decoding="async" alt="蓝白主题个人小卡">
+              </button>
+              <button class="image-preview" type="button" aria-label="放大查看：关于命运主题小卡">
+                <img src="./xiaoka/02-about-fate.png" width="1280" height="768" loading="lazy" decoding="async" alt="关于命运主题小卡">
+              </button>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+  <aside class="music-player" id="music-player" aria-label="背景音乐播放器">
+    <audio id="background-audio" src="./assets/background-music.mp3" preload="none" loop></audio>
+    <button class="music-player__toggle" id="music-toggle" type="button" aria-label="播放背景音乐：将记忆永存 · Duvet" title="播放背景音乐：将记忆永存 · Duvet" aria-pressed="false">
+      <svg class="music-player__icon" id="music-play-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z"></path>
+      </svg>
+    </button>
+  </aside>
+  <dialog class="image-lightbox" id="image-lightbox" aria-label="图片预览">
+    <button class="image-lightbox__close" type="button" aria-label="关闭图片预览">×</button>
+    <img class="image-lightbox__image" id="image-lightbox-image" alt="">
+  </dialog>
+
+  <script>
+    (() => {
+      const backgroundAudio = document.querySelector("#background-audio");
+      const musicPlayer = document.querySelector("#music-player");
+      const musicToggle = document.querySelector("#music-toggle");
+      const imageLightbox = document.querySelector("#image-lightbox");
+      const imageLightboxImage = document.querySelector("#image-lightbox-image");
+      const imageLightboxClose = imageLightbox.querySelector(".image-lightbox__close");
+      const syncImageLightboxViewport = () => {
+        const viewport = window.visualViewport;
+        imageLightbox.style.setProperty("--lightbox-viewport-left", `${viewport?.offsetLeft ?? 0}px`);
+        imageLightbox.style.setProperty("--lightbox-viewport-top", `${viewport?.offsetTop ?? 0}px`);
+        imageLightbox.style.setProperty("--lightbox-viewport-width", `${viewport?.width ?? document.documentElement.clientWidth}px`);
+        imageLightbox.style.setProperty("--lightbox-viewport-height", `${viewport?.height ?? document.documentElement.clientHeight}px`);
+      };
+      window.visualViewport?.addEventListener("resize", syncImageLightboxViewport);
+      window.visualViewport?.addEventListener("scroll", syncImageLightboxViewport);
+      const musicVolume = 0.3;
+      const musicFadeDuration = 5000;
+      let musicFadeFrame = null;
+      let musicFadeStartedAt = null;
+      let musicFadeStartVolume = 0;
+      backgroundAudio.volume = 0;
+      const stopMusicFade = () => {
+        if (musicFadeFrame !== null) window.cancelAnimationFrame(musicFadeFrame);
+        musicFadeFrame = null;
+        musicFadeStartedAt = null;
+      };
+      const fadeInMusic = (timestamp) => {
+        if (backgroundAudio.paused) {
+          stopMusicFade();
+          return;
+        }
+        if (musicFadeStartedAt === null) musicFadeStartedAt = timestamp;
+        const progress = Math.min(1, (timestamp - musicFadeStartedAt) / musicFadeDuration);
+        backgroundAudio.volume = musicFadeStartVolume + (musicVolume - musicFadeStartVolume) * progress;
+        if (progress < 1) {
+          musicFadeFrame = window.requestAnimationFrame(fadeInMusic);
+        } else {
+          backgroundAudio.volume = musicVolume;
+          musicFadeFrame = null;
+        }
+      };
+      const startMusicFade = () => {
+        stopMusicFade();
+        if (backgroundAudio.volume >= musicVolume) return;
+        musicFadeStartVolume = backgroundAudio.volume;
+        musicFadeFrame = window.requestAnimationFrame(fadeInMusic);
+      };
+      const updateMusicPlayer = () => {
+        const isPlaying = !backgroundAudio.paused;
+        musicPlayer.classList.toggle("is-playing", isPlaying);
+        musicToggle.setAttribute("aria-pressed", String(isPlaying));
+        const action = isPlaying ? "暂停" : "播放";
+        const label = `${action}背景音乐：将记忆永存 · Duvet`;
+        musicToggle.setAttribute("aria-label", label);
+        musicToggle.title = label;
+      };
+      const playBackgroundMusic = async () => {
+        try {
+          await backgroundAudio.play();
+        } catch (error) {
+          if (error instanceof DOMException && error.name === "NotAllowedError") return;
+          console.error("Could not play the background music.", error);
+        }
+      };
+      const startMusicAfterGesture = (event) => {
+        if (event.target instanceof Element && event.target.closest("#music-player")) return;
+        void playBackgroundMusic();
+      };
+      backgroundAudio.addEventListener("play", () => {
+        updateMusicPlayer();
+        startMusicFade();
+      });
+      backgroundAudio.addEventListener("pause", () => {
+        stopMusicFade();
+        updateMusicPlayer();
+      });
+      backgroundAudio.addEventListener("ended", updateMusicPlayer);
+      backgroundAudio.addEventListener("error", () => {
+        console.error("Could not load the background music.", backgroundAudio.error);
+      });
+      musicToggle.addEventListener("click", () => {
+        if (backgroundAudio.paused) {
+          void playBackgroundMusic();
+        } else {
+          backgroundAudio.pause();
+        }
+      });
+      document.addEventListener("click", (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const preview = target?.closest(".image-preview");
+        const image = preview?.querySelector("img")
+          || target?.closest(".image-shelf__content img");
+        if (!image) return;
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        imageLightboxImage.src = image.currentSrc || image.src;
+        imageLightboxImage.alt = image.alt;
+        syncImageLightboxViewport();
+        imageLightbox.showModal();
+        window.scrollTo(scrollX, scrollY);
+      });
+      imageLightboxClose.addEventListener("click", () => imageLightbox.close());
+      imageLightbox.addEventListener("click", (event) => {
+        if (event.target === imageLightbox) imageLightbox.close();
+      });
+      document.addEventListener("click", startMusicAfterGesture, true);
+
+      const slides = [...document.querySelectorAll(".slide-image")];
+      const interactiveRun = document.querySelector("#interactive-run");
+      const profileIntro = document.querySelector("#profile-intro");
+      const profileTextTopLayer = document.querySelector("#profile-text-top-layer");
+      const profileTextTopCopy = profileIntro.cloneNode(true);
+      profileTextTopCopy.removeAttribute("id");
+      profileTextTopCopy.style.animation = "none";
+      profileTextTopLayer.append(profileTextTopCopy);
+      const moons = [...document.querySelectorAll(".phase-moon")];
+      const moonProcess = document.querySelector("#moon-process");
+      const slideFrame = document.querySelector("#slide-frame");
+      const handsTransitionLayer = document.querySelector("#hands-transition-layer");
+      const fallingPptStar = document.querySelector("#falling-ppt-star");
+      const fallingStarTrail = document.querySelector("#falling-star-trail");
+      const fifthSlide = document.querySelector(".document-slide--fifth");
+      const sixthSlide = document.querySelector('[aria-label="PPT 第六页：风格与点单须知"]');
+      const fifthSlideRender = document.querySelector(".ppt-fifth-render");
+      const fifthTransitionPreview = document.querySelector("#transition-fifth-preview");
+      const fifthImageAspectRatio = 1920 / 1080;
+      const fifthSceneTargetHeight = 960 / fifthImageAspectRatio;
+      const transitionHands = [
+        {
+          element: document.querySelector("#transition-hand-left"),
+          x: -445135,
+          y: -3898900,
+          width: 8013065,
+          height: 8910955,
+          direction: -1,
+          zIndex: 2
+        },
+        {
+          element: document.querySelector("#transition-hand-right"),
+          x: 3926205,
+          y: 429260,
+          width: 9779000,
+          height: 8345805,
+          direction: 1,
+          zIndex: 1
+        }
+      ];
+      transitionHands.forEach((hand) => {
+        hand.element.style.zIndex = String(hand.zIndex);
+      });
+      const scrollCue = document.querySelector("#scroll-cue");
+      const referenceLayout = document.querySelector("#reference-layout");
+      const referenceImage = referenceLayout.querySelector("img");
+      const ringOcclusion = document.querySelector("#ring-occlusion");
+      const identityCopy = document.querySelector("#identity-copy");
+      const identityText = [...identityCopy.querySelectorAll("[data-copy-text]")];
+      const presentationScreen = document.querySelector(".presentation-screen");
+      const whiteSpine = document.querySelector(".white-spine");
+      const particleCanvas = document.querySelector("#particle-canvas");
+      const particleContext = particleCanvas.getContext("2d");
+      const spaceCanvas = document.querySelector("#space-canvas");
+      const spaceContext = spaceCanvas.getContext("2d");
+      const starfallLayer = document.querySelector("#starfall-layer");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const moonScale = 1;
+      const artworkScale = 0.92;
+      let visualProgress = null;
+      let previousFrameTime = null;
+      let renderedSlide = 0;
+      let identityCopyState = "hidden";
+      let sceneTargets = [];
+      let thirdSceneParticles = [];
+      let finalTransitionProgress = 0;
+      let sceneTargetRetryPending = false;
+      let sceneTargetRetryCount = 0;
+      const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
+      slides.forEach((slide, index) => {
+        slide.setAttribute("aria-hidden", String(index !== renderedSlide));
+      });
+      const openingFrame = [
+        { x: 93.05, y: 280.03, w: 91.2, h: 98.05 },
+        { x: 185.48, y: 357.63, w: 117.35, h: 118.55 },
+        { x: 311.22, y: 424.67, w: 122.55, h: 121.25 },
+        { x: 480.02, y: 454.67, w: 157.25, h: 152.05 },
+        { x: 650.45, y: 419.33, w: 112.5, h: 121.25 },
+        { x: 769.43, y: 353.42, w: 107.05, h: 98.05 },
+        { x: 854.9, y: 280, w: 98, h: 98 }
+      ];
+      let framePending = false;
+
+      // 碎片在 PPT 960x540 坐标中的初始位置。
+      const pieceData = [
+        { f: 1, x: 209.05, y: -4.2, w: 562, h: 550.65 },
+        { f: 2, x: 289.5, y: 270, w: 255, h: 168.75 },
+        { f: 3, x: 324.05, y: 87.4, w: 322.9, h: 356.55 },
+        { f: 4, x: 309.15, y: 67.95, w: 349.65, h: 412 },
+        { f: 5, x: 367.5, y: 328, w: 196, h: 133 },
+        { f: 6, x: 326.75, y: 125.3, w: 166.45, h: 291.6 },
+        { f: 7, x: 338, y: 125.3, w: 268.55, h: 297.65 },
+        { f: 8, x: 510.6, y: 270, w: 157.2, h: 141.5 },
+        { f: 9, x: 438.5, y: 77, w: 228, h: 355 },
+        { f: 10, x: 404.5, y: 83, w: 140, h: 329 },
+        { f: 11, x: 364.5, y: 239, w: 98, h: 149 },
+        { f: 12, x: 226.8, y: 266.9, w: 266.4, h: 150 },
+        { f: 13, x: 142.4, y: 41.15, w: 615, h: 228 },
+        { f: 14, x: 145.4, y: 271.15, w: 617, h: 191 },
+        { f: 15, x: 756.4, y: 38.15, w: 7, h: 426 },
+        { f: 16, x: 188.2, y: 142.9, w: 173.9, h: 68.65 }
+      ];
+      const blueFragmentIds = new Set([3, 4, 5, 7, 8, 9, 11, 13, 15]);
+      const pieceLayer = document.querySelector("#piece-layer");
+      const sphereLens = document.querySelector(".sphere-lens");
+      identityText.forEach((element) => {
+        [...element.dataset.copyText].forEach((character, index) => {
+          const span = document.createElement("span");
+          span.className = "identity-character";
+          span.setAttribute("aria-hidden", "true");
+          span.textContent = character === " " ? "\u00a0" : character;
+          span.style.setProperty("--character-delay", `${index * 0.055}s`);
+          element.append(span);
+        });
+      });
+
+      const spaceDots = Array.from({ length: 52 }, (_, index) => {
+        const seed = index + 1;
+        const fraction = (value) => value - Math.floor(value);
+        return {
+          angle: fraction(Math.sin(seed * 12.9898) * 43758.5453) * Math.PI * 2,
+          radius: 0.16 + Math.floor(index / 60) * 0.115
+            + (fraction(Math.sin(seed * 78.233) * 19341.749) - 0.5) * 0.045,
+          depth: fraction(Math.sin(seed * 39.425) * 27183.117),
+          drift: fraction(Math.sin(seed * 5.217) * 9812.551) * Math.PI * 2,
+          size: 0.25 + fraction(Math.sin(seed * 19.19) * 15731.743) * 0.5
+        };
+      });
+      const imageParticles = [];
+      const maxImageParticles = 900;
+      const fifthSceneParticles = [];
+      const fraction = (value) => value - Math.floor(value);
+      function addImageParticles(image, sourceRect, particles = imageParticles) {
+        if (image.dataset.particlesSampled === "true") return;
+        const imageWidth = image.naturalWidth || image.width;
+        const imageHeight = image.naturalHeight || image.height;
+        const canvas = document.createElement("canvas");
+        canvas.width = imageWidth;
+        canvas.height = imageHeight;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        if (!context) {
+          console.error(`Could not create particles from ${image.currentSrc || image.src}.`);
+          return;
+        }
+
+        context.drawImage(image, 0, 0);
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+        const step = Math.max(12, Math.ceil(Math.sqrt(
+          imageWidth * imageHeight / maxImageParticles
+        )));
+        for (let y = 0; y < imageHeight; y += step) {
+          for (let x = 0; x < imageWidth; x += step) {
+            if (particles.length >= maxImageParticles) break;
+            const pixel = (y * canvas.width + x) * 4;
+            if (pixels.data[pixel + 3] < 80) continue;
+            const seed = particles.length + 1;
+            particles.push({
+              originX: sourceRect.x + x / canvas.width * sourceRect.w,
+              originY: sourceRect.y + y / canvas.height * sourceRect.h,
+              step,
+              color: [pixels.data[pixel], pixels.data[pixel + 1], pixels.data[pixel + 2]],
+              alpha: pixels.data[pixel + 3] / 255,
+              scatterX: fraction(Math.sin(seed * 12.9898) * 43758.5453),
+              scatterY: fraction(Math.sin(seed * 78.233) * 19341.749),
+              targetX: fraction(Math.sin(seed * 5.217) * 9812.551),
+              targetY: fraction(Math.sin(seed * 39.425) * 27183.117)
+            });
+          }
+          if (particles.length >= maxImageParticles) break;
+        }
+        image.dataset.particlesSampled = "true";
+      }
+
+      function prepareSceneTargets() {
+        const assetsReady = referenceImage.complete && referenceImage.naturalWidth > 0
+          && slides[2].complete && slides[2].naturalWidth > 0
+          && fifthSlideRender.complete && fifthSlideRender.naturalWidth > 0
+          && transitionHands.every((hand) => hand.element.complete && hand.element.naturalWidth > 0)
+          && moons.every((moon) => moon.complete && moon.naturalWidth > 0)
+          && pieces.every((piece) => piece.img.complete && piece.img.naturalWidth > 0);
+        if (!assetsReady) {
+          if (!sceneTargetRetryPending && sceneTargetRetryCount < 200) {
+            sceneTargetRetryCount += 1;
+            sceneTargetRetryPending = true;
+            window.setTimeout(() => {
+              sceneTargetRetryPending = false;
+              updatePresentation(performance.now());
+            }, 100);
+          } else if (!sceneTargetRetryPending && sceneTargetRetryCount === 200) {
+            sceneTargetRetryCount += 1;
+            console.error("Timed out waiting for the artwork needed to build particle targets.");
+          }
+          return;
+        }
+        sceneTargetRetryCount = 0;
+
+        if (!slides[0].dataset.particlesSampled) {
+          const sourceCanvas = document.createElement("canvas");
+          sourceCanvas.width = 960;
+          sourceCanvas.height = 540;
+          const sourceContext = sourceCanvas.getContext("2d", { willReadFrequently: true });
+          if (!sourceContext) {
+            console.error("Could not create particles from the first-page artwork.");
+            return;
+          }
+          pieces.forEach((piece) => {
+            sourceContext.drawImage(
+              piece.img,
+              piece.x,
+              piece.y,
+              piece.w,
+              piece.h
+            );
+          });
+          const firstFrameRect = slideFrame.getBoundingClientRect();
+          profileIntro.querySelectorAll(
+            ".profile-kicker, .profile-name, .profile-label, .profile-value, .profile-number"
+          ).forEach((element) => {
+            const rect = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            const scale = 960 / firstFrameRect.width;
+            sourceContext.fillStyle = style.color;
+            sourceContext.font = `${style.fontWeight} ${parseFloat(style.fontSize) * scale}px ${style.fontFamily}`;
+            sourceContext.textBaseline = "top";
+            sourceContext.fillText(
+              element.textContent.trim(),
+              (rect.left - firstFrameRect.left) * scale,
+              (rect.top - firstFrameRect.top) * scale
+            );
+          });
+          moons.forEach((moon, index) => {
+            const frame = openingFrame[index];
+            sourceContext.drawImage(moon, frame.x, frame.y, frame.w, frame.h);
+          });
+          addImageParticles(sourceCanvas, { x: 0, y: 0, w: 960, h: 540 });
+          slides[0].dataset.particlesSampled = "true";
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = 960;
+        canvas.height = 540;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        if (!context) {
+          console.error("Could not create particles from the transition artwork.");
+          return;
+        }
+
+        const collectTargets = (sourceCanvas) => {
+          const targetPixels = sourceCanvas.getContext("2d", { willReadFrequently: true })
+            .getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+          const targetStep = Math.max(8, Math.ceil(Math.sqrt(
+            sourceCanvas.width * sourceCanvas.height / maxImageParticles
+          )));
+          const targets = [];
+          for (let y = 0; y < sourceCanvas.height; y += targetStep) {
+            for (let x = 0; x < sourceCanvas.width; x += targetStep) {
+              const pixel = (y * sourceCanvas.width + x) * 4;
+              if (targetPixels.data[pixel + 3] < 80) continue;
+              targets.push({
+                x: x + targetStep / 2,
+                y: y + targetStep / 2,
+                color: [
+                  targetPixels.data[pixel],
+                  targetPixels.data[pixel + 1],
+                  targetPixels.data[pixel + 2]
+                ],
+                alpha: targetPixels.data[pixel + 3] / 255
+              });
+            }
+          }
+          return targets;
+        };
+        if (!sceneTargets.length) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(referenceImage, 0, 0, canvas.width, canvas.height);
+          moons.forEach((moon, index) => {
+            const frame = openingFrame[index];
+            context.drawImage(moon, frame.x, frame.y, frame.w, frame.h);
+          });
+          const copyStyle = getComputedStyle(identityCopy);
+          const copyScale = Number(copyStyle.transform.match(/^matrix\(([^,]+)/)?.[1] || 1);
+          const targetScale = copyScale / (identityCopy.getBoundingClientRect().width / 960);
+          context.fillStyle = "#101c40";
+          context.textBaseline = "top";
+          context.font = `500 ${parseFloat(getComputedStyle(identityText[0]).fontSize) * targetScale}px Microsoft YaHei, sans-serif`;
+          context.fillText("常驻团：暂无", 240, 302);
+          context.fillText("倒影（建模）", 240, 394);
+          context.font = `300 ${parseFloat(getComputedStyle(document.querySelector(".identity-name")).fontSize) * targetScale}px Microsoft YaHei, sans-serif`;
+          context.fillText("白枭", 106, 286);
+          context.fillText("巫师", 106, 378);
+          sceneTargets = collectTargets(canvas);
+        }
+        if (!thirdSceneParticles.length) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(slides[2], 0, 0, canvas.width, canvas.height);
+          transitionHands.forEach((hand) => {
+            const height = hand.height / 6858000 * canvas.height;
+            const width = hand.element.naturalWidth > 0
+              ? height * hand.element.naturalWidth / hand.element.naturalHeight
+              : hand.width / 12192000 * canvas.width;
+            context.drawImage(
+              hand.element,
+              hand.x / 12192000 * canvas.width,
+              hand.y / 6858000 * canvas.height,
+              width,
+              height
+            );
+          });
+          addImageParticles(canvas, { x: 0, y: 0, w: 960, h: 540 }, thirdSceneParticles);
+        }
+        if (!fifthSceneParticles.length) {
+          addImageParticles(
+            fifthSlideRender,
+            { x: 0, y: 0, w: 960, h: fifthSceneTargetHeight },
+            fifthSceneParticles
+          );
+        }
+      }
+
+      const pieces = pieceData.map((data) => {
+        const img = new Image();
+        img.className = "piece";
+        img.alt = "";
+        img.draggable = false;
+        img.addEventListener("load", () => {
+          if (blueFragmentIds.has(data.f) && img.dataset.recolored !== "true") {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const context = canvas.getContext("2d", { willReadFrequently: true });
+            if (!context) {
+              console.error(`Could not recolor blue fragments in piece-${data.f}.png.`);
+            } else {
+              context.drawImage(img, 0, 0);
+              const image = context.getImageData(0, 0, canvas.width, canvas.height);
+              for (let i = 0; i < image.data.length; i += 4) {
+                const [red, green, blue] = image.data.subarray(i, i + 3);
+                if (blue > 90 && blue > red * 1.2 && blue > green * 1.2) {
+                  image.data[i] = 255;
+                  image.data[i + 1] = 255;
+                  image.data[i + 2] = 255;
+                }
+              }
+
+              context.putImageData(image, 0, 0);
+              img.dataset.recolored = "true";
+              img.src = canvas.toDataURL("image/png");
+              return;
+            }
+          }
+
+        });
+        img.src = `./assets/ppt-pieces/piece-${data.f}.png`;
+        pieceLayer.append(img);
+        if (data.f === 1) {
+          const paper = document.createElement("div");
+          paper.className = "slide-paper";
+          pieceLayer.append(paper);
+        }
+        return { ...data, img };
+      });
+      const slidePaper = pieceLayer.querySelector(".slide-paper");
+
+      const easeInOutSine = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
+      const clamp01 = (value) => Math.min(1, Math.max(0, value));
+      const particleTransition = {
+        scatterStart: 0.02,
+        assemblyStart: 0.62,
+        end: 1
+      };
+      const finalParticleTransition = {
+        start: 2,
+        end: 3
+      };
+      function drawSpaceDots(timestamp, slidePosition, screenRect, isBlueBackground) {
+        if (!spaceContext) return;
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        const width = Math.round(screenRect.width * pixelRatio);
+        const height = Math.round(screenRect.height * pixelRatio);
+        if (spaceCanvas.width !== width || spaceCanvas.height !== height) {
+          spaceCanvas.width = width;
+          spaceCanvas.height = height;
+        }
+
+        spaceContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        spaceContext.clearRect(0, 0, screenRect.width, screenRect.height);
+        const ambientAlpha = 0.55;
+        const time = (timestamp || 0) * 0.00008;
+        const rotation = time + slidePosition * 0.17;
+        const scale = Math.min(screenRect.width, screenRect.height);
+        const offsetX = pointer.x * screenRect.width * 0.012;
+        const offsetY = pointer.y * screenRect.height * 0.012;
+        spaceDots.forEach((dot) => {
+          const angle = dot.angle + rotation + Math.sin(time * 1.7 + dot.drift) * 0.035;
+          const radius = dot.radius * (0.94 + Math.sin(time + dot.drift) * 0.025);
+          const x3d = Math.cos(angle) * radius;
+          const y3d = Math.sin(angle) * radius * 0.56;
+          const z3d = Math.sin(angle * 2 + dot.drift) * dot.depth * 0.26;
+          const perspective = 1 / (1.25 - z3d);
+          const x = screenRect.width / 2 + x3d * scale * perspective + offsetX;
+          const y = screenRect.height / 2 + y3d * scale * perspective + offsetY;
+          const alpha = 0.1 * ambientAlpha;
+          spaceContext.fillStyle = isBlueBackground
+            ? `rgba(211, 226, 255, ${alpha})`
+            : `rgba(54, 70, 112, ${alpha})`;
+          const size = dot.size * (0.72 + perspective * 0.35);
+          spaceContext.beginPath();
+          spaceContext.arc(x, y, size, 0, Math.PI * 2);
+          spaceContext.fill();
+        });
+
+      }
+
+      function drawImageParticles(
+        slidePosition,
+        frameRect,
+        sourceFrameRect,
+        screenRect,
+        unitX,
+        unitY,
+        timestamp,
+        transitionProgress,
+        fifthPreviewRect
+      ) {
+        if (!particleContext) return;
+        prepareSceneTargets();
+        const bounds = presentationScreen.getBoundingClientRect();
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        const width = Math.round(bounds.width * pixelRatio);
+        const height = Math.round(bounds.height * pixelRatio);
+        if (particleCanvas.width !== width || particleCanvas.height !== height) {
+          particleCanvas.width = width;
+          particleCanvas.height = height;
+        }
+
+        const firstTransitionActive = slidePosition > 0.02 && slidePosition < 1.02;
+        const exitTransitionActive = slidePosition >= finalParticleTransition.start
+          && transitionProgress < 1;
+        const firstTransitionOpacity = 1 - easeInOutSine(clamp01((slidePosition - 0.92) / 0.1));
+        particleCanvas.style.opacity = firstTransitionActive
+          ? String(firstTransitionOpacity)
+          : exitTransitionActive ? "1" : "0";
+        particleContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        particleContext.clearRect(0, 0, bounds.width, bounds.height);
+        if (!firstTransitionActive && !exitTransitionActive) return;
+        if (firstTransitionActive && (!imageParticles.length || !sceneTargets.length)) return;
+        if (exitTransitionActive && (!thirdSceneParticles.length || !fifthSceneParticles.length)) return;
+
+        const secondSceneAssembly = easeInOutSine(clamp01((slidePosition - 0.58) / 0.42));
+        const exitMorph = easeInOutSine(clamp01(transitionProgress / 0.78));
+        const exitFade = 1 - easeInOutSine(clamp01((transitionProgress - 0.78) / 0.22));
+        const particleStep = Math.max(12, Math.ceil(Math.sqrt(
+          960 * 540 / maxImageParticles
+        )));
+        const time = (timestamp || 0) * 0.001;
+        const drawParticle = (x, y, radius, color, alpha) => {
+          if (alpha <= 0) return;
+          particleContext.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
+          particleContext.beginPath();
+          particleContext.arc(x, y, radius, 0, Math.PI * 2);
+          particleContext.fill();
+        };
+        const driftRight = (x, y, scatterX, scatterY) => ({
+          x: x + bounds.width * (0.035 + scatterX * 0.12),
+          y: y + (scatterY - 0.5) * bounds.height * 0.16
+        });
+
+        if (firstTransitionActive) {
+          imageParticles.forEach((particle, index) => {
+            const sourceX = sourceFrameRect.left - screenRect.left + particle.originX * unitX;
+            const sourceY = sourceFrameRect.top - screenRect.top + particle.originY * unitY;
+            const sourceRatioX = clamp01(particle.originX / 960);
+            const horizontalWave = easeInOutSine(clamp01(
+              (slidePosition - particleTransition.scatterStart - sourceRatioX * 0.32) / 0.36
+            ));
+            const destination = driftRight(
+              sourceX, sourceY, particle.scatterX, particle.scatterY
+            );
+            const target = sceneTargets[index % sceneTargets.length];
+            const targetX = frameRect.left - screenRect.left + target.x / 960 * frameRect.width;
+            const targetY = frameRect.top - screenRect.top + target.y / 540 * frameRect.height;
+            const x = sourceX + (destination.x - sourceX) * horizontalWave
+              + (targetX - destination.x) * secondSceneAssembly;
+            const y = sourceY + (destination.y - sourceY) * horizontalWave
+              + (targetY - destination.y) * secondSceneAssembly;
+            const floatWeight = 1 - secondSceneAssembly * 0.55;
+            const floatX = Math.sin(time * 1.1 + index * 1.73) * 2.2 * floatWeight;
+            const floatY = Math.cos(time * 0.9 + index * 2.17) * 2.2 * floatWeight;
+            const colorMix = secondSceneAssembly;
+            const color = particle.color.map((channel, channelIndex) => Math.round(
+              channel * (1 - colorMix) + target.color[channelIndex] * colorMix
+            ));
+            const radius = Math.max(1.2, particle.step * Math.min(unitX, unitY) * (
+              0.13 + secondSceneAssembly * 0.22
+            ));
+            const alpha = particle.alpha * firstTransitionOpacity;
+            drawParticle(x + floatX, y + floatY, radius, color, alpha);
+          });
+        }
+
+        if (exitTransitionActive) {
+          thirdSceneParticles.forEach((source, index) => {
+            const sourceX = source.originX / 960 * sourceFrameRect.width
+              + sourceFrameRect.left - screenRect.left;
+            const sourceY = source.originY / 540 * sourceFrameRect.height
+              + sourceFrameRect.top - screenRect.top;
+            const target = fifthSceneParticles[index % fifthSceneParticles.length];
+            const targetX = fifthPreviewRect.left - screenRect.left
+              + target.originX / 960 * fifthPreviewRect.width;
+            const targetY = fifthPreviewRect.top - screenRect.top
+              + target.originY / fifthSceneTargetHeight * fifthPreviewRect.height;
+            const x = sourceX + (targetX - sourceX) * exitMorph;
+            const y = sourceY + (targetY - sourceY) * exitMorph;
+            const floatWeight = (1 - exitMorph)
+              * (0.45 + Math.sin(Math.PI * exitMorph) * 0.75);
+            const floatX = Math.sin(time * 1.05 + index * 1.61) * 2.4 * floatWeight;
+            const floatY = Math.cos(time * 0.88 + index * 2.03) * 2.4 * floatWeight;
+            const color = source.color.map((channel, channelIndex) => Math.round(
+              channel * (1 - exitMorph) + target.color[channelIndex] * exitMorph
+            ));
+            drawParticle(
+              x + floatX,
+              y + floatY,
+              Math.max(1.2, particleStep * Math.min(unitX, unitY) * (0.13 + exitMorph * 0.22)),
+              color,
+              (source.alpha * (1 - exitMorph) + target.alpha * exitMorph) * exitFade
+            );
+          });
+        }
+      }
+
+      function updatePresentation(timestamp) {
+        presentationScreen.removeAttribute("aria-hidden");
+        const viewportWidth = document.documentElement.clientWidth;
+        const viewportHeight = document.documentElement.clientHeight;
+        const scrollRange = interactiveRun.offsetHeight - viewportHeight;
+        const runProgress = scrollRange > 0
+          ? Math.min(1, Math.max(
+            0,
+            (window.scrollY - interactiveRun.offsetTop) / scrollRange
+          ))
+          : 0;
+        const targetProgress = runProgress * 3 / (slides.length - 1);
+        const elapsed = previousFrameTime === null
+          ? 16
+          : Math.min(64, Math.max(1, timestamp - previousFrameTime));
+        if (visualProgress === null || reduceMotion.matches) {
+          visualProgress = targetProgress;
+        } else {
+          const remaining = targetProgress - visualProgress;
+          visualProgress = Math.abs(remaining) < 0.00012
+            ? targetProgress
+            : visualProgress + remaining * (1 - Math.exp(-elapsed / 110));
+        }
+        const pointerEase = reduceMotion.matches ? 1 : 1 - Math.exp(-elapsed / 240);
+        pointer.x += (pointer.targetX - pointer.x) * pointerEase;
+        pointer.y += (pointer.targetY - pointer.y) * pointerEase;
+        previousFrameTime = timestamp ?? null;
+        if (Math.abs(targetProgress - visualProgress) >= 0.00012) requestUpdate();
+        const progress = visualProgress;
+        presentationScreen.style.visibility = runProgress >= 0.9998
+          && Math.abs(targetProgress - progress) < 0.00012
+          ? "hidden"
+          : "visible";
+        const motionProgress = reduceMotion.matches ? 0 : progress;
+        const slidePosition = progress * (slides.length - 1);
+        const frameScaleStart = parseFloat(
+          getComputedStyle(slideFrame).getPropertyValue("--slide-frame-base-scale")
+        ) || 1;
+        slideFrame.style.setProperty("--slide-frame-scale", String(frameScaleStart));
+        const pageScrollRange = document.documentElement.scrollHeight - viewportHeight;
+        const moonMotionProgress = !reduceMotion.matches && pageScrollRange > 0
+          ? Math.min(1, Math.max(
+            0,
+            document.documentElement.scrollTop / pageScrollRange
+          ))
+          : 0;
+        const sixthPageTop = sixthSlide.getBoundingClientRect().top + window.scrollY;
+        const sixthPageFadeStart = Math.max(0, sixthPageTop - viewportHeight);
+        const sixthPageOpacity = !reduceMotion.matches
+          ? easeInOutSine(clamp01(
+            (window.scrollY - sixthPageFadeStart) / Math.max(1, sixthPageTop - sixthPageFadeStart)
+          ))
+          : 0;
+        const frameRect = slideFrame.getBoundingClientRect();
+        const screenRect = presentationScreen.getBoundingClientRect();
+        const spineRect = whiteSpine.getBoundingClientRect();
+        const coverScale = Math.max(screenRect.width / 960, screenRect.height / 540);
+        const coverFrameRect = {
+          left: screenRect.left + (screenRect.width - 960 * coverScale) / 2,
+          top: screenRect.top + (screenRect.height - 540 * coverScale) / 2,
+          width: 960 * coverScale,
+          height: 540 * coverScale
+        };
+        const frameScaleX = frameRect.width / slideFrame.offsetWidth;
+        const frameScaleY = frameRect.height / slideFrame.offsetHeight;
+        const activeSlide = progress >= 0.9998
+          ? slides.length - 1
+          : Math.min(slides.length - 1, Math.floor(slidePosition));
+        const slideTransition = slidePosition - activeSlide;
+        const isPortraitPhone = window.matchMedia(
+          "(max-width: 700px) and (orientation: portrait)"
+        ).matches;
+        const usesLandscapeArtwork = isPortraitPhone && slidePosition < 1.02;
+        const usesCroppedArtwork = isPortraitPhone && slidePosition >= 2;
+        const handFrameRect = isPortraitPhone && slidePosition >= 1
+          ? coverFrameRect
+          : frameRect;
+        slideFrame.classList.toggle("is-landscape-artwork", usesLandscapeArtwork);
+        slideFrame.classList.toggle(
+          "is-fifth-artwork",
+          isPortraitPhone && activeSlide === slides.length - 1
+        );
+        profileIntro.classList.toggle("is-landscape-artwork", usesLandscapeArtwork);
+        profileTextTopCopy.classList.toggle("is-landscape-artwork", usesLandscapeArtwork);
+        profileTextTopCopy.style.left = usesLandscapeArtwork
+          ? "0px"
+          : `${frameRect.left - screenRect.left}px`;
+        profileTextTopCopy.style.top = usesLandscapeArtwork
+          ? "0px"
+          : `${frameRect.top - screenRect.top}px`;
+        profileTextTopCopy.style.width = usesLandscapeArtwork
+          ? `${screenRect.width}px`
+          : `${slideFrame.offsetWidth}px`;
+        profileTextTopCopy.style.height = usesLandscapeArtwork
+          ? `${screenRect.height}px`
+          : `${slideFrame.offsetHeight}px`;
+        profileTextTopCopy.style.transform = usesLandscapeArtwork
+          ? "none"
+          : `scale(${frameScaleX}, ${frameScaleY})`;
+        const artworkFrameRect = usesLandscapeArtwork
+          ? {
+            left: screenRect.left + (screenRect.width - frameRect.width) / 2,
+            top: screenRect.top + (screenRect.height - frameRect.width * 540 / 960) / 2,
+            width: frameRect.width,
+            height: frameRect.width * 540 / 960
+          }
+          : usesCroppedArtwork
+          ? coverFrameRect
+          : frameRect;
+        const particleTargetFrameRect = usesLandscapeArtwork
+          ? {
+            left: screenRect.left + (screenRect.width - frameRect.width) / 2,
+            top: screenRect.top,
+            width: frameRect.width,
+            height: screenRect.height
+          }
+          : usesCroppedArtwork
+          ? coverFrameRect
+          : frameRect;
+        scrollCue.style.setProperty(
+          "--cue-opacity",
+          String(1 - easeInOutSine(clamp01(slidePosition / 0.08)))
+        );
+        const isBlueBackgroundSlide = activeSlide === 1;
+        finalTransitionProgress = reduceMotion.matches
+          ? 1
+          : easeInOutSine(clamp01(
+            (slidePosition - finalParticleTransition.start)
+              / (finalParticleTransition.end - finalParticleTransition.start)
+          ));
+        const handAssembly = easeInOutSine(clamp01(
+          (slidePosition - 1) / (finalParticleTransition.start - 1)
+        ));
+        const handDissolve = easeInOutSine(clamp01(
+          finalTransitionProgress / 0.16
+        ));
+        handsTransitionLayer.style.opacity = slidePosition >= 1
+          && slidePosition <= finalParticleTransition.end
+          ? String(1 - handDissolve)
+          : "0";
+        transitionHands.forEach((hand) => {
+          const finalLeft = handFrameRect.left + hand.x / 12192000 * handFrameRect.width;
+          const finalTop = handFrameRect.top + hand.y / 6858000 * handFrameRect.height;
+          const handHeight = hand.height / 6858000 * handFrameRect.height;
+          const handWidth = hand.element.naturalWidth > 0
+            ? handHeight * hand.element.naturalWidth / hand.element.naturalHeight
+            : hand.width / 12192000 * handFrameRect.width;
+          hand.element.style.left = `${finalLeft}px`;
+          hand.element.style.top = `${finalTop}px`;
+          hand.element.style.width = `${handWidth}px`;
+          hand.element.style.height = `${handHeight}px`;
+          const entranceDistance = hand.direction < 0
+            ? -(finalLeft + handWidth + 24)
+            : (screenRect.right - finalLeft + 24);
+          const offset = (1 - handAssembly) * entranceDistance;
+          hand.element.style.transform = `translateX(${offset}px)`;
+        });
+        const fifthSlideRect = fifthSlide.getBoundingClientRect();
+        const fifthRenderRect = fifthSlideRender.getBoundingClientRect();
+        const targetStarX = fifthRenderRect.left + fifthRenderRect.width * (970 / 1920);
+        const targetStarY = fifthRenderRect.top + fifthRenderRect.height * (210 / 1080);
+        const targetStarWidth = fifthRenderRect.width * (590 / 1920);
+        const fifthPreviewRect = {
+          left: fifthRenderRect.left,
+          top: fifthRenderRect.top,
+          width: fifthRenderRect.width,
+          height: fifthRenderRect.height
+        };
+        fifthTransitionPreview.style.left = `${fifthSlideRect.left - screenRect.left}px`;
+        fifthTransitionPreview.style.top = `${fifthSlideRect.top - screenRect.top}px`;
+        fifthTransitionPreview.style.width = `${fifthSlideRect.width}px`;
+        fifthTransitionPreview.style.height = `${fifthSlideRect.height}px`;
+        const previewOpacity = easeInOutSine(clamp01((finalTransitionProgress - 0.28) / 0.5));
+        fifthTransitionPreview.style.opacity = String(previewOpacity);
+        const starTransitionOpacity = clamp01(finalTransitionProgress / 0.06);
+        if (slidePosition >= finalParticleTransition.start) {
+          const starSourceX = handFrameRect.left + handFrameRect.width * 0.545;
+          const starSourceY = handFrameRect.top + handFrameRect.height * 0.315;
+          const starSourceWidth = Math.max(18, handFrameRect.width * 0.055);
+          const starDropProgress = reduceMotion.matches
+            ? 1
+            : easeInOutSine(clamp01(finalTransitionProgress / 0.82));
+          const starX = starSourceX + (targetStarX - starSourceX) * starDropProgress;
+          const starY = starSourceY + (targetStarY - starSourceY) * starDropProgress;
+          const starWidth = starSourceWidth + (targetStarWidth - starSourceWidth) * starDropProgress;
+          fallingPptStar.style.left = `${starX}px`;
+          fallingPptStar.style.top = `${starY}px`;
+          fallingPptStar.style.width = `${starWidth}px`;
+          fallingPptStar.style.opacity = String(starTransitionOpacity);
+          fallingPptStar.style.transform =
+            `translate(-50%, -50%) rotate(${finalTransitionProgress * 180}deg)`;
+          fallingStarTrail.style.left = `${starX}px`;
+          fallingStarTrail.style.top = `${starSourceY}px`;
+          fallingStarTrail.style.height = `${Math.max(0, starY - starSourceY)}px`;
+          fallingStarTrail.style.opacity = String(
+            starTransitionOpacity * (1 - clamp01((finalTransitionProgress - 0.84) / 0.16))
+          );
+        } else {
+          fallingPptStar.style.opacity = "0";
+          fallingStarTrail.style.opacity = "0";
+        }
+        const finalParticleTransitionActive = slidePosition >= finalParticleTransition.start
+          && slidePosition < finalParticleTransition.end
+          && !reduceMotion.matches;
+        const fifthPageRevealActive = finalParticleTransitionActive && previewOpacity > 0;
+        fifthTransitionPreview.style.visibility = fifthPageRevealActive ? "visible" : "hidden";
+        interactiveRun.style.zIndex = finalParticleTransitionActive ? "3" : "";
+        const firstSceneFadeIn = easeInOutSine(clamp01((slidePosition - 0.92) / 0.1));
+        const referenceOpacity = slidePosition < 1.76
+          ? firstSceneFadeIn
+          : slidePosition < finalParticleTransition.start
+            ? 1
+            : 0;
+        const firstSceneScatter = clamp01((slidePosition - 0.02) / 0.72);
+        slides[0].style.opacity = "1";
+        slides[0].style.clipPath = `inset(0 0 0 ${firstSceneScatter * 100}%)`;
+        slides[slides.length - 1].style.opacity = activeSlide === slides.length - 1
+          ? "0"
+          : "";
+        referenceLayout.style.opacity = String(referenceOpacity);
+        const copyState = slidePosition < 1.02 || slidePosition > finalParticleTransition.end
+          ? "hidden"
+          : slidePosition >= finalParticleTransition.start
+            ? "exiting"
+            : "visible";
+        if (copyState !== identityCopyState) {
+          identityCopy.classList.toggle("is-visible", copyState === "visible");
+          identityCopy.classList.toggle("is-exiting", copyState === "exiting");
+          identityCopy.setAttribute("aria-hidden", String(copyState === "hidden"));
+          identityCopyState = copyState;
+        }
+        profileIntro.style.opacity = String(1 - easeInOutSine(clamp01(
+          slidePosition / particleTransition.assemblyStart
+        )));
+        profileTextTopCopy.style.opacity = profileIntro.style.opacity;
+        const hasReferenceLayout = referenceOpacity;
+        presentationScreen.style.backgroundColor = slidePosition >= finalParticleTransition.start
+          ? "#fff"
+          : "#ebebec";
+        const isParticleTransition = (slidePosition > 0.02 && slidePosition < 1.02)
+          || finalParticleTransitionActive;
+        spaceCanvas.style.opacity = activeSlide === slides.length - 1
+          ? "0"
+          : isParticleTransition
+          ? "0"
+          : String(1 - hasReferenceLayout);
+        slideFrame.style.backgroundColor = slidePosition >= finalParticleTransition.start
+          ? "#fff"
+          : "#ebebec";
+        drawSpaceDots(timestamp, slidePosition, screenRect, isBlueBackgroundSlide);
+        ringOcclusion.style.opacity = String(
+          slidePosition >= 1 && slidePosition <= 3 ? referenceOpacity : 0
+        );
+        if (activeSlide !== renderedSlide) {
+          slides[renderedSlide].classList.remove("is-active");
+          slides[renderedSlide].setAttribute("aria-hidden", "true");
+          slides[activeSlide].classList.add("is-active");
+          slides[activeSlide].setAttribute("aria-hidden", "false");
+          renderedSlide = activeSlide;
+        }
+        const spineOpacity = slidePosition >= particleTransition.assemblyStart
+          + (particleTransition.end - particleTransition.assemblyStart) * 0.2 ? 1 : 0;
+        const firstSlideClip = Math.min(
+          100,
+          Math.max(0, (frameRect.bottom - screenRect.top) / screenRect.height * 100)
+        );
+        whiteSpine.style.clipPath = activeSlide === 0 && slideTransition === 0
+          ? `inset(${firstSlideClip}% 0 0)`
+          : "inset(0% 0 0)";
+        const isReferenceTransition = slidePosition >= particleTransition.assemblyStart
+          + (particleTransition.end - particleTransition.assemblyStart) * 0.2
+          && slidePosition < finalParticleTransition.start;
+        whiteSpine.style.opacity = isReferenceTransition
+          || slidePosition >= finalParticleTransition.start
+          ? "0"
+          : String(spineOpacity);
+        sphereLens.style.opacity = activeSlide === 0 || activeSlide === slides.length - 1
+          ? "0"
+          : String(motionProgress);
+
+        pieceLayer.style.left = `${artworkFrameRect.left - screenRect.left}px`;
+        pieceLayer.style.top = `${artworkFrameRect.top - screenRect.top}px`;
+        pieceLayer.style.width = `${artworkFrameRect.width}px`;
+        pieceLayer.style.height = `${artworkFrameRect.height}px`;
+        const unitX = artworkFrameRect.width / 960;
+        const unitY = artworkFrameRect.height / 540;
+        drawImageParticles(
+          slidePosition,
+          particleTargetFrameRect,
+          artworkFrameRect,
+          screenRect,
+          unitX,
+          unitY,
+          timestamp,
+          finalTransitionProgress,
+          fifthPreviewRect
+        );
+        const pieceProgress = clamp01(slidePosition);
+        const pieceEase = easeInOutSine(pieceProgress);
+        const pieceOpacity = 1 - easeInOutSine(clamp01((pieceProgress - 0.08) / 0.78));
+        slidePaper.style.opacity = String(pieceOpacity);
+        const paperX = 292;
+        const paperY = -38;
+        const paperWidth = 376;
+        const paperHeight = 625;
+        slidePaper.style.left = `${(480 + (paperX - 480) * artworkScale) / 960 * 100}%`;
+        slidePaper.style.top = `${(270 + (paperY - 270) * artworkScale) / 540 * 100}%`;
+        slidePaper.style.width = `${paperWidth * artworkScale / 960 * 100}%`;
+        slidePaper.style.height = `${paperHeight * artworkScale / 540 * 100}%`;
+        pieces.forEach((piece, index) => {
+          const startX = piece.x + piece.w / 2;
+          const startY = piece.y + piece.h / 2;
+          const cx = startX - 18 * pieceEase + Math.sin(index * 1.7) * 5 * pieceEase;
+          const cy = startY + Math.cos(index * 1.3) * 4 * pieceEase;
+          const scale = 1 - 0.035 * pieceEase;
+          const rotate = Math.sin(index * 1.1) * 1.2 * pieceEase;
+          const artCenterX = 480 + (cx - 480) * artworkScale;
+          const artCenterY = 270 + (cy - 270) * artworkScale;
+          piece.img.style.width = `${piece.w * unitX * artworkScale}px`;
+          piece.img.style.height = `${piece.h * unitY * artworkScale}px`;
+          const scaledPieceX = 480 + (piece.x - 480) * artworkScale;
+          const pieceFront = clamp01(
+            (pieceProgress - particleTransition.scatterStart - scaledPieceX / 960 * 0.16)
+              / (particleTransition.assemblyStart - particleTransition.scatterStart - 0.16)
+          );
+          const pieceOpacity = 1 - easeInOutSine(pieceFront);
+          piece.img.style.opacity = String(pieceOpacity);
+          if (progress === 0) {
+            piece.img.style.filter = "none";
+          } else {
+            piece.img.style.removeProperty("filter");
+          }
+          piece.img.style.transform =
+            `translate(${artCenterX * unitX}px, ${artCenterY * unitY}px) translate(-50%, -50%) rotate(${rotate}deg) scale(${scale})`;
+        });
+
+        const isMobileViewport = window.matchMedia("(max-width: 700px)").matches;
+        const moonTravelProgress = Math.min(1, moonMotionProgress / 0.88);
+        const rotationProgress = isMobileViewport ? moonMotionProgress : moonTravelProgress;
+        const rotation = rotationProgress * Math.PI * 2;
+        const resetProgress = Math.min(1, Math.max(0, (moonMotionProgress - 0.88) / 0.12));
+        const easedReset = resetProgress * resetProgress * (3 - 2 * resetProgress);
+        const startBlend = Math.min(1, moonMotionProgress / 0.08);
+        const easedStart = startBlend * startBlend * (3 - 2 * startBlend);
+        const moonUnitY = window.matchMedia(
+          "(max-width: 700px) and (orientation: portrait)"
+        ).matches
+          ? frameRect.width / 960
+          : frameRect.height / 540;
+        const moonArtworkFrameRect = isPortraitPhone
+          ? {
+            left: 0,
+            top: (viewportHeight - viewportWidth * 540 / 960) / 2,
+            width: viewportWidth,
+            height: viewportWidth * 540 / 960
+          }
+          : artworkFrameRect;
+        const moonFrameLeft = moonArtworkFrameRect.left;
+        const moonFrameTop = moonArtworkFrameRect.top;
+        const orbitCenterX = viewportWidth / 2;
+        const orbitCenterY = viewportHeight / 2;
+        const moonSpacing = viewportHeight * 0.13;
+        const descent = moonTravelProgress * viewportHeight
+          * (isMobileViewport ? 0.08 : 0.28);
+        const moonBounds = openingFrame.reduce((bounds, moon) => ({
+          left: Math.min(bounds.left, moon.x - moon.w / 2),
+          right: Math.max(bounds.right, moon.x + moon.w / 2),
+          top: Math.min(bounds.top, moon.y - moon.h / 2),
+          bottom: Math.max(bounds.bottom, moon.y + moon.h / 2)
+        }), {
+          left: Infinity,
+          right: -Infinity,
+          top: Infinity,
+          bottom: -Infinity
+        });
+        const finalMoonScale = Math.min(
+          screenRect.width * 0.9 / (moonBounds.right - moonBounds.left),
+          screenRect.height * 0.7 / (moonBounds.bottom - moonBounds.top)
+        );
+        const moonGroupCenterX = (moonBounds.left + moonBounds.right) / 2;
+        const moonGroupCenterY = (moonBounds.top + moonBounds.bottom) / 2;
+        moons.forEach((moon, index) => {
+          const opening = openingFrame[index];
+          const openingX = moonFrameLeft + moonArtworkFrameRect.width * opening.x / 960;
+          const openingY = moonFrameTop + moonArtworkFrameRect.height * opening.y / 540;
+          moon.style.opacity = "1";
+          const angle = (index - (moons.length - 1) / 2) * Math.PI / 4 + rotation;
+          const depth = Math.cos(angle);
+          const normalizedDepth = (depth + 1) / 2;
+          const depthScale = 0.72 + normalizedDepth * 0.56;
+          const perspectiveWeight = easedStart * (1 - easedReset);
+          const perspectiveScale = 1 + (depthScale - 1) * perspectiveWeight;
+          const depthOpacity = 0.52 + normalizedDepth * 0.48;
+          const depthBasedOpacity = 1 - (1 - depthOpacity) * perspectiveWeight;
+          const opacity = depthBasedOpacity + (1 - depthBasedOpacity) * sixthPageOpacity;
+          const width = frameRect.width * opening.w / 960 * moonScale * perspectiveScale;
+          const height = moonUnitY * opening.h * moonScale * perspectiveScale;
+          const radiusX = spineRect.width * 0.74;
+          const spiralX = orbitCenterX + Math.sin(angle) * radiusX;
+          const spiralY = orbitCenterY + (index - (moons.length - 1) / 2) * moonSpacing + descent;
+          const screenX = spiralX * (1 - easedReset) + openingX * easedReset;
+          const screenY = spiralY * (1 - easedReset) + openingY * easedReset;
+          const positionX = openingX + (screenX - openingX) * easedStart;
+          const positionY = openingY + (screenY - openingY) * easedStart;
+          const mobileFinalProgress = isMobileViewport ? easedReset : 0;
+          const finalX = viewportWidth / 2
+            + (opening.x - moonGroupCenterX) * finalMoonScale;
+          const finalY = viewportHeight / 2
+            + (opening.y - moonGroupCenterY) * finalMoonScale;
+
+          const renderedX = positionX + (finalX - positionX) * mobileFinalProgress;
+          const renderedY = positionY + (finalY - positionY) * mobileFinalProgress;
+          moon.style.left = `${renderedX}px`;
+          moon.style.top = `${renderedY}px`;
+          moon.style.setProperty(
+            "--moon-width",
+            `${width * (1 + (finalMoonScale - 1) * mobileFinalProgress)}px`
+          );
+          moon.style.setProperty(
+            "--moon-height",
+            `${height * (1 + (finalMoonScale - 1) * mobileFinalProgress)}px`
+          );
+          moon.style.opacity = String(opacity);
+          moon.style.filter = `blur(${(1 - normalizedDepth) * 1.2 * perspectiveWeight}px)`;
+          moon.style.zIndex = depth > 0 ? "8" : "6";
+        });
+
+        if (!reduceMotion.matches) requestUpdate();
+      }
+
+      function requestUpdate() {
+        if (framePending) return;
+        framePending = true;
+        window.requestAnimationFrame((timestamp) => {
+          framePending = false;
+          updatePresentation(timestamp);
+        });
+      }
+
+      function createClickBurst(layer, x, y, count, spread) {
+        const ripple = document.createElement("span");
+        ripple.className = "click-ripple";
+        ripple.style.left = `${x - 12}px`;
+        ripple.style.top = `${y - 12}px`;
+        ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+        layer.append(ripple);
+
+        for (let index = 0; index < count; index += 1) {
+          const star = document.createElement("span");
+          const size = 4 + Math.random() * 7;
+          star.className = "falling-star";
+          star.style.left = `${x + (Math.random() - 0.5) * spread}px`;
+          star.style.top = `${y + (Math.random() - 0.5) * spread * 0.6}px`;
+          star.style.setProperty("--star-size", `${size}px`);
+          star.style.setProperty("--star-drift", `${(Math.random() - 0.5) * spread * 2.4}px`);
+          star.style.setProperty("--star-fall", `${70 + Math.random() * 150}px`);
+          star.style.setProperty("--star-duration", `${1.2 + Math.random() * 0.8}s`);
+          star.style.setProperty("--star-delay", `${Math.random() * 0.18}s`);
+          star.addEventListener("animationend", () => star.remove(), { once: true });
+          layer.append(star);
+        }
+      }
+
+      function animateClickedComponent(component) {
+        if (!component) return;
+        component.classList.remove("is-clicked");
+        void component.offsetWidth;
+        component.classList.add("is-clicked");
+        const clearClickedState = (event) => {
+          if (event.target !== component) return;
+          component.classList.remove("is-clicked");
+          component.removeEventListener("animationend", clearClickedState);
+        };
+        component.addEventListener("animationend", clearClickedState);
+      }
+
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+      window.addEventListener("resize", () => {
+        sceneTargets = [];
+        requestUpdate();
+      });
+      window.addEventListener("pointermove", (event) => {
+        pointer.targetX = (event.clientX / window.innerWidth - 0.5) * 2;
+        pointer.targetY = (event.clientY / window.innerHeight - 0.5) * 2;
+        requestUpdate();
+      }, { passive: true });
+      window.addEventListener("pointerleave", () => {
+        pointer.targetX = 0;
+        pointer.targetY = 0;
+        requestUpdate();
+      }, { passive: true });
+      presentationScreen.addEventListener("pointerdown", (event) => {
+        const bounds = presentationScreen.getBoundingClientRect();
+        const target = event.target instanceof Element ? event.target : null;
+        animateClickedComponent(target?.closest(
+          ".slide-image.is-active, .phase-moon, .reference-layout, .profile-intro, .slide-frame"
+        ) || slideFrame);
+        createClickBurst(
+          starfallLayer,
+          event.clientX - bounds.left,
+          event.clientY - bounds.top,
+          reduceMotion.matches ? 4 : 9,
+          64
+        );
+      });
+      updatePresentation();
+    })();
+  </script>
+</body>
+</html>
